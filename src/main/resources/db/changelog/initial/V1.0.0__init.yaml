@@ -1,0 +1,449 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-clients-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: clients
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(20)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: telegram_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_clients_email
+            tableName: clients
+            unique: true
+            columns:
+              - column:
+                  name: email
+        - createIndex:
+            indexName: idx_clients_phone
+            tableName: clients
+            columns:
+              - column:
+                  name: phone
+
+  - changeSet:
+      id: 002-create-shifts-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: shifts
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: time
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: time
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-limits-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: limits
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: height_min
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: height_max
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age_min
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: only_men
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 004-create-routes-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: routes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: distance
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: difficulty
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: map_path
+                  type: varchar(500)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 005-create-payments-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: provider
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: transaction_ref
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_payments_transaction_ref
+            tableName: payments
+            columns:
+              - column:
+                  name: transaction_ref
+
+  - changeSet:
+      id: 006-create-bikes-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: bikes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: brand
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: model
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: engine_cc
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: limit_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: photo_path
+                  type: varchar(500)
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: bikes
+            baseColumnNames: limit_id
+            constraintName: fk_bikes_limits
+            referencedTableName: limits
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 007-create-rides-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: rides
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shift_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: route_id
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: rides
+            baseColumnNames: shift_id
+            constraintName: fk_rides_shifts
+            referencedTableName: shifts
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: rides
+            baseColumnNames: route_id
+            constraintName: fk_rides_routes
+            referencedTableName: routes
+            referencedColumnNames: id
+        - createIndex:
+            indexName: idx_rides_date_shift
+            tableName: rides
+            unique: true
+            columns:
+              - column:
+                  name: date
+              - column:
+                  name: shift_id
+
+  - changeSet:
+      id: 008-create-participants-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: participants
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: gender
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: height
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: experience_level
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ride_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bike_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: participants
+            baseColumnNames: ride_id
+            constraintName: fk_participants_rides
+            referencedTableName: rides
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: participants
+            baseColumnNames: bike_id
+            constraintName: fk_participants_bikes
+            referencedTableName: bikes
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: participants
+            baseColumnNames: client_id
+            constraintName: fk_participants_clients
+            referencedTableName: clients
+            referencedColumnNames: id
+        - createIndex:
+            indexName: idx_participants_ride_bike
+            tableName: participants
+            unique: true
+            columns:
+              - column:
+                  name: ride_id
+              - column:
+                  name: bike_id
+
+  - changeSet:
+      id: 009-create-bookings-table
+      author: Vlad Tsepesh
+      changes:
+        - createTable:
+            tableName: bookings
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ride_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_id
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: booking_status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: bookings
+            baseColumnNames: client_id
+            constraintName: fk_bookings_clients
+            referencedTableName: clients
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: bookings
+            baseColumnNames: ride_id
+            constraintName: fk_bookings_rides
+            referencedTableName: rides
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: bookings
+            baseColumnNames: payment_id
+            constraintName: fk_bookings_payments
+            referencedTableName: payments
+            referencedColumnNames: id
+        - createIndex:
+            indexName: idx_bookings_status
+            tableName: bookings
+            columns:
+              - column:
+                  name: booking_status
+        - createIndex:
+            indexName: idx_bookings_expires_at
+            tableName: bookings
+            columns:
+              - column:
+                  name: expires_at
