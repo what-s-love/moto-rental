@@ -5,9 +5,9 @@ spring:
     name: moto-rental
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/moto_rental
-    username: ${DB_USERNAME:moto_rental_user}
-    password: ${DB_PASSWORD:password}
+    url: jdbc:postgresql://localhost:5050/moto_rental_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,9 +20,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/changelog/master.yaml
     enabled: true
     default-schema: public
+
 logging:
   level:
     liquibase: INFO

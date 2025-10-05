@@ -138,8 +138,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: duration
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
                   name: difficulty
-                  type: varchar(20)
+                  type: int
                   constraints:
                     nullable: false
               - column:
@@ -148,10 +153,27 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: description
+                  type: varchar(500)
+                  constraints:
+                    nullable: true
+              - column:
                   name: map_path
                   type: varchar(500)
                   constraints:
                     nullable: true
+              - column:
+                  name: is_special
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: false
+              - column:
+                  name: enabled
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
 
   - changeSet:
       id: 005-create-payments-table
@@ -238,6 +260,12 @@ databaseChangeLog:
                   type: varchar(500)
                   constraints:
                     nullable: true
+              - column:
+                  name: enabled
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: false
         - addForeignKeyConstraint:
             baseTableName: bikes
             baseColumnNames: limit_id
@@ -405,6 +433,11 @@ databaseChangeLog:
               - column:
                   name: expires_at
                   type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: decimal(10,2)
                   constraints:
                     nullable: false
               - column:

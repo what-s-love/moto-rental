@@ -13,4 +13,7 @@ public interface LimitRepository extends JpaRepository<Limit, Integer> {
 
     @Query("SELECT l FROM Limit l WHERE l.heightMin <= :height AND l.heightMax >= :height AND l.ageMin <= :age AND (:isMale = true OR l.onlyMen = false)")
     List<Limit> findSuitableLimitsForParticipant(@Param("height") Integer height, @Param("age") Integer age, @Param("isMale") Boolean isMale);
+
+    @Query("SELECT DISTINCT l FROM Limit l LEFT JOIN FETCH l.bikes")
+    List<Limit> findAllWithBikes();
 }

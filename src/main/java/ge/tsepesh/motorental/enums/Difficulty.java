@@ -6,9 +6,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Difficulty {
-    EASY("Легкий"),
-    MEDIUM("Средний"),
-    HARD("Жесткий");
+    INDIVIDUAL(0,"индивидуальная"),
+    EASY(1,"легкий"),
+    MEDIUM(2,"средний"),
+    PRE_HARD(3,"умеренно сложный"),
+    HARD(4,"сложный");
+
+    private final int value;
 
     private final String displayName;
 }

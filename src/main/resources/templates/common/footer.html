@@ -1,0 +1,51 @@
+<footer th:fragment="footer" class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 th:text="#{app.name}">Moto Rental</h5>
+                <p class="text-muted" th:text="#{app.tagline}">Незабываемые приключения</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h6 th:text="#{footer.contact}">Контакты</h6>
+                <p class="mb-1">
+                    <i class="fas fa-phone me-2"></i>
+                    <span th:text="#{footer.phone}">Телефон</span>: +7 (XXX) XXX-XX-XX
+                </p>
+                <p class="mb-1">
+                    <i class="fas fa-envelope me-2"></i>
+                    info@motorental.com
+                </p>
+                <p class="mb-1">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    <span th:text="#{section.location.address}">Владикавказ</span>
+                </p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h6 th:text="#{footer.social}">Социальные сети</h6>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-light fs-4"><i class="fab fa-telegram"></i></a>
+                    <a href="#" class="text-light fs-4"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-light fs-4"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0 text-muted">
+                    &copy; 2024 <span th:text="#{app.name}">Moto Rental</span>.
+                    <span th:text="#{footer.legal}">Все права защищены</span>.
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <small class="text-muted" th:text="#{footer.disclaimer}">
+                    Участие в заездах на собственный риск
+                </small>
+            </div>
+        </div>
+    </div>
+</footer>

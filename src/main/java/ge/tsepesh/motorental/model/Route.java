@@ -24,13 +24,24 @@ public class Route {
     @Column(nullable = false)
     private Integer distance;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Difficulty difficulty;
+    @Column(nullable = false)
+    private Integer duration;
+
+    @Column(nullable = false)
+    private Integer difficulty;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column
+    private String description;
+
+    @Column
     private String mapPath;
+
+    @Column(nullable = false)
+    private Boolean isSpecial;
+
+    @Column(nullable = false)
+    private Boolean enabled;
 }

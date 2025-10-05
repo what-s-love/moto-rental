@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div layout:fragment="content">
+    <!-- Hero Section -->
+    <section class="hero-section position-relative">
+        <div class="hero-background"></div>
+        <div class="hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="row min-vh-100 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content text-white">
+                        <h1 class="display-4 fw-bold mb-4" th:text="#{home.hero.title}">
+                            Эндуро приключения в горах
+                        </h1>
+                        <p class="lead mb-4" th:text="#{home.hero.subtitle}">
+                            Испытайте адреналин на профессиональных мотоциклах с опытным гидом
+                        </p>
+                        <a th:href="@{/booking}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            <span th:text="#{home.hero.cta}">Забронировать заезд</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bikes Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold" th:text="#{section.bikes.title}">Наши мотоциклы</h2>
+                <p class="lead text-muted" th:text="#{section.bikes.subtitle}">Профессиональная техника для любого уровня</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-img-top bike-image bg-primary d-flex align-items-center justify-content-center">
+                            <i class="fas fa-motorcycle fa-3x text-white"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title" th:text="#{section.bikes.enduro.title}">Эндуро мотоциклы</h5>
+                            <p class="card-text text-muted" th:text="#{section.bikes.enduro.desc}">250-350 куб.см</p>
+                            <span class="badge bg-primary">KTM, Husqvarna, Beta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-img-top bike-image bg-success d-flex align-items-center justify-content-center">
+                            <i class="fas fa-motorcycle fa-3x text-white"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title" th:text="#{section.bikes.pitbike.title}">Питбайки</h5>
+                            <p class="card-text text-muted" th:text="#{section.bikes.pitbike.desc}">125-150 куб.см</p>
+                            <span class="badge bg-success">Honda, Yamaha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-img-top bike-image bg-warning d-flex align-items-center justify-content-center">
+                            <i class="fas fa-motorcycle fa-3x text-white"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title" th:text="#{section.bikes.mini.title}">Мини питбайки</h5>
+                            <p class="card-text text-muted" th:text="#{section.bikes.mini.desc}">Автомат</p>
+                            <span class="badge bg-warning text-dark">Kawasaki</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Routes Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold" th:text="#{section.routes.title}">Маршруты</h2>
+                <p class="lead text-muted" th:text="#{section.routes.subtitle}">Выберите свое приключение</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
+                        <div class="route-image bg-success"></div>
+                        <div class="card-img-overlay d-flex flex-column justify-content-end">
+                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0" th:text="#{route.easy}">Легкий</h5>
+                                    <span class="badge bg-success">15 км</span>
+                                </div>
+                                <p class="card-text">
+                                    <span th:text="#{route.from}">от</span> 50
+                                    <span th:text="#{route.currency}">₽</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
+                        <div class="route-image bg-warning"></div>
+                        <div class="card-img-overlay d-flex flex-column justify-content-end">
+                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0" th:text="#{route.medium}">Средний</h5>
+                                    <span class="badge bg-warning text-dark">25 км</span>
+                                </div>
+                                <p class="card-text">
+                                    <span th:text="#{route.from}">от</span> 75
+                                    <span th:text="#{route.currency}">₽</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
+                        <div class="route-image bg-danger"></div>
+                        <div class="card-img-overlay d-flex flex-column justify-content-end">
+                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0" th:text="#{route.hard}">Сложный</h5>
+                                    <span class="badge bg-danger">40 км</span>
+                                </div>
+                                <p class="card-text">
+                                    <span th:text="#{route.from}">от</span> 100
+                                    <span th:text="#{route.currency}">₽</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Sections -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Age Restrictions -->
+                <div class="col-lg-6">
+                    <div class="info-block h-100">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h3 th:text="#{section.age.title}">Возрастные ограничения</h3>
+                        </div>
+                        <p class="text-muted" th:text="#{section.age.text}">
+                            Принимаем участников от 12 лет. Для детей до 16 лет обязательно присутствие взрослого.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Equipment -->
+                <div class="col-lg-6">
+                    <div class="info-block h-100">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-list-check fa-3x text-primary mb-3"></i>
+                            <h3 th:text="#{section.equipment.title}">Что взять с собой</h3>
+                        </div>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{equipment.clothes}">Спортивная одежда</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{equipment.shoes}">Закрытая обувь</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{equipment.gloves}">Перчатки (по желанию)</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{equipment.water}">Питьевая вода</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{equipment.snack}">Легкий перекус</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center">
+                <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                <h3 class="mb-3" th:text="#{section.location.title}">Где мы находимся</h3>
+                <p class="text-muted mb-4" th:text="#{section.location.address}">г. Владикавказ, ул. Примерная, 123</p>
+                <a href="https://2gis.ru" target="_blank" class="btn btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    <span th:text="#{section.location.cta}">Открыть в 2ГИС</span>
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

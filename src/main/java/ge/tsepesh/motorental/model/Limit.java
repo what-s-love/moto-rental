@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "limits")
@@ -29,4 +31,7 @@ public class Limit {
 
     @Column(name = "only_men", nullable = false)
     private Boolean onlyMen = false;
+
+    @OneToMany(mappedBy = "limits", fetch = FetchType.LAZY)
+    private List<Bike> bikes = new ArrayList<>();
 }
