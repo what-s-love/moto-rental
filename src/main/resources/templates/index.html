@@ -10,15 +10,15 @@
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content text-white">
-                        <h1 class="display-4 fw-bold mb-4" th:text="#{home.hero.title}">
+                        <h1 class="display-4 fw-bold mb-4" th:text="#{main.hero.title}">
                             Эндуро приключения в горах
                         </h1>
-                        <p class="lead mb-4" th:text="#{home.hero.subtitle}">
+                        <p class="lead mb-4" th:text="#{main.hero.subtitle}">
                             Испытайте адреналин на профессиональных мотоциклах с опытным гидом
                         </p>
                         <a th:href="@{/booking}" class="btn btn-primary btn-lg">
                             <i class="fas fa-calendar-plus me-2"></i>
-                            <span th:text="#{home.hero.cta}">Забронировать заезд</span>
+                            <span th:text="#{main.hero.cta}">Забронировать заезд</span>
                         </a>
                     </div>
                 </div>
@@ -34,42 +34,77 @@
                 <p class="lead text-muted" th:text="#{section.bikes.subtitle}">Профессиональная техника для любого уровня</p>
             </div>
 
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm hover-card">
-                        <div class="card-img-top bike-image bg-primary d-flex align-items-center justify-content-center">
-                            <i class="fas fa-motorcycle fa-3x text-white"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title" th:text="#{section.bikes.enduro.title}">Эндуро мотоциклы</h5>
-                            <p class="card-text text-muted" th:text="#{section.bikes.enduro.desc}">250-350 куб.см</p>
-                            <span class="badge bg-primary">KTM, Husqvarna, Beta</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="position-relative" data-carousel>
+                <!-- Prev button -->
+                <button class="btn btn-outline-secondary position-absolute top-50 start-0 translate-middle-y"
+                        type="button" aria-label="Previous" data-carousel-prev
+                        style="z-index: 2;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
 
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm hover-card">
-                        <div class="card-img-top bike-image bg-success d-flex align-items-center justify-content-center">
-                            <i class="fas fa-motorcycle fa-3x text-white"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title" th:text="#{section.bikes.pitbike.title}">Питбайки</h5>
-                            <p class="card-text text-muted" th:text="#{section.bikes.pitbike.desc}">125-150 куб.см</p>
-                            <span class="badge bg-success">Honda, Yamaha</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Next button -->
+                <button class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y"
+                        type="button" aria-label="Next" data-carousel-next
+                        style="z-index: 2;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
 
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm hover-card">
-                        <div class="card-img-top bike-image bg-warning d-flex align-items-center justify-content-center">
-                            <i class="fas fa-motorcycle fa-3x text-white"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title" th:text="#{section.bikes.mini.title}">Мини питбайки</h5>
-                            <p class="card-text text-muted" th:text="#{section.bikes.mini.desc}">Автомат</p>
-                            <span class="badge bg-warning text-dark">Kawasaki</span>
+                <!-- Track -->
+                <div class="d-flex flex-nowrap overflow-auto gap-4 px-5" data-carousel-track>
+                    <div class="flex-shrink-0" style="min-width: 300px;" th:each="bike : ${bikes}">
+                        <div class="card h-100 shadow-sm hover-card">
+                            <!-- Bike Image -->
+                            <div class="card-img-top bike-image d-flex align-items-center justify-content-center">
+<!--                                 th:classappend="${bike.engineCc >= 250} ? 'bg-primary' : (${bike.engineCc >= 125} ? 'bg-success' : 'bg-warning')">-->
+                                <img th:if="${bike.photoPath != null}"
+                                     th:src="@{${bike.photoPath}}"
+                                     alt="Bike photo"
+                                     class="img-fluid"
+                                     style="max-height: 200px; object-fit: cover;">
+                                <i th:unless="${bike.photoPath != null}"
+                                   class="fas fa-motorcycle fa-3x text-white"></i>
+                            </div>
+
+                            <!-- Bike Details -->
+                            <div class="card-body text-center">
+                                <h5 class="card-title" th:text="${bike.brand + ' ' + bike.model}">модель</h5>
+
+                                <!-- Engine CC -->
+                                <p class="card-text text-muted mb-2">
+                                    <span th:text="${bike.engineCc}">объём</span>
+                                    <span th:text="#{bike.cc}">куб.см</span>
+                                </p>
+
+                                <!-- Limits Description -->
+                                <p class="card-text text-muted small" th:if="${bike.limits != null}">
+                                    <!-- Age -->
+                                    <span th:text="#{bike.from.age}">от</span>
+                                    <span th:text="${bike.limits.ageMin}">16</span>
+                                    <span th:text="#{bike.years}">лет</span>
+
+                                    <!-- Height -->
+                                    <span th:if="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
+                                        , <span th:text="#{bike.height}">рост</span>
+                                        <span th:text="${bike.limits.heightMin + '–' + bike.limits.heightMax}">140–155</span> см
+                                    </span>
+                                    <span th:unless="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
+                                        , <span th:text="#{bike.height}">рост</span>
+                                        <span th:text="#{bike.from.age}">от</span>
+                                        <span th:text="${bike.limits.heightMin}">165</span> см
+                                    </span>
+
+                                    <!-- Only Men -->
+                                    <span th:if="${bike.limits.onlyMen}">
+                                        , <span th:text="#{bike.only.men}">только для мужчин</span>
+                                    </span>
+                                </p>
+
+                                <!-- Bike Brand Badge -->
+                                <span class="badge"
+                                      th:classappend="${bike.engineCc >= 250} ? 'bg-custom-success' : (${bike.engineCc <= 125} ? 'bg-custom-primary' : 'bg-custom-warning')"
+                                      th:text="${bike.engineCc >= 250} ? #{bike.type.enduro} : (${bike.engineCc <= 125} ? #{bike.type.pitbike} : #{bike.type.pitbike})">
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

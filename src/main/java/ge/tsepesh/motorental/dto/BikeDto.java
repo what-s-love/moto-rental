@@ -10,8 +10,7 @@ public class BikeDto {
     private String brand;
     private String model;
     private Integer engineCc;
-    private String photoPath;
-    private String description;
     private LimitDto limits;
-    private Boolean isAvailable;
+    private String photoPath;
+    private Boolean enabled;
 }

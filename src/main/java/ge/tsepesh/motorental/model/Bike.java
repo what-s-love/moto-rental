@@ -39,7 +39,7 @@ public class Bike {
     @JoinColumn(name = "limit_id", nullable = false)
     private Limit limits;
 
-    @Column(length = 500)
+    @Column(name = "photo_path", length = 500)
     private String photoPath;
 
     @Column(nullable = false)

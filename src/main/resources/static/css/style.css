@@ -1,9 +1,9 @@
 /* Custom CSS for Moto Rental */
 
 :root {
-    --primary-color: #007bff;
+    --primary-color: #22bbff;
     --secondary-color: #6c757d;
-    --success-color: #28a745;
+    --success-color: #0059ff;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
     --dark-color: #343a40;
@@ -61,7 +61,15 @@
 
 .bike-image {
     height: 200px;
-    background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+    /*background: linear-gradient(135deg, var(--primary-color), var(--success-color));*/
+}
+
+.badge.bg-custom-success {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-custom-primary {
+    background-color: var(--primary-color) !important;
 }
 
 /* Route Cards */
@@ -81,7 +89,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(40, 167, 69, 0.8));
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 81, 255, 0.8));
 }
 
 .route-info {

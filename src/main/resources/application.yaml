@@ -3,12 +3,20 @@ server:
 spring:
   application:
     name: moto-rental
-
+  messages:
+    encoding: UTF-8
   datasource:
     url: jdbc:postgresql://localhost:5050/moto_rental_db
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
 
   jpa:
     hibernate:
