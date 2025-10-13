@@ -5,6 +5,39 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
+    // Initialize Swiper for bikes
+    const bikesSwiper = new Swiper('.bikes-swiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+            },
+            768: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+            },
+            1024: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+            },
+        },
+    });
+
     // Route cards click animation
     const routeCards = document.querySelectorAll('.route-card');
     routeCards.forEach(card => {
@@ -14,58 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 this.style.transform = '';
             }, 150);
-        });
-    });
-
-    // Bikes carousel
-    document.querySelectorAll('[data-carousel]').forEach(carousel => {
-        const track = carousel.querySelector('[data-carousel-track]');
-        const prevBtn = carousel.querySelector('[data-carousel-prev]');
-        const nextBtn = carousel.querySelector('[data-carousel-next]');
-
-        if (!track) return;
-
-        const scrollByStep = () => Math.max(300, Math.floor(track.clientWidth * 0.8));
-
-        const scrollNext = () => {
-            track.scrollBy({ left: scrollByStep(), behavior: 'smooth' });
-        };
-
-        const scrollPrev = () => {
-            track.scrollBy({ left: -scrollByStep(), behavior: 'smooth' });
-        };
-
-        nextBtn && nextBtn.addEventListener('click', scrollNext);
-        prevBtn && prevBtn.addEventListener('click', scrollPrev);
-
-        // Optional: drag to scroll
-        let isDown = false;
-        let startX = 0;
-        let scrollLeft = 0;
-
-        track.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - track.offsetLeft;
-            scrollLeft = track.scrollLeft;
-            track.classList.add('dragging');
-        });
-
-        track.addEventListener('mouseleave', () => {
-            isDown = false;
-            track.classList.remove('dragging');
-        });
-
-        track.addEventListener('mouseup', () => {
-            isDown = false;
-            track.classList.remove('dragging');
-        });
-
-        track.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - track.offsetLeft;
-            const walk = (x - startX) * 1.2; // scroll speed
-            track.scrollLeft = scrollLeft - walk;
         });
     });
 

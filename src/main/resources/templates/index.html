@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html layout:decorate="~{common/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{common/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/html">
 
 <div layout:fragment="content">
     <!-- Hero Section -->
     <section class="hero-section position-relative">
-        <div class="hero-background"></div>
-        <div class="hero-overlay"></div>
+        <div class="hero-promo">
+            <img th:src="@{/images/promo/promo1.png}"
+                 alt="Promo image"
+                 class="hero-image">
+        </div>
         <div class="container position-relative">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
@@ -27,35 +31,17 @@
     </section>
 
     <!-- Bikes Section -->
-    <section class="py-5 bg-light">
+    <section id="bikes" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="display-6 fw-bold" th:text="#{section.bikes.title}">Наши мотоциклы</h2>
                 <p class="lead text-muted" th:text="#{section.bikes.subtitle}">Профессиональная техника для любого уровня</p>
             </div>
-
-            <div class="position-relative" data-carousel>
-                <!-- Prev button -->
-                <button class="btn btn-outline-secondary position-absolute top-50 start-0 translate-middle-y"
-                        type="button" aria-label="Previous" data-carousel-prev
-                        style="z-index: 2;">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-
-                <!-- Next button -->
-                <button class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y"
-                        type="button" aria-label="Next" data-carousel-next
-                        style="z-index: 2;">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-
-                <!-- Track -->
-                <div class="d-flex flex-nowrap overflow-auto gap-4 px-5" data-carousel-track>
-                    <div class="flex-shrink-0" style="min-width: 300px;" th:each="bike : ${bikes}">
-                        <div class="card h-100 shadow-sm hover-card">
-                            <!-- Bike Image -->
+            <div class="swiper bikes-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide swiper-autoheight" th:each="bike : ${bikes}">
+                        <div class="card flex h-100 shadow-sm hover-card">
                             <div class="card-img-top bike-image d-flex align-items-center justify-content-center">
-<!--                                 th:classappend="${bike.engineCc >= 250} ? 'bg-primary' : (${bike.engineCc >= 125} ? 'bg-success' : 'bg-warning')">-->
                                 <img th:if="${bike.photoPath != null}"
                                      th:src="@{${bike.photoPath}}"
                                      alt="Bike photo"
@@ -64,43 +50,35 @@
                                 <i th:unless="${bike.photoPath != null}"
                                    class="fas fa-motorcycle fa-3x text-white"></i>
                             </div>
-
-                            <!-- Bike Details -->
                             <div class="card-body text-center">
                                 <h5 class="card-title" th:text="${bike.brand + ' ' + bike.model}">модель</h5>
-
-                                <!-- Engine CC -->
                                 <p class="card-text text-muted mb-2">
                                     <span th:text="${bike.engineCc}">объём</span>
                                     <span th:text="#{bike.cc}">куб.см</span>
                                 </p>
-
-                                <!-- Limits Description -->
                                 <p class="card-text text-muted small" th:if="${bike.limits != null}">
                                     <!-- Age -->
                                     <span th:text="#{bike.from.age}">от</span>
                                     <span th:text="${bike.limits.ageMin}">16</span>
                                     <span th:text="#{bike.years}">лет</span>
-
-                                    <!-- Height -->
                                     <span th:if="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
-                                        , <span th:text="#{bike.height}">рост</span>
+                                        | <span th:text="#{bike.height}">рост</span>
                                         <span th:text="${bike.limits.heightMin + '–' + bike.limits.heightMax}">140–155</span> см
                                     </span>
                                     <span th:unless="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
-                                        , <span th:text="#{bike.height}">рост</span>
+                                        | <span th:text="#{bike.height}">рост</span>
                                         <span th:text="#{bike.from.age}">от</span>
                                         <span th:text="${bike.limits.heightMin}">165</span> см
                                     </span>
-
-                                    <!-- Only Men -->
+                                    <br>
                                     <span th:if="${bike.limits.onlyMen}">
-                                        , <span th:text="#{bike.only.men}">только для мужчин</span>
+                                        <span th:text="#{bike.only.men}">только для мужчин</span>
+                                    </span>
+                                    <span th:unless="${bike.limits.onlyMen}">
+                                        <br>
                                     </span>
                                 </p>
-
-                                <!-- Bike Brand Badge -->
-                                <span class="badge"
+                                <span class="badge mt-auto"
                                       th:classappend="${bike.engineCc >= 250} ? 'bg-custom-success' : (${bike.engineCc <= 125} ? 'bg-custom-primary' : 'bg-custom-warning')"
                                       th:text="${bike.engineCc >= 250} ? #{bike.type.enduro} : (${bike.engineCc <= 125} ? #{bike.type.pitbike} : #{bike.type.pitbike})">
                                 </span>
@@ -108,6 +86,13 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Navigation buttons -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+
+                <!-- Pagination -->
+                <div class="swiper-pagination position-relative pt-5"></div>
             </div>
         </div>
     </section>
@@ -237,7 +222,7 @@
                 <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
                 <h3 class="mb-3" th:text="#{section.location.title}">Где мы находимся</h3>
                 <p class="text-muted mb-4" th:text="#{section.location.address}">г. Владикавказ, ул. Примерная, 123</p>
-                <a href="https://2gis.ru" target="_blank" class="btn btn-outline-primary">
+                <a href="https://go.2gis.com/lVIE6" target="_blank" class="btn btn-outline-primary">
                     <i class="fas fa-external-link-alt me-2"></i>
                     <span th:text="#{section.location.cta}">Открыть в 2ГИС</span>
                 </a>

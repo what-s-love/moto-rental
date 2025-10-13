@@ -48,4 +48,19 @@ public class FileController {
         return FileUtil.getOutputFile(safeName, "images/bikes");
     }
 
+    @GetMapping("images/promo/{fileName:.+}")
+    public ResponseEntity<InputStreamResource> getPromoImage(
+            @PathVariable String fileName
+    ) {
+        String safeName = Paths.get(fileName).getFileName().toString();
+        return FileUtil.getOutputFile(safeName, "images/promo");
+    }
+
+    @GetMapping("images/routes/{fileName:.+}")
+    public ResponseEntity<InputStreamResource> getRouteImage(
+            @PathVariable String fileName
+    ) {
+        String safeName = Paths.get(fileName).getFileName().toString();
+        return FileUtil.getOutputFile(safeName, "images/promo");
+    }
 }
