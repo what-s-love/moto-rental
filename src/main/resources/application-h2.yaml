@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop  # Пересоздаёт схему при старте
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
