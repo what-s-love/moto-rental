@@ -205,3 +205,102 @@ header {
 .route-card:hover::before {
     transform: translateX(100%);
 }
+
+/* Route Cards */
+.route-card {
+    height: 300px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.route-card:hover {
+    transform: scale(1.02);
+}
+
+.route-image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.route-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.route-info {
+    backdrop-filter: blur(10px);
+}
+
+/* Routes Swiper Styles */
+.routes-swiper {
+    padding: 20px 0 60px 0;
+}
+
+/* Routes Swiper: фиксируем высоту слайда через min-height карточки */
+.routes-swiper .swiper-slide {
+    display: block;   /* важно: не flex, чтобы h-100 нигде не мешал */
+    height: auto;
+}
+
+/* Карточка маршрута гарантированная высота */
+.route-card {
+    min-height: 320px; /* или 300–360px на ваш вкус */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Фон-картинка под контентом, контент поверх */
+.route-image-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.route-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-img-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.route-info {
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 3;
+}
+
+.routes-swiper .swiper-button-next,
+.routes-swiper .swiper-button-prev {
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+}
+
+.routes-swiper .swiper-button-next:after,
+.routes-swiper .swiper-button-prev:after {
+    font-size: 16px;
+}
+
+.routes-swiper .swiper-pagination-bullet {
+    background: var(--primary-color);
+}
+
+.routes-swiper .swiper-pagination-bullet-active {
+    background: var(--success-color);
+}
+
+.route-desc-tip { cursor: help; }

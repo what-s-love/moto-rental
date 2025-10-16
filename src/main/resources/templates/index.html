@@ -105,60 +105,55 @@
                 <p class="lead text-muted" th:text="#{section.routes.subtitle}">Выберите свое приключение</p>
             </div>
 
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
-                        <div class="route-image bg-success"></div>
-                        <div class="card-img-overlay d-flex flex-column justify-content-end">
-                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
+            <!-- Swiper -->
+            <div class="swiper routes-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide swiper-autoheight" th:each="route : ${routes}">
+                        <div class="card route-card shadow-sm position-relative overflow-hidden">
+                            <!-- Route Image -->
+                            <div class="route-image-container">
+                                <img th:src="@{${route.mapPath}}"
+                                     alt="Route map"
+                                     class="route-image">
+                            </div>
+
+                            <!-- Route Info Overlay -->
+                            <div class="card-img-overlay d-flex flex-column justify-content-end">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="card-title mb-0" th:text="#{route.easy}">Легкий</h5>
-                                    <span class="badge bg-success">15 км</span>
+                                    <h5 class="card-title text-muted mb-0" th:text="${route.difficultyDisplayName}">Легкий</h5>
+                                    <span class="badge"
+                                          th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))"
+                                          th:text="${route.distance + ' км'}">15 км</span>
                                 </div>
-                                <p class="card-text">
-                                    <span th:text="#{route.from}">от</span> 50
+                                <p class="card-text text-muted">
+                                    <span th:text="#{route.from}">от</span>
+                                    <span th:text="${route.price}">50</span>
                                     <span th:text="#{route.currency}">₽</span>
                                 </p>
+
+                                <!-- Tooltip trigger with full description -->
+                                <div class="mt-1" th:if="${route.description != null}">
+                                    <a href="javascript:void(0)"
+                                       class="text-muted small route-desc-tip"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       data-bs-html="true"
+                                       th:attr="title=${route.description}">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        <span th:text="#{route.description}">Описание маршрута</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
-                        <div class="route-image bg-warning"></div>
-                        <div class="card-img-overlay d-flex flex-column justify-content-end">
-                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="card-title mb-0" th:text="#{route.medium}">Средний</h5>
-                                    <span class="badge bg-warning text-dark">25 км</span>
-                                </div>
-                                <p class="card-text">
-                                    <span th:text="#{route.from}">от</span> 75
-                                    <span th:text="#{route.currency}">₽</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Navigation buttons -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
 
-                <div class="col-lg-4">
-                    <div class="card route-card h-100 shadow-sm position-relative overflow-hidden">
-                        <div class="route-image bg-danger"></div>
-                        <div class="card-img-overlay d-flex flex-column justify-content-end">
-                            <div class="route-info bg-white bg-opacity-90 p-3 rounded">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="card-title mb-0" th:text="#{route.hard}">Сложный</h5>
-                                    <span class="badge bg-danger">40 км</span>
-                                </div>
-                                <p class="card-text">
-                                    <span th:text="#{route.from}">от</span> 100
-                                    <span th:text="#{route.currency}">₽</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Pagination -->
+                <div class="swiper-pagination position-relative pt-2"></div>
             </div>
         </div>
     </section>

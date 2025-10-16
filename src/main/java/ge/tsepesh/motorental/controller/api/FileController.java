@@ -61,6 +61,6 @@ public class FileController {
             @PathVariable String fileName
     ) {
         String safeName = Paths.get(fileName).getFileName().toString();
-        return FileUtil.getOutputFile(safeName, "images/promo");
+        return FileUtil.getOutputFile(safeName, "images/routes");
     }
 }
