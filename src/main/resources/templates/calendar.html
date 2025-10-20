@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- FullCalendar CSS -->
+    <link th:fragment="calendar-css" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css" rel="stylesheet">
+</head>
+
+<div layout:fragment="content">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <!-- Header -->
+                <div class="mb-4">
+                    <h1 class="h2" th:text="#{calendar.title}">Календарь заездов</h1>
+                </div>
+
+                <!-- Calendar Container -->
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing FullCalendar...');
+
+            const calendarEl = document.getElementById('calendar');
+
+            if (!calendarEl) {
+                console.error('Calendar element not found!');
+                return;
+            }
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ru',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek'
+                },
+                buttonText: {
+                    today: 'Сегодня',
+                    month: 'Месяц',
+                    week: 'Неделя'
+                },
+                height: 'auto',
+                events: [
+                    {
+                        title: 'Тестовый заезд',
+                        start: new Date(),
+                        backgroundColor: '#0059ff',
+                        borderColor: '#0059ff'
+                    },
+                    {
+                        title: 'Утренняя смена',
+                        start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                        backgroundColor: '#28a745',
+                        borderColor: '#28a745'
+                    },
+                    {
+                        title: 'Вечерняя смена',
+                        start: new Date(new Date().setDate(new Date().getDate() + 3)),
+                        backgroundColor: '#22bbff',
+                        borderColor: '#22bbff'
+                    }
+                ],
+                dateClick: function(info) {
+                    console.log('Clicked on: ' + info.dateStr);
+                    alert('Выбрана дата: ' + info.dateStr);
+                },
+                eventClick: function(info) {
+                    console.log('Event clicked:', info.event.title);
+                    alert('Событие: ' + info.event.title + '\nДата: ' + info.event.start.toLocaleDateString());
+                }
+            });
+
+            calendar.render();
+            console.log('Calendar rendered successfully!');
+        });
+    </script>
+
+    <style>
+        #calendar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .fc-event {
+            cursor: pointer;
+        }
+
+        .fc-event:hover {
+            opacity: 0.9;
+        }
+    </style>
+</div>
+
+</html>
