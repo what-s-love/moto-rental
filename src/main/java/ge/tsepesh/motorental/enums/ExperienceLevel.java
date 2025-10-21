@@ -9,7 +9,7 @@ public enum ExperienceLevel {
     NONE("Не умею на велосипеде"),
     BEGINNER("Умею на велосипеде, не пробовал на мотоцикле"),
     INTERMEDIATE("Ездил на мотоцикле, но давно и не правда"),
-    ADVANCED("Да я вообще мотоциклист");
+    ADVANCED("Знаете, я и сам своего рода учёный");
 
     private final String displayName;
 }

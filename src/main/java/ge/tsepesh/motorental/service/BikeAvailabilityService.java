@@ -37,6 +37,13 @@ public class BikeAvailabilityService {
     }
 
     @Transactional(readOnly = true)
+    public long getTotalEnabledBikes() {
+        return bikeRepository.findAll().stream()
+                .filter(Bike::getEnabled)
+                .count();
+    }
+
+    @Transactional(readOnly = true)
     public Map<Integer, Long> getAvailableBikesCountByLimitForDateAndShift(LocalDate date, Integer shiftId) {
         List<BikeAvailabilityDto> availableBikes = getAvailableBikesForDateAndShift(date, shiftId);
         
@@ -76,6 +83,11 @@ public class BikeAvailabilityService {
                 .build();
     }
 }
+
+
+
+
+
 
 
 
