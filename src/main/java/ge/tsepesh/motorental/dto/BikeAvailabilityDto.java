@@ -14,21 +14,3 @@ public class BikeAvailabilityDto {
     private Integer limitId;
     private LimitDto limit;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
