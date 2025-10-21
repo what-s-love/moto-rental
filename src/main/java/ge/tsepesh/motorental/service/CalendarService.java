@@ -53,6 +53,15 @@ public class CalendarService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<RideCalendarDto> getRidesForDateRange(LocalDate startDate, LocalDate endDate) {
+        List<Ride> rides = rideRepository.findRidesByDateRange(startDate, endDate);
+
+        return rides.stream()
+                .map(this::mapToRideCalendarDto)
+                .collect(Collectors.toList());
+    }
+
     private CalendarDayDto buildCalendarDay(LocalDate date, List<Shift> shifts, List<Ride> ridesForDate) {
         List<ShiftAvailabilityDto> shiftAvailabilities = shifts.stream()
                 .map(shift -> buildShiftAvailability(date, shift, ridesForDate))
@@ -89,6 +98,7 @@ public class CalendarService {
         long participantCount = ride.getParticipants() != null ? ride.getParticipants().size() : 0;
         long availableBikes = bikeAvailabilityService.getTotalAvailableBikesForDateAndShift(
                 ride.getDate(), ride.getShift().getId());
+        long totalEnabledBikes = bikeAvailabilityService.getTotalEnabledBikes();
 
         return RideCalendarDto.builder()
                 .rideId(ride.getId())
@@ -101,6 +111,8 @@ public class CalendarService {
                 .routeId(ride.getRoute().getId())
                 .routeName(ride.getRoute().getDescription())
                 .availableBikes(availableBikes)
+                .totalBikes(totalEnabledBikes)
+                .isFull(participantCount >= totalEnabledBikes)
                 .build();
     }
 }

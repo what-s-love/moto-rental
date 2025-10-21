@@ -2,6 +2,7 @@ package ge.tsepesh.motorental.controller.mvc;
 
 import ge.tsepesh.motorental.dto.CalendarDayDto;
 import ge.tsepesh.motorental.dto.RideCalendarDto;
+import ge.tsepesh.motorental.model.Shift;
 import ge.tsepesh.motorental.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,10 +24,16 @@ public class CalendarController {
 
     @GetMapping
     public String calendar(Model model) {
+        // Получаем текущий месяц
         YearMonth currentMonth = YearMonth.now();
-        List<CalendarDayDto> calendarDays = calendarService.getCalendarForMonth(currentMonth);
+        LocalDate startDate = currentMonth.atDay(1);
+        LocalDate endDate = currentMonth.atEndOfMonth();
 
-        model.addAttribute("calendarDays", calendarDays);
+        // Получаем все заезды за текущий месяц
+        List<RideCalendarDto> rides = calendarService.getRidesForDateRange(startDate, endDate);
+        List<Shift> availableShifts;
+
+        model.addAttribute("rides", rides);
         model.addAttribute("currentMonth", currentMonth);
         return "calendar";
     }

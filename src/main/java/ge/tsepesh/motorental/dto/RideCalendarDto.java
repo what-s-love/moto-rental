@@ -18,4 +18,6 @@ public class RideCalendarDto {
     private Integer routeId;
     private String routeName;
     private Long availableBikes;
+    private Long totalBikes;
+    private Boolean isFull;
 }
