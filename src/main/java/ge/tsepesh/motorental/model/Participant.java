@@ -3,10 +3,10 @@ package ge.tsepesh.motorental.model;
 import ge.tsepesh.motorental.enums.ExperienceLevel;
 import ge.tsepesh.motorental.enums.Gender;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "participants")

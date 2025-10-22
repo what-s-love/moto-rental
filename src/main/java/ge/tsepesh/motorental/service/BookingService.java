@@ -131,22 +131,17 @@ public class BookingService {
     }
 
     private void validateAndLockBikes(List<ParticipantDto> participantDtos, Ride ride) {
-        // Пессимистическая блокировка на короткое время
         List<Integer> requestedBikeIds = participantDtos.stream()
-            .map(ParticipantDto::getBikeId)
-            .toList();
-        
-        // Проверяем, что все мотоциклы доступны
-        List<Bike> availableBikes = bikeRepository.findAvailableBikesForDateAndShift(
-            null, ride.getDate(), ride.getShift().getId()
+                .map(ParticipantDto::getBikeId)
+                .toList();
+
+        // Получаем уже занятые байки на эту дату/смену
+        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(
+                ride.getDate(), ride.getShift().getId()
         );
-        
-        List<Integer> availableBikeIds = availableBikes.stream()
-            .map(Bike::getId)
-            .toList();
-        
+
         for (Integer bikeId : requestedBikeIds) {
-            if (!availableBikeIds.contains(bikeId)) {
+            if (occupiedBikeIds.contains(bikeId)) {
                 throw new IllegalStateException("Bike " + bikeId + " is not available");
             }
         }

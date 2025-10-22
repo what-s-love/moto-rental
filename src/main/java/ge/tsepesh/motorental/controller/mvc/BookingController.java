@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -103,37 +105,17 @@ public class BookingController {
         return "ride";
     }
 
-    @PostMapping("/booking")
-    public String createBooking(
-            @Valid @RequestBody BookingRequestDto request,
-            BindingResult bindingResult,
-            HttpServletRequest httpRequest,
-            RedirectAttributes redirectAttributes) {
-
-        log.info("Creating booking for date: {}, shift: {}, route: {} with {} participants",
-                request.getDate(), request.getShiftId(), request.getRouteId(), request.getParticipants().size());
-
-        if (bindingResult.hasErrors()) {
-            log.warn("Validation errors in booking request: {}", bindingResult.getAllErrors());
-            redirectAttributes.addFlashAttribute("error", "Ошибка валидации данных");
-            return "redirect:/ride?date=" + request.getDate() + "&shiftId=" + request.getShiftId();
-        }
-
+    @PostMapping(value = "/booking", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> createBookingJson(@Valid @RequestBody BookingRequestDto request) {
         try {
-            // Генерируем sessionId для резервации мотоциклов
             String sessionId = UUID.randomUUID().toString();
-            
             BookingResponseDto response = bookingService.createBooking(request, sessionId);
-            
-            log.info("Booking created successfully: {}", response.getBookingId());
-            redirectAttributes.addFlashAttribute("success", "Бронирование создано успешно");
-            
-            return "redirect:/booking/confirmation/" + response.getBookingId();
-            
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
-            log.error("Error creating booking", e);
-            redirectAttributes.addFlashAttribute("error", "Ошибка при создании бронирования: " + e.getMessage());
-            return "redirect:/ride?date=" + request.getDate() + "&shiftId=" + request.getShiftId();
+            return ResponseEntity.status(500).body(Map.of("message", "Ошибка при создании бронирования"));
         }
     }
 

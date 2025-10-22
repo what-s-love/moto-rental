@@ -26,6 +26,25 @@ public class BikeAvailabilityService {
     private final BikeRepository bikeRepository;
     private final ParticipantRepository participantRepository;
 
+    /**
+     * Получить все мотоциклы с флагом занятости для конкретной даты и смены
+     */
+    @Transactional(readOnly = true)
+    public List<BikeAvailabilityDto> getAllBikesWithOccupiedStatus(LocalDate date, Integer shiftId) {
+        List<Bike> allBikes = bikeRepository.findAll();
+        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
+
+        return allBikes.stream()
+                .filter(Bike::getEnabled) // Только активные байки
+                .map(bike -> {
+                    BikeAvailabilityDto dto = mapToBikeAvailabilityDto(bike);
+                    // Добавляем флаг занятости
+                    dto.setOccupied(occupiedBikeIds.contains(bike.getId()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public List<BikeAvailabilityDto> getAvailableBikesForDateAndShift(LocalDate date, Integer shiftId) {
         List<Bike> allBikes = bikeRepository.findAll();

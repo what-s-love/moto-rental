@@ -13,4 +13,5 @@ public class BikeAvailabilityDto {
     private String photoPath;
     private Integer limitId;
     private LimitDto limit;
+    private Boolean occupied;
 }
