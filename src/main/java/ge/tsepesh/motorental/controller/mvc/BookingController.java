@@ -102,7 +102,7 @@ public class BookingController {
             log.info("No existing ride found, showing {} routes for selection", routes.size());
         }
 
-        return "ride";
+        return "booking";
     }
 
     @PostMapping(value = "/booking", consumes = "application/json", produces = "application/json")
@@ -117,6 +117,17 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("message", "Ошибка при создании бронирования"));
         }
+    }
+
+    @GetMapping("/booking/confirmation/{bookingId}")
+    public String showBookingConfirmation(@PathVariable Integer bookingId, Model model) {
+        log.info("Showing booking confirmation page for booking ID: {}", bookingId);
+
+        // Здесь можно добавить логику для получения данных бронирования
+        // Пока что просто передаем bookingId в модель
+        model.addAttribute("bookingId", bookingId);
+
+        return "confirmation";
     }
 
     private ShiftDto mapToShiftDto(Shift shift) {

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div layout:fragment="content">
+    <div class="container py-5">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;"></canvas>
+        <!-- Main Content -->
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card shadow-lg border-info border-2 z-2">
+                    <!-- Card Header -->
+                    <div class="card-header bg-info bg-opacity-10 text-center py-4">
+                            <!-- Success Icon -->
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        <!-- Success Title -->
+                        <h2 class="card-title fw-bold text-success mb-2">Отлично!</h2>
+                        <p class="text-muted mb-0">Ваше бронирование успешно оформлено</p>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-4">
+                        <!-- Email Instructions -->
+                        <div class="alert alert-info d-flex align-items-start mb-4">
+                            <i class="fas fa-envelope text-primary me-3 mt-1" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <h6 class="alert-heading mb-2">Проверьте вашу почту</h6>
+                                <p class="mb-0">Проверьте вашу почту на предмет ссылки на предоплату. Для подтверждения бронирования вам необходимо внести предоплату в течение 24-х часов.</p>
+                            </div>
+                        </div>
+
+                        <!-- Spam Warning -->
+                        <div class="alert alert-warning d-flex align-items-center mb-4">
+                            <i class="fas fa-exclamation-triangle text-warning me-3" style="font-size: 1.2rem;"></i>
+                            <p class="mb-0 fw-medium">Пожалуйста, проверяйте папки СПАМ и РАССЫЛКИ</p>
+                        </div>
+
+                        <!-- Booking Info -->
+                        <div class="text-center mb-4">
+                            <p class="text-muted mb-0">
+                                <small>Номер бронирования: <strong th:text="${bookingId}">#12345</strong></small>
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2">
+                            <a href="/calendar" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Вернуться к календарю
+                            </a>
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>
+                                На главную
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Basic Confetti  -->
+    <script th:src="@{/js/confetti.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            startConfetti();
+        });
+    </script>
+
+    <!-- Working Confetti Script -->
+<!--
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                // Простой эффект конфетти
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                // Дополнительный взрыв через 500мс
+                setTimeout(function() {
+                    confetti({
+                        particleCount: 50,
+                        spread: 100,
+                        origin: { y: 0.6 }
+                    });
+                }, 500);
+            }, 1000);
+        });
+    </script>
+-->
+
+    <!--  tsParticles Confetti  -->
+<!--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                tsParticles.load({
+                    id: "tsparticles",
+                    options: {
+                        "fullScreen": {
+                            "zIndex": 1
+                        },
+                        "emitters": [
+                            {
+                                "position": {
+                                    "x": 0,
+                                    "y": 30
+                                },
+                                "rate": {
+                                    "quantity": 5,
+                                    "delay": 0.15
+                                },
+                                "particles": {
+                                    "move": {
+                                        "direction": "top-right",
+                                        "outModes": {
+                                            "top": "none",
+                                            "left": "none",
+                                            "default": "destroy"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 100,
+                                    "y": 30
+                                },
+                                "rate": {
+                                    "quantity": 5,
+                                    "delay": 0.15
+                                },
+                                "particles": {
+                                    "move": {
+                                        "direction": "top-left",
+                                        "outModes": {
+                                            "top": "none",
+                                            "right": "none",
+                                            "default": "destroy"
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "particles": {
+                            "color": {
+                                "value": [
+                                    "#ffffff",
+                                    "#FF0000"
+                                ]
+                            },
+                            "move": {
+                                "decay": 0.05,
+                                "direction": "top",
+                                "enable": true,
+                                "gravity": {
+                                    "enable": true
+                                },
+                                "outModes": {
+                                    "top": "none",
+                                    "default": "destroy"
+                                },
+                                "speed": {
+                                    "min": 10,
+                                    "max": 50
+                                }
+                            },
+                            "number": {
+                                "value": 0
+                            },
+                            "opacity": {
+                                "value": 1
+                            },
+                            "rotate": {
+                                "value": {
+                                    "min": 0,
+                                    "max": 360
+                                },
+                                "direction": "random",
+                                "animation": {
+                                    "enable": true,
+                                    "speed": 30
+                                }
+                            },
+                            "tilt": {
+                                "direction": "random",
+                                "enable": true,
+                                "value": {
+                                    "min": 0,
+                                    "max": 360
+                                },
+                                "animation": {
+                                    "enable": true,
+                                    "speed": 30
+                                }
+                            },
+                            "size": {
+                                "value": {
+                                    "min": 0,
+                                    "max": 2
+                                },
+                                "animation": {
+                                    "enable": true,
+                                    "startValue": "min",
+                                    "count": 1,
+                                    "speed": 16,
+                                    "sync": true
+                                }
+                            },
+                            "roll": {
+                                "darken": {
+                                    "enable": true,
+                                    "value": 25
+                                },
+                                "enable": true,
+                                "speed": {
+                                    "min": 5,
+                                    "max": 15
+                                }
+                            },
+                            "wobble": {
+                                "distance": 30,
+                                "enable": true,
+                                "speed": {
+                                    "min": -7,
+                                    "max": 7
+                                }
+                            },
+                            "shape": {
+                                "type": [
+                                    "circle",
+                                    "square"
+                                ],
+                                "options": {}
+                            }
+                        }
+                    }
+                });
+            }, 1000);
+        });
+    </script>-->
+
+    <!-- Custom Styles -->
+    <style>
+        .card {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+        }
+
+        .alert-info {
+            background-color: rgba(13, 202, 240, 0.1);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+        }
+
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+        }
+
+        /* Confetti canvas positioning */
+        /*
+        #tsparticles {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 1 !important;
+            pointer-events: none !important;
+        }
+        */
+    </style>
+</div>
+
+</html>

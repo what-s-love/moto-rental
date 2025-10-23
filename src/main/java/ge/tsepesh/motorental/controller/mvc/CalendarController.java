@@ -31,7 +31,6 @@ public class CalendarController {
 
         // Получаем все заезды за текущий месяц
         List<RideCalendarDto> rides = calendarService.getRidesForDateRange(startDate, endDate);
-        List<Shift> availableShifts;
 
         model.addAttribute("rides", rides);
         model.addAttribute("currentMonth", currentMonth);

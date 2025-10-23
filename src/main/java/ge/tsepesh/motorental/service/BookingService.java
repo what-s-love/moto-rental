@@ -69,9 +69,14 @@ public class BookingService {
             Booking booking = createBooking(client, ride, totalPrice);
             
             // 7. Освободить резервации в Redis
-            bikeReservationService.releaseAllReservations(sessionId);
+            //ToDo Настроить работу Redis на проде
+//            bikeReservationService.releaseAllReservations(sessionId);
             
             log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
+
+            // 8. Создание ссылки на оплату
+            // 9. Отправка пользователю письма с подтверждением и ссылкой на оплату
+            // 10. Отправка уведомления админу в Телеграм-бот
             
             return mapToBookingResponse(booking, participants);
             

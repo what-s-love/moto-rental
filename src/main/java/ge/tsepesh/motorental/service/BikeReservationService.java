@@ -70,26 +70,3 @@ public class BikeReservationService {
         return RESERVATION_PREFIX + rideId + ":" + bikeId;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
