@@ -65,8 +65,7 @@
 
                     <div class="row g-3" id="routeSelection">
                         <div class="col-md-6 col-lg-4" th:each="route : ${routes}">
-                            <div class="card route-selection-card h-100"
-                                 th:classappend="${route.isAvailableForBeginners} ? 'border-success' : ''"
+                            <div class="card route-selection-card h-100 position-relative"
                                  onclick="selectRoute(this)"
                                  th:data-route-id="${route.id}"
                                  th:data-route-price="${route.price}">
@@ -76,6 +75,13 @@
                                        th:id="'route-' + ${route.id}"
                                        th:value="${route.id}"
                                        class="d-none route-radio">
+
+                                <!-- Selection Badge - moved to top-left corner -->
+                                <div class="route-selected-badge position-absolute top-0 start-0 m-2 d-none">
+                            <span class="badge fs-2">
+                                <i class="fas fa-check-circle text-primary"></i>
+                            </span>
+                                </div>
 
                                 <!-- Route Image -->
                                 <div class="route-image-wrapper position-relative overflow-hidden">
@@ -87,9 +93,9 @@
                                     <!-- Beginner Badge -->
                                     <span th:if="${route.isAvailableForBeginners}"
                                           class="badge bg-success position-absolute top-0 end-0 m-2">
-                                        <i class="fas fa-check-circle me-1"></i>
-                                        Для новичков
-                                    </span>
+                                <i class="fas fa-check-circle me-1"></i>
+                                Для новичков
+                            </span>
                                 </div>
 
                                 <div class="card-body">
@@ -97,9 +103,9 @@
                                         <h5 class="card-title mb-0" th:text="${route.difficultyDisplayName}">Легкий</h5>
                                         <span class="badge"
                                               th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
-                                            <i class="fas fa-mountain me-1"></i>
-                                            <span th:text="${route.distance}">15</span> км
-                                        </span>
+                                    <i class="fas fa-mountain me-1"></i>
+                                    <span th:text="${route.distance}">15</span> км
+                                </span>
                                     </div>
 
                                     <div class="mb-2">
@@ -116,14 +122,6 @@
                                     <p class="card-text small" th:text="${route.description}">
                                         Описание маршрута
                                     </p>
-                                </div>
-
-                                <!-- Selection Indicator -->
-                                <div class="card-footer bg-transparent border-top-0">
-                                    <div class="route-selected-indicator text-center text-primary d-none">
-                                        <i class="fas fa-check-circle fa-2x"></i>
-                                        <div class="fw-bold mt-1">Выбрано</div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -651,12 +649,12 @@
             // Remove selection from all cards
             document.querySelectorAll('.route-selection-card').forEach(c => {
                 c.classList.remove('border-primary', 'shadow');
-                c.querySelector('.route-selected-indicator').classList.add('d-none');
+                c.querySelector('.route-selected-badge').classList.add('d-none');
             });
 
             // Add selection to clicked card
             card.classList.add('border-primary', 'shadow');
-            card.querySelector('.route-selected-indicator').classList.remove('d-none');
+            card.querySelector('.route-selected-badge').classList.remove('d-none');
 
             // Update hidden input and radio
             const routeId = card.dataset.routeId;
@@ -967,12 +965,13 @@
             border-width: 3px !important;
         }
 
-        .route-preview-image {
-            transition: transform 0.3s ease;
+        .route-selected-badge {
+            z-index: 10;
+            pointer-events: none;
         }
 
-        .route-selection-card:hover .route-preview-image {
-            transform: scale(1.05);
+        .route-preview-image {
+            transition: transform 0.3s ease;
         }
 
         .bikes-selection {

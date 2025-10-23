@@ -6,15 +6,19 @@ import ge.tsepesh.motorental.dto.BookingResponseDto;
 import ge.tsepesh.motorental.dto.RideDto;
 import ge.tsepesh.motorental.dto.RouteDto;
 import ge.tsepesh.motorental.dto.ShiftDto;
+import ge.tsepesh.motorental.exception.ResourceNotFoundException;
+import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.repository.BookingRepository;
 import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.RouteRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
 import ge.tsepesh.motorental.service.RouteService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingController {
+    private final BookingRepository bookingRepository;
 
     private final RideRepository rideRepository;
     private final ShiftRepository shiftRepository;
@@ -108,25 +114,19 @@ public class BookingController {
     @PostMapping(value = "/booking", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createBookingJson(@Valid @RequestBody BookingRequestDto request) {
-        try {
-            String sessionId = UUID.randomUUID().toString();
-            BookingResponseDto response = bookingService.createBooking(request, sessionId);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Ошибка при создании бронирования"));
-        }
+        String sessionId = UUID.randomUUID().toString();
+        BookingResponseDto response = bookingService.createBooking(request, sessionId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/booking/confirmation/{bookingId}")
     public String showBookingConfirmation(@PathVariable Integer bookingId, Model model) {
         log.info("Showing booking confirmation page for booking ID: {}", bookingId);
-
-        // Здесь можно добавить логику для получения данных бронирования
-        // Пока что просто передаем bookingId в модель
-        model.addAttribute("bookingId", bookingId);
-
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
+        if (booking.isEmpty()) {
+            throw new ResourceNotFoundException("error.booking.not.found");
+        }
+        model.addAttribute("bookingId", booking.get().getId());
         return "confirmation";
     }
 
@@ -168,3 +168,4 @@ public class BookingController {
                 .build();
     }
 }
+

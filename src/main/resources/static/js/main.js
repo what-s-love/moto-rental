@@ -38,6 +38,18 @@ document.addEventListener('DOMContentLoaded', function() {
         },
     });
 
+    // Pause autoplay on bike cards hover
+    const bikeCards = document.querySelectorAll('.bikes-swiper .card');
+    bikeCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            bikesSwiper.autoplay.stop();
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            bikesSwiper.autoplay.start();
+        });
+    });
+
     // Initialize Swiper for routes
     const routesSwiper = new Swiper('.routes-swiper', {
         slidesPerView: 1,

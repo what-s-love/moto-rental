@@ -4,13 +4,9 @@
 
 <div layout:fragment="content">
     <!-- Hero Section -->
-    <section class="hero-section position-relative">
-        <div class="hero-promo">
-            <img th:src="@{/images/promo/promo1.png}"
-                 alt="Promo image"
-                 class="hero-image">
-        </div>
-        <div class="container position-relative">
+    <section class="hero-section"
+             th:style="'background-image: url(' + @{/images/promo/promo1.png} + ');'">
+        <div class="container">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content text-white">
@@ -37,7 +33,7 @@
                 <h2 class="display-6 fw-bold" th:text="#{section.bikes.title}">Наши мотоциклы</h2>
                 <p class="lead text-muted" th:text="#{section.bikes.subtitle}">Профессиональная техника для любого уровня</p>
             </div>
-            <div class="swiper bikes-swiper">
+            <div class="swiper bikes-swiper pt-2">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide swiper-autoheight" th:each="bike : ${bikes}">
                         <div class="card flex h-100 shadow-sm hover-card">
@@ -71,12 +67,14 @@
                                         <span th:text="${bike.limits.heightMin}">165</span> см
                                     </span>
                                     <br>
+<!--                                Текст "Только для мужчин" на эндуро
                                     <span th:if="${bike.limits.onlyMen}">
                                         <span th:text="#{bike.only.men}">только для мужчин</span>
                                     </span>
                                     <span th:unless="${bike.limits.onlyMen}">
                                         <br>
                                     </span>
+-->
                                 </p>
                                 <span class="badge mt-auto"
                                       th:classappend="${bike.engineCc >= 250} ? 'bg-custom-success' : (${bike.engineCc <= 125} ? 'bg-custom-primary' : 'bg-custom-warning')"
@@ -98,9 +96,9 @@
     </section>
 
     <!-- Routes Section -->
-    <section class="py-5">
+    <section class="pt-5">
         <div class="container">
-            <div class="text-center mb-5">
+            <div class="text-center mb-4">
                 <h2 class="display-6 fw-bold" th:text="#{section.routes.title}">Маршруты</h2>
                 <p class="lead text-muted" th:text="#{section.routes.subtitle}">Выберите свое приключение</p>
             </div>
@@ -153,7 +151,7 @@
                 <div class="swiper-button-prev"></div>
 
                 <!-- Pagination -->
-                <div class="swiper-pagination position-relative pt-2"></div>
+                <div class="swiper-pagination position-relative pt-5"></div>
             </div>
         </div>
     </section>

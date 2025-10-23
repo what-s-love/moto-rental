@@ -24,18 +24,29 @@ header {
 .hero-section {
     min-height: 100vh;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--primary-color), var(--success-color));
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1; /* Меняем на отрицательный z-index */
 }
 
 .hero-content {
-    z-index: 3;
+    z-index: 1;
     position: relative;
 }
 
 .hero-promo {
-    position: absolute;
+    /*position: absolute;*/
     top: 0;
     right: 0;
      width: 100%;
@@ -404,6 +415,65 @@ header {
 .bike-count {
     font-size: 0.7rem;
     opacity: 0.8;
+}
+
+/* Dark theme variables */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #212529;
+    --bs-body-color: #fff;
+}
+
+/* Dark theme for bikes section */
+[data-bs-theme="dark"] #bikes {
+    background-color: #343a40 !important;
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] #bikes .display-6 {
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] #bikes .lead {
+    color: var(--bs-secondary);
+}
+
+/* Ensure bike cards stay white in dark theme */
+[data-bs-theme="dark"] .bikes-swiper .card {
+    background-color: white !important;
+    color: var(--bs-dark) !important;
+}
+
+[data-bs-theme="dark"] .bikes-swiper .card-title {
+    color: var(--bs-dark) !important;
+}
+
+[data-bs-theme="dark"] .bikes-swiper .card-text {
+    color: var(--bs-secondary) !important;
+}
+
+[data-bs-theme="dark"] .bikes-swiper .text-muted {
+    color: var(--bs-secondary) !important;
+}
+
+/* Dark theme for info section */
+[data-bs-theme="dark"] .bg-light {
+    background-color: #343a40 !important;
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .bg-light .display-6,
+[data-bs-theme="dark"] .bg-light h3 {
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .bg-light .lead,
+[data-bs-theme="dark"] .bg-light .text-muted {
+    color: var(--bs-secondary);
+}
+
+[data-bs-theme="dark"] .bg-light .info-block {
+    background: var(--bs-dark);
+    color: var(--bs-light);
 }
 
 /* Dark theme calendar */

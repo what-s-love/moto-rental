@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{common/base}">
+<head>
+    <title th:text="#{error.page.title}">Error</title>
+</head>
+<body>
+<div layout:fragment="content" class="min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white text-center">
+                        <h2 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="#{error.page.title}">Error</span>
+                        </h2>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="error-icon mb-4">
+                            <i class="fas fa-exclamation-circle text-danger" style="font-size: 4rem;"></i>
+                        </div>
+
+                        <h3 class="text-danger mb-3" th:text="${errorModel.error}">Error Type</h3>
+
+                        <div class="alert alert-danger" role="alert">
+                            <p class="mb-0" th:text="${errorModel.message}">Error message</p>
+                        </div>
+
+                        <div class="error-details mt-4">
+                            <p class="text-muted">
+                                <strong th:text="#{error.page.timestamp}">Timestamp:</strong>
+                                <span th:text="${#temporals.format(errorModel.timestamp, 'dd.MM.yyyy HH:mm:ss')}">timestamp</span>
+                            </p>
+                            <p class="text-muted">
+                                <strong>Status Code:</strong>
+                                <span th:text="${errorModel.status}">status</span>
+                            </p>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="/" class="btn btn-primary btn-lg">
+                                <i class="fas fa-home me-2"></i>
+                                <span th:text="#{error.page.back.home}">Back to Home</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
