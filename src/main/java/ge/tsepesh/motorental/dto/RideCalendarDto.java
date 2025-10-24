@@ -16,6 +16,7 @@ public class RideCalendarDto {
     private LocalTime endTime;
     private Integer participantCount;
     private Integer routeId;
+    private String routeDescription;
     private String routeName;
     private Long availableBikes;
     private Long totalBikes;

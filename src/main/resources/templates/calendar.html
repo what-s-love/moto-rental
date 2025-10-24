@@ -71,6 +71,7 @@
                     availableBikes: ride.availableBikes,
                     totalBikes: ride.totalBikes,
                     routeName: ride.routeName,
+                    routeDescription: ride.routeDescription,
                     isFull: ride.isFull,
                     startTime: ride.startTime.substring(0, 5),
                     endTime: ride.endTime.substring(0, 5)
@@ -120,7 +121,7 @@
                         `Время: ${props.startTime} - ${props.endTime}\n` +
                         `Участников: ${props.participantCount}\n` +
                         `Свободно мест: ${props.availableBikes}\n` +
-                        `Маршрут: ${props.routeName || 'не указан'}\n` +
+                        `Маршрут:  ${props.routeName}` + `: ` + `${props.routeDescription || 'не указан'}\n` +
                         `Статус: ${props.isFull ? 'Полностью забронирован' : 'Есть свободные места'}`
                     );
                 },
