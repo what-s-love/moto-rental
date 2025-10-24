@@ -108,6 +108,10 @@ header {
     background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 81, 255, 0.8));
 }
 
+.route-card .card-img-overlay * {
+    color: #212529 !important;
+}
+
 .route-info {
     backdrop-filter: blur(10px);
 }
