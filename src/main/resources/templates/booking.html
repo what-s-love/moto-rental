@@ -100,7 +100,8 @@
 
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="card-title mb-0" th:text="${route.difficultyDisplayName}">Легкий</h5>
+                                        <h5 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h5>
+                                        <h6 class="text-muted pt-2" th:text="${route.difficultyDisplayName}">Легкий</h6>
                                         <span class="badge"
                                               th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
                                     <i class="fas fa-mountain me-1"></i>
@@ -146,7 +147,8 @@
                             <div class="col-md-8">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <h4 class="card-title" th:text="${existingRide.route.difficultyDisplayName}">Средний</h4>
+                                        <h4 class="card-title" th:text="${existingRide.route.name}">Миражи на виражах</h4>
+                                        <h5 class="text-muted pt-2" th:text="${existingRide.route.difficultyDisplayName}">Средний</h5>
                                         <div>
                                             <span th:if="${existingRide.route.isAvailableForBeginners}"
                                                   class="badge bg-success me-2">
@@ -375,7 +377,9 @@
                                                             <div class="flex-grow-1">
                                                                 <div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>
                                                                 <small class="text-muted">
-                                                                    <span th:text="${bike.engineCc}">125</span> куб.см
+                                                                    <span th:text="${bike.engineCc}">125</span>
+                                                                    <span th:text="#{bike.cc}">куб.см</span>,
+                                                                    <span th:text="#{${bike.transmissionType}}">механика</span>
                                                                 </small>
                                                             </div>
                                                         </div>

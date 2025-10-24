@@ -46,7 +46,6 @@ public class BookingController {
 
     private final RideRepository rideRepository;
     private final ShiftRepository shiftRepository;
-    private final RouteRepository routeRepository;
     private final BikeAvailabilityService bikeAvailabilityService;
     private final BookingService bookingService;
     private final RouteService routeService;
@@ -147,25 +146,10 @@ public class BookingController {
                 .id(ride.getId())
                 .date(ride.getDate())
                 .shift(mapToShiftDto(ride.getShift()))
-                .route(mapToRouteDto(ride.getRoute()))
+                .route(routeService.convertToDto(ride.getRoute()))
                 .participantCount(participantCount)
                 .maxParticipants((int) totalBikes)
                 .hasAvailableSlots(participantCount < totalBikes)
                 .build();
     }
-
-    private RouteDto mapToRouteDto(Route route) {
-        return RouteDto.builder()
-                .id(route.getId())
-                .distance(route.getDistance())
-                .difficulty(ge.tsepesh.motorental.enums.Difficulty.values()[route.getDifficulty()])
-                .difficultyDisplayName(ge.tsepesh.motorental.enums.Difficulty.values()[route.getDifficulty()].getDisplayName())
-                .price(route.getPrice())
-                .mapPath(route.getMapPath())
-                .description(route.getDescription())
-                .estimatedDuration(route.getDuration())
-                .isAvailableForBeginners(route.getDifficulty() <= 1)
-                .build();
-    }
 }
-

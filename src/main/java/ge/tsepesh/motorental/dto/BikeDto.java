@@ -10,6 +10,7 @@ public class BikeDto {
     private String brand;
     private String model;
     private Integer engineCc;
+    private String transmissionType;
     private LimitDto limits;
     private String photoPath;
     private Boolean enabled;

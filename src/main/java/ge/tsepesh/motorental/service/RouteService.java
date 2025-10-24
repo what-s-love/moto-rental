@@ -25,11 +25,12 @@ public class RouteService {
                 .collect(Collectors.toList());
     }
 
-    private RouteDto convertToDto(Route route) {
+    public RouteDto convertToDto(Route route) {
         Difficulty difficulty = Difficulty.values()[route.getDifficulty()];
         
         return RouteDto.builder()
                 .id(route.getId())
+                .name(route.getName())
                 .distance(route.getDistance())
                 .difficulty(difficulty)
                 .difficultyDisplayName(difficulty.getDisplayName())

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Builder
 public class RouteDto {
     private Integer id;
+    private String name;
     private Integer distance;
     private Difficulty difficulty;
     private String difficultyDisplayName;

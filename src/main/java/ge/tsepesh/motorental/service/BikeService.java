@@ -2,6 +2,7 @@ package ge.tsepesh.motorental.service;
 
 import ge.tsepesh.motorental.dto.BikeDto;
 import ge.tsepesh.motorental.dto.LimitDto;
+import ge.tsepesh.motorental.enums.TransmissionType;
 import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.repository.BikeRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class BikeService {
                 .brand(bike.getBrand())
                 .model(bike.getModel())
                 .engineCc(bike.getEngineCc())
+                .transmissionType(TransmissionType.fromValue(bike.getTransmissionType()).getDisplayName())
                 .limits(convertLimitToDto(bike.getLimits()))
                 .photoPath(bike.getPhotoPath())
                 .enabled(bike.getEnabled())

@@ -133,6 +133,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: distance
                   type: int
                   constraints:
@@ -247,6 +252,11 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: engine_cc
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transmission_type
                   type: int
                   constraints:
                     nullable: false

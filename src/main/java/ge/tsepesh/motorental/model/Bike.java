@@ -35,6 +35,9 @@ public class Bike {
     @Column(name = "engine_cc", nullable = false)
     private Integer engineCc;
 
+    @Column(name = "transmission_type" ,nullable = false)
+    private Integer transmissionType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "limit_id", nullable = false)
     private Limit limits;

@@ -50,11 +50,12 @@
                                 <h5 class="card-title" th:text="${bike.brand + ' ' + bike.model}">модель</h5>
                                 <p class="card-text text-muted mb-2">
                                     <span th:text="${bike.engineCc}">объём</span>
-                                    <span th:text="#{bike.cc}">куб.см</span>
+                                    <span th:text="#{bike.cc}">куб.см</span>,
+                                    <span th:text="#{${bike.transmissionType}}">механика</span>
                                 </p>
                                 <p class="card-text text-muted small" th:if="${bike.limits != null}">
                                     <!-- Age -->
-                                    <span th:text="#{bike.from.age}">от</span>
+                                    <span th:text="#{bike.from}">от</span>
                                     <span th:text="${bike.limits.ageMin}">16</span>
                                     <span th:text="#{bike.years}">лет</span>
                                     <span th:if="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
@@ -63,7 +64,7 @@
                                     </span>
                                     <span th:unless="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
                                         | <span th:text="#{bike.height}">рост</span>
-                                        <span th:text="#{bike.from.age}">от</span>
+                                        <span th:text="#{bike.from}">от</span>
                                         <span th:text="${bike.limits.heightMin}">165</span> см
                                     </span>
                                     <br>
@@ -118,15 +119,20 @@
                             <!-- Route Info Overlay -->
                             <div class="card-img-overlay d-flex flex-column justify-content-end">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="card-title text-muted mb-0" th:text="${route.difficultyDisplayName}">Легкий</h5>
+                                    <h6 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h6>
                                     <span class="badge"
                                           th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))"
                                           th:text="${route.distance + ' км'}">15 км</span>
                                 </div>
                                 <p class="card-text text-muted">
-                                    <span th:text="#{route.from}">от</span>
-                                    <span th:text="${route.price}">50</span>
-                                    <span th:text="#{route.currency}">₽</span>
+                                    <div>
+                                        <span th:text="${route.difficultyDisplayName}">Легкий</span>
+                                    </div>
+                                    <p>
+                                        <span th:text="#{route.from}">от</span>
+                                        <span th:text="${route.price}">50</span>
+                                        <span th:text="#{route.currency}">₽</span>
+                                    </p>
                                 </p>
 
                                 <!-- Tooltip trigger with full description -->
@@ -168,10 +174,7 @@
                             <h3 th:text="#{section.age.title}">Возрастные ограничения</h3>
                         </div>
                         <p class="text-muted" th:text="#{section.age.text}">
-                            Принимаем участников от 12 лет.
-                        </p>
-                        <p class="text-muted" th:text="#{section.age.text}">
-                            Для детей до 16 лет обязательно присутствие взрослого.
+                            Принимаем участников от 10 лет. Для детей до 16 лет обязательно присутствие взрослого.
                         </p>
                     </div>
                 </div>

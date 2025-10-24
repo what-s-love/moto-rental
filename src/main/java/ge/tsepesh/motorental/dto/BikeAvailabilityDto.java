@@ -10,6 +10,7 @@ public class BikeAvailabilityDto {
     private String brand;
     private String model;
     private Integer engineCc;
+    private String transmissionType;
     private String photoPath;
     private Integer limitId;
     private LimitDto limit;

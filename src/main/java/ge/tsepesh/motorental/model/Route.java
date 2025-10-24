@@ -26,6 +26,9 @@ public class Route {
     private Integer id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private Integer distance;
 
     @Column(nullable = false)
