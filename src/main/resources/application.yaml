@@ -17,6 +17,17 @@ spring:
           content:
             enabled: true
             paths: /**
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:email@example.com}
+    password: ${MAIL_PASSWORD:https://myaccount.google.com/apppasswords}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   jpa:
     hibernate:

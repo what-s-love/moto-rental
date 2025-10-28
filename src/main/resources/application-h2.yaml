@@ -7,7 +7,6 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,17 +16,26 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
     database-platform: org.hibernate.dialect.H2Dialect
-  
   liquibase:
     change-log: classpath:db/changelog/master.yaml
     enabled: true
     default-schema: public
-  
   # H2 Console (опционально, для отладки)
   h2:
     console:
       enabled: true
       path: /h2-console
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:email@example.com}
+    password: ${MAIL_PASSWORD:https://myaccount.google.com/apppasswords}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:

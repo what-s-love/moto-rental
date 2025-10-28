@@ -44,6 +44,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final BikeRepository bikeRepository;
     private final BikeReservationService bikeReservationService;
+    private final EmailService emailService;
 
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
@@ -76,6 +77,7 @@ public class BookingService {
 
             // 8. Создание ссылки на оплату
             // 9. Отправка пользователю письма с подтверждением и ссылкой на оплату
+            emailService.sendPaymentLink(booking, "test_payment_link");
             // 10. Отправка уведомления админу в Телеграм-бот
             
             return mapToBookingResponse(booking, participants);

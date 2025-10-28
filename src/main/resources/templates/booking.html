@@ -99,16 +99,15 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h5>
-                                        <h6 class="text-muted pt-2" th:text="${route.difficultyDisplayName}">Легкий</h6>
                                         <span class="badge"
                                               th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
-                                    <i class="fas fa-mountain me-1"></i>
-                                    <span th:text="${route.distance}">15</span> км
-                                </span>
+                                            <i class="fas fa-mountain me-1"></i>
+                                            <span th:text="${route.distance}">15</span> км
+                                        </span>
                                     </div>
-
+                                    <h6 class="text-muted pt-2 mb-2" th:text="${route.difficultyDisplayName}">Легкий</h6>
                                     <div class="mb-2">
                                         <strong class="text-primary h4" th:text="${route.price}">1500</strong>
                                         <span class="text-muted">₽ / человек</span>
@@ -146,9 +145,8 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
                                         <h4 class="card-title" th:text="${existingRide.route.name}">Миражи на виражах</h4>
-                                        <h5 class="text-muted pt-2" th:text="${existingRide.route.difficultyDisplayName}">Средний</h5>
                                         <div>
                                             <span th:if="${existingRide.route.isAvailableForBeginners}"
                                                   class="badge bg-success me-2">
@@ -161,7 +159,7 @@
                                             </span>
                                         </div>
                                     </div>
-
+                                    <h5 class="text-muted pt-2 mb-2" th:text="${existingRide.route.difficultyDisplayName}">Средний</h5>
                                     <div class="mb-3">
                                         <h3 class="text-primary mb-0">
                                             <span th:text="${existingRide.route.price}">2000</span> ₽
