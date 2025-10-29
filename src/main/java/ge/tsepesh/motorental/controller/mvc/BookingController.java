@@ -60,7 +60,7 @@ public class BookingController {
         log.info("Showing ride booking page for date: {} and shift: {}", date, shiftId);
 
         // Валидация входных параметров
-        if (date.isBefore(LocalDate.now())) {
+        if (date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now())) {
             redirectAttributes.addFlashAttribute("error", "Нельзя бронировать заезды в прошлом");
             return "redirect:/calendar";
         }

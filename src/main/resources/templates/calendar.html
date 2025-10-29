@@ -8,7 +8,9 @@
             <div class="col-12">
                 <!-- Header -->
                 <div class="mb-4">
-                    <h1 class="h2" th:text="#{calendar.title}">Календарь заездов</h1>
+                    <h1 class="h2 text-center mb-2" th:text="#{calendar.title}">Календарь заездов</h1>
+                    <p class="h5 text-center" th:text="#{calendar.info1}">Создайте свой заезд или присоединяйтесь к существующему!</p>
+                    <p class="h5 text-center" th:text="#{calendar.info2}">Выберите дату и смену заезда</p>
                 </div>
 
                 <!-- Calendar Container -->
@@ -168,7 +170,7 @@
                                     <small><i class="fas fa-clock me-1"></i>${shift.startTime} - ${shift.endTime}</small>
                                 </div>
                                 <div class="text-end">
-                                    <span class="badge bg-light text-dark">
+                                    <span class="badge bg-custom-primary">
                                         <i class="fas fa-users me-1"></i>${ride.participantCount} чел.
                                     </span><br>
                                     <small>${ride.availableBikes} свободно</small>
@@ -251,6 +253,48 @@
             cursor: not-allowed;
         }
 
+        /* Стилизация дат как кнопок с кружками */
+        .fc-daygrid-day-number {
+            cursor: pointer;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            background-color: rgba(34, 187, 255, 0.2);
+            color: inherit;
+        }
+
+        .fc-daygrid-day-number:hover {
+            background-color: rgba(34, 187, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* Текущий день */
+        .fc-day-today .fc-daygrid-day-number {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Прошедшие дни */
+        .fc-day-past .fc-daygrid-day-number {
+            color: #6c757d;
+        }
+
+        .fc-day-past .fc-daygrid-day-number:hover {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        /* Выходные дни */
+        .fc-day-sat .fc-daygrid-day-number,
+        .fc-day-sun .fc-daygrid-day-number {
+            color: #dc3545;
+        }
+
         /* Темная тема */
         [data-bs-theme="dark"] #calendar {
             background: #212529;
@@ -281,6 +325,37 @@
             background-color: rgba(34, 187, 255, 0.1) !important;
         }
 
+        [data-bs-theme="dark"] .fc-daygrid-day-number {
+            background-color: rgb(90, 173, 255, 0.3);
+            color: #e9ecef;
+        }
+
+        [data-bs-theme="dark"] .fc-daygrid-day-number:hover {
+            background-color: rgba(34, 187, 255, 0.2);
+        }
+
+        [data-bs-theme="dark"] .fc-day-today .fc-daygrid-day-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        [data-bs-theme="dark"] .fc-day-past .fc-daygrid-day-number {
+            color: #6c757d;
+        }
+
+        [data-bs-theme="dark"] .fc-day-past .fc-daygrid-day-number:hover {
+            background-color: rgba(108, 117, 125, 0.2);
+        }
+
+        [data-bs-theme="dark"] .fc-day-sat .fc-daygrid-day-number,
+        [data-bs-theme="dark"] .fc-day-sun .fc-daygrid-day-number {
+            color: #ff6b6b;
+        }
+
+        [data-bs-theme="dark"] #shiftsContainer .badge {
+            color: #fff;
+        }
+
         @media (max-width: 768px) {
             #calendar {
                 padding: 10px;
@@ -294,6 +369,12 @@
             .fc-event-title {
                 font-size: 0.8em;
                 padding: 1px 4px;
+            }
+
+            .fc-daygrid-day-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9em;
             }
         }
     </style>
