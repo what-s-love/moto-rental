@@ -15,6 +15,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     public void sendPaymentLink(Booking booking, String paymentUrl) {
+        log.info("Start creating email to send to {}", booking.getClient().getEmail());
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(booking.getClient().getEmail());
         message.setSubject("Подтверждение бронирования и оплата");

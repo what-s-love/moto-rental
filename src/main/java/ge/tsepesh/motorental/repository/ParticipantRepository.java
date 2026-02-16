@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
-    //ToDo Переделать выборку, т.к. сначала отбираются все свободные на дату мотоциклы, а затем фильтруются под параметры участника на форнте с помощью JS
+    //ToDo Переделать выборку, т.к. сначала отбираются все свободные на дату мотоциклы, а затем фильтруются под параметры участника на фронте с помощью JS
     @Query("SELECT COUNT(p) FROM Participant p WHERE p.ride.date = :date AND p.ride.shift.id = :shiftId AND p.experienceLevel = :experienceLevel")
     Long countByDateShiftAndExperience(@Param("date") LocalDate date, 
                                       @Param("shiftId") Integer shiftId, 
