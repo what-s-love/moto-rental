@@ -17,11 +17,11 @@ public class PolicyService {
 
     private PolicyDto mapToPolicyDto(Policy policy) {
         return PolicyDto.builder()
-                .id(policy.getId())
+//                .id(policy.getId())
                 .text(policy.getText())
                 .version(policy.getVersion())
                 .createdAt(policy.getCreatedAt())
-                .isActive(policy.getIsActive())
+//                .isActive(policy.getIsActive())
                 .build();
     }
 }
