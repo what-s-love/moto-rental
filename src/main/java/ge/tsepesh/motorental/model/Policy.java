@@ -21,7 +21,7 @@ public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(columnDefinition = "text", nullable = false)
+    @Column(nullable = false, length = 10000)
     private String text;
     @Column(nullable = false, unique = true)
     private String version;
