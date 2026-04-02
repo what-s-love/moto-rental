@@ -9,6 +9,7 @@ import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Client;
 import ge.tsepesh.motorental.model.Participant;
+import ge.tsepesh.motorental.model.Policy;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
@@ -45,6 +46,8 @@ public class BookingService {
     private final BikeRepository bikeRepository;
     private final BikeReservationService bikeReservationService;
     private final EmailService emailService;
+    private final PolicyService policyService;
+    private final ConsentService consentService;
 
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
@@ -68,18 +71,26 @@ public class BookingService {
             
             // 6. Создать бронирование
             Booking booking = createBooking(client, ride, totalPrice);
+
+            // 7. Создать соглашение пользователя
+            Policy activePolicy = policyService.getActivePolicy();
+            consentService.createConsent(client, activePolicy, booking);
             
-            // 7. Освободить резервации в Redis
+            // 8. Освободить резервации в Redis
             //ToDo Настроить работу Redis на проде
 //            bikeReservationService.releaseAllReservations(sessionId);
             
             log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
 
-            // 8. Создание ссылки на оплату
-            // 9. Отправка пользователю письма с подтверждением и ссылкой на оплату
+            // 9. Создание ссылки на оплату
+            //ToDo Добавить генерацию ссылки на оплату
+
+            // 10. Отправка пользователю письма с подтверждением и ссылкой на оплату
             emailService.sendPaymentLink(booking, "test_payment_link");
-            // 10. Отправка уведомления админу в Телеграм-бот
-            
+
+            // 11. Отправка уведомления админу в Телеграм-бот
+            //ToDo Добавить связку с ТГ-ботом
+
             return mapToBookingResponse(booking, participants);
             
         } catch (Exception e) {
