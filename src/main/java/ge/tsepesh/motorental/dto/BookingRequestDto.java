@@ -1,6 +1,7 @@
 package ge.tsepesh.motorental.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -34,4 +35,8 @@ public class BookingRequestDto {
     @NotEmpty(message = "Должен быть хотя бы один участник")
     @Size(max = 8, message = "Максимальное количество участников: 8")
     private List<ParticipantDto> participants;
+
+    @AssertTrue(message = "Необходимо согласие с политикой обработки персональных данных")
+    @NotNull(message = "Необходимо согласие с политикой обработки персональных данных")
+    private Boolean consentGiven;
 }
