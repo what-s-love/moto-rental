@@ -435,6 +435,31 @@
                                 </div>
                             </div>
 
+                            <!-- Privacy Policy Consent -->
+                            <div class="mb-3" id="consentBlock">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="consentCheckbox"
+                                           onchange="onConsentChange()">
+                                    <label class="form-check-label" for="consentCheckbox">
+                                        Я согласен с
+                                        <a href="/privacy" target="_blank" rel="noopener">
+                                            политикой обработки персональных данных
+                                        </a>
+                                        и подтверждаю, что имею согласие третьих лиц
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <div id="consentError"
+                                     class="alert alert-warning mt-2 py-2 d-none"
+                                     role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Пожалуйста, ознакомьтесь с политикой обработки персональных данных
+                                    и подтвердите своё согласие.
+                                </div>
+                            </div>
+
                             <!-- Submit Button -->
                             <div class="d-grid gap-2">
                                 <button type="submit"
@@ -463,7 +488,7 @@
 
     <!-- JavaScript for Dynamic Form Handling -->
     <script th:inline="javascript">
-        /*<![CDATA[*/
+
         // Available bikes data from server
         const availableBikes = /*[[${availableBikes}]]*/ [];
         const maxParticipants = /*[[${maxParticipants}]]*/ 8;
@@ -837,6 +862,15 @@
             }
         }
 
+        // Check policy consent
+        function onConsentChange() {
+            const consentError = document.getElementById('consentError');
+            if (document.getElementById('consentCheckbox').checked) {
+                consentError.classList.add('d-none');
+            }
+            validateForm();
+        }
+
         // Validate form
         function validateForm() {
             const routeId = document.getElementById('routeIdInput').value;
@@ -854,6 +888,13 @@
             const clientAge = parseInt(document.getElementById('clientAge').value) || 0;
             const participantCount = document.querySelectorAll('.participant-block').length;
             if (clientAge > 0 && clientAge < 16 && participantCount === 1) {
+                submitBtn.disabled = true;
+                return false;
+            }
+
+            // Check consent checkbox
+            const consentCheckbox = document.getElementById('consentCheckbox');
+            if (!consentCheckbox.checked) {
                 submitBtn.disabled = true;
                 return false;
             }
@@ -881,6 +922,14 @@
         function handleFormSubmit(e) {
             e.preventDefault();
 
+            // Явная проверка чекбокса с показом inline-ошибки
+            const consentCheckbox = document.getElementById('consentCheckbox');
+            if (!consentCheckbox.checked) {
+                document.getElementById('consentError').classList.remove('d-none');
+                document.getElementById('consentBlock').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
             if (!validateForm()) {
                 alert('Пожалуйста, заполните все обязательные поля');
                 return;
@@ -891,6 +940,7 @@
                 date: document.querySelector('[name="date"]').value,
                 shiftId: parseInt(document.querySelector('[name="shiftId"]').value),
                 routeId: parseInt(document.querySelector('[name="routeId"]').value),
+                consentGiven: true,
                 client: {
                     name: document.querySelector('[name="client.name"]').value,
                     email: document.querySelector('[name="client.email"]').value,
@@ -948,7 +998,6 @@
                 })
                 .catch(err => alert('Ошибка при создании бронирования: ' + err.message));
         }
-        /*]]>*/
     </script>
 
     <!-- Custom styles for this page -->

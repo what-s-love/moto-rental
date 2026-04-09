@@ -32,10 +32,10 @@ public class ConsentService {
         consent.setBooking(booking);
         consent.setHash(hash);
         consent.setCreatedAt(now);
-        Consent saved = consentRepository.save(consent);
+        Consent savedConsent = consentRepository.save(consent);
         log.info("Consent recorded: client={}, policy={}, hash={}",
-                client.getId(), policy.getVersion(), hash);
-        return saved;
+                savedConsent.getClient().getId(), savedConsent.getPolicy().getVersion(), savedConsent.getHash());
+        return savedConsent;
     }
     private String computeHash(Integer clientId, Integer policyId,
                                String version, LocalDateTime timestamp) {
