@@ -1,5 +1,7 @@
 package ge.tsepesh.motorental.service;
 
+import ge.tsepesh.motorental.dto.BookingAdminDto;
+import ge.tsepesh.motorental.dto.BookingCreateDto;
 import ge.tsepesh.motorental.dto.BookingRequestDto;
 import ge.tsepesh.motorental.dto.BookingResponseDto;
 import ge.tsepesh.motorental.dto.ClientDto;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +40,7 @@ public class BookingService {
     //ToDo Проверить код
     //ToDo Зачем передаётся sessionId и как это связано с Redis
     //ToDo Дописать необходимые DTO
+    //ToDo Перейти на использование сервисов
 
     private final ClientRepository clientRepository;
     private final RideRepository rideRepository;
@@ -98,6 +102,13 @@ public class BookingService {
             throw e;
         }
     }
+
+    //ToDo Дописать методы для админки
+//    public List<BookingAdminDto> getBookingsByMonth(YearMonth yearMonth);
+//    public BookingAdminDto getBookingById(Integer id);
+//    public BookingAdminDto createBookingByAdmin(BookingCreateDto dto);
+//    public BookingAdminDto updateBookingStatus(Integer id, BookingStatus newStatus);
+//    public String generatePaymentLink(Integer bookingId);
 
     private Client findOrCreateClient(ClientDto clientDto) {
         Optional<Client> existingClient = clientRepository.findByEmailOrPhone(

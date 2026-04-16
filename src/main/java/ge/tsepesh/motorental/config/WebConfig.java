@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
-        resolver.setDefaultLocale(new Locale("ru"));
+        resolver.setDefaultLocale(Locale.of("ru"));
         resolver.setLocaleAttributeName("session.current.locale");
         return resolver;
     }

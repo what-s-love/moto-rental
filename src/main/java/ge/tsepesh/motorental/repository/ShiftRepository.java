@@ -14,4 +14,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
 
     @Query("SELECT s FROM Shift s WHERE s.startTime >= :currentTime ORDER BY s.startTime")
     List<Shift> findUpcomingShifts(@Param("currentTime") LocalTime currentTime);
+
+    @Query("SELECT s FROM Shift s WHERE s.enabled = true")
+    List<Shift> findEnabledShifts();
 }

@@ -33,4 +33,7 @@ public class Shift {
 
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 }

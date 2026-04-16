@@ -147,6 +147,23 @@ header {
     background-color: rgba(33, 37, 41, 0.95) !important;
 }
 
+/* Admin Sidebar */
+.admin-layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: fixed;
+}
+
+.admin-content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+}
+
 /* Theme switcher */
 .form-check-input:checked {
     background-color: var(--primary-color);

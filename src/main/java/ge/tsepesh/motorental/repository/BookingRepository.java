@@ -23,4 +23,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Override
     Optional<Booking> findById(Integer integer);
+
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.client " +
+            "JOIN FETCH b.ride r " +
+            "JOIN FETCH r.shift " +
+            "JOIN FETCH r.route " +
+            "WHERE YEAR(r.date) = :year AND MONTH(r.date) = :month " +
+            "ORDER BY r.date, r.shift.startTime")
+    List<Booking> findBookingsByYearAndMonth(@Param("year") int year, @Param("month") int month);
 }

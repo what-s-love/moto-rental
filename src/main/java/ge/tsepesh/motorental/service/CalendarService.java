@@ -32,7 +32,7 @@ public class CalendarService {
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
 
-        List<Shift> allShifts = shiftRepository.findAll();
+        List<Shift> allShifts = shiftRepository.findEnabledShifts();
         List<Ride> ridesInMonth = rideRepository.findRidesByDateRange(startDate, endDate);
 
         // Группируем заезды по датам
