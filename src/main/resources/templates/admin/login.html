@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/base}">
+<div layout:fragment="content">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h5 mb-0">
+                            <i class="fas fa-lock me-2"></i>Вход администратора
+                        </h1>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                            <i class="fas fa-triangle-exclamation me-2"></i>Неверный логин или пароль
+                        </div>
+
+                        <form th:action="@{/admin/login}" method="post" class="vstack gap-3">
+                            <div>
+                                <label class="form-label" for="username">Логин</label>
+                                <input class="form-control" id="username" name="username" type="text" autocomplete="username" required>
+                            </div>
+
+                            <div>
+                                <label class="form-label" for="password">Пароль</label>
+                                <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+                            </div>
+
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                <i class="fas fa-right-to-bracket me-2"></i>Войти
+                            </button>
+
+                            <a class="btn btn-outline-secondary" th:href="@{/}">
+                                <i class="fas fa-arrow-left me-2"></i>На сайт
+                            </a>
+                        </form>
+                    </div>
+                </div>
+
+                <small class="text-muted d-block mt-3">
+                    <i class="fas fa-circle-info me-1"></i>Доступ ограничен.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

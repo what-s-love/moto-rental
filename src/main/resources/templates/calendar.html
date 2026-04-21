@@ -49,14 +49,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             const ridesData = /*[[${rides}]]*/ [];
+            const allShifts = /*[[${shifts}]]*/ [];
 
-            // Все доступные смены
-            const allShifts = [
-                { id: 1, name: 'Утренняя', startTime: '10:00', endTime: '11:30' },
-                { id: 2, name: 'Обеденная', startTime: '13:00', endTime: '14:30' },
-                { id: 3, name: 'Дневная', startTime: '16:00', endTime: '17:30' },
-                { id: 4, name: 'Вечерняя', startTime: '19:00', endTime: '21:30' }
-            ];
+            console.log('Rides data:', ridesData);
+            console.log('All shifts:', allShifts);
+            console.log('Rides count:', ridesData.length);
+            console.log('Shifts count:', allShifts.length);
 
             const events = ridesData.map(ride => ({
                 id: 'ride-' + ride.rideId,

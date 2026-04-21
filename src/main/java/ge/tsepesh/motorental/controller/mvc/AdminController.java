@@ -1,11 +1,303 @@
 package ge.tsepesh.motorental.controller.mvc;
 
+import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
+import ge.tsepesh.motorental.dto.DashboardStatsDto;
+import ge.tsepesh.motorental.dto.ShiftUpdateDto;
+import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
+import ge.tsepesh.motorental.dto.booking.BookingCreateDto;
+import ge.tsepesh.motorental.dto.policy.PolicyAdminDto;
+import ge.tsepesh.motorental.dto.policy.PolicyCreateDto;
+import ge.tsepesh.motorental.dto.policy.PolicyDto;
+import ge.tsepesh.motorental.dto.route.RouteCreateDto;
+import ge.tsepesh.motorental.dto.route.RouteDto;
+import ge.tsepesh.motorental.dto.route.RouteUpdateDto;
+import ge.tsepesh.motorental.enums.BookingStatus;
+import ge.tsepesh.motorental.model.Route;
+import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.service.BikeAvailabilityService;
+import ge.tsepesh.motorental.service.BikeService;
+import ge.tsepesh.motorental.service.BookingService;
+import ge.tsepesh.motorental.service.PolicyService;
+import ge.tsepesh.motorental.service.RouteService;
+import ge.tsepesh.motorental.service.ShiftService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminController {
+
+    private final BookingService bookingService;
+    private final ShiftService shiftService;
+    private final PolicyService policyService;
+    private final RouteService routeService;
+    private final BikeService bikeService;
+    private final BikeAvailabilityService bikeAvailabilityService;
+
+    // ==================== LOGIN ====================
+
+    @GetMapping("/login")
+    public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("error", true);
+        }
+        return "admin/login";
+    }
+
+    // ==================== DASHBOARD ====================
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        DashboardStatsDto stats = bookingService.getDashboardStats();
+
+        model.addAttribute("totalBookings", stats.getTotalBookings());
+        model.addAttribute("paidCount", stats.getPaidCount());
+        model.addAttribute("expiredCount", stats.getExpiredCount());
+        model.addAttribute("completedCount", stats.getCompletedCount());
+
+        model.addAttribute("weekTotalBookings", stats.getWeekTotalBookings());
+        model.addAttribute("weekPendingPaymentCount", stats.getWeekPendingPaymentCount());
+        model.addAttribute("weekPaidCount", stats.getWeekPaidCount());
+        model.addAttribute("weekExpiredCount", stats.getWeekExpiredCount());
+
+        return "admin/dashboard";
+    }
+
+    // ==================== SHIFTS ====================
+
+    @GetMapping("/shifts")
+    public String shifts(Model model) {
+        List<Shift> shifts = shiftService.getAllShifts();
+        model.addAttribute("shifts", shifts);
+        return "admin/shifts";
+    }
+
+    @PostMapping("/shifts")
+    public String updateShifts(@ModelAttribute ShiftUpdateDto.ShiftsUpdateForm shiftsUpdates,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            shiftService.updateShifts(shiftsUpdates.getShifts());
+            redirectAttributes.addFlashAttribute("success", "Смены успешно обновлены");
+        } catch (Exception e) {
+            log.error("Error updating shifts", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка при обновлении смен: " + e.getMessage());
+        }
+        return "redirect:/admin/shifts";
+    }
+
+    // ==================== BOOKINGS ====================
+
+    @GetMapping("/bookings")
+    public String bookingsList(Model model) {
+        List<BookingAdminDto> bookings = bookingService.getAllBookings();
+        model.addAttribute("bookings", bookings);
+        return "admin/booking/list";
+    }
+
+    @GetMapping("/bookings/create")
+    public String createBookingForm(Model model) {
+        // Даты: с завтрашнего дня + 30 дней
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        List<LocalDate> dates = tomorrow.datesUntil(tomorrow.plusDays(30))
+                .collect(Collectors.toList());
+
+        List<Shift> shifts = shiftService.getAllShifts();
+        List<RouteDto> routes = routeService.getAllActiveRoutes();
+
+        // Для упрощения — все активные байки (фильтрация на фронте опциональна)
+        List<BikeAvailabilityDto> availableBikes = bikeService.getAllActiveBikes()
+                .stream()
+                .map(bike -> BikeAvailabilityDto.builder()
+                        .id(bike.getId())
+                        .brand(bike.getBrand())
+                        .model(bike.getModel())
+                        .engineCc(bike.getEngineCc())
+                        .photoPath(bike.getPhotoPath())
+                        .build())
+                .toList();
+
+        model.addAttribute("dates", dates);
+        model.addAttribute("shifts", shifts);
+        model.addAttribute("routes", routes);
+        model.addAttribute("availableBikes", availableBikes);
+        model.addAttribute("maxParticipants", 8);
+
+        return "admin/booking/create";
+    }
+
+    @PostMapping("/bookings")
+    public String createBooking(@ModelAttribute BookingCreateDto dto,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            BookingAdminDto created = bookingService.createBookingByAdmin(dto);
+            redirectAttributes.addFlashAttribute("success", "Бронирование #" + created.getId() + " создано");
+            return "redirect:/admin/bookings";
+        } catch (Exception e) {
+            log.error("Error creating booking by admin", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/bookings/create";
+        }
+    }
+
+    @GetMapping("/bookings/{id}/edit")
+    public String editBookingForm(@PathVariable Integer id, Model model) {
+        BookingAdminDto booking = bookingService.getBookingById(id);
+        model.addAttribute("booking", booking);
+        return "admin/booking/edit";
+    }
+
+    @PostMapping("/bookings/{id}")
+    public String updateBooking(@PathVariable Integer id,
+                                @RequestParam BookingStatus bookingStatus,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            bookingService.updateBookingStatus(id, bookingStatus);
+            redirectAttributes.addFlashAttribute("success", "Бронирование #" + id + " обновлено");
+        } catch (Exception e) {
+            log.error("Error updating booking {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка при обновлении: " + e.getMessage());
+        }
+        return "redirect:/admin/bookings";
+    }
+
+    // ==================== POLICIES ====================
+
+    @GetMapping("/policies")
+    public String policiesList(Model model) {
+        List<PolicyAdminDto> policies = policyService.getAllPolicies();
+        model.addAttribute("policies", policies);
+        return "admin/policies/list";
+    }
+
+    @GetMapping("/policies/{id}")
+    public String showChosenPolicy(@PathVariable Integer id, Model model) {
+        PolicyDto policy = policyService.getChosenPolicyDto(id);
+        model.addAttribute("policy", policy);
+        return "admin/policies/privacy";
+    }
+
+    @GetMapping("/policies/create")
+    public String createPolicyForm() {
+        return "admin/policies/create";
+    }
+
+    @PostMapping("/policies")
+    public String createPolicy(@Valid @ModelAttribute PolicyCreateDto dto,
+                               RedirectAttributes redirectAttributes,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/policies/create";
+        }
+
+        try {
+            policyService.createNewPolicyVersion(dto);
+            redirectAttributes.addFlashAttribute("success", "Политика версии " + dto.getVersion() + " добавлена");
+        } catch (Exception e) {
+            log.error("Error creating policy", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+
+        return "redirect:/admin/policies";
+    }
+
+    // ==================== ROUTES ====================
+
+    @GetMapping("/routes")
+    public String routesList(Model model) {
+        List<RouteDto> routes = routeService.getAllRoutes();
+        model.addAttribute("routes", routes);
+        return "admin/routes/list";
+    }
+
+    @GetMapping("/routes/create")
+    public String createRouteForm(Model model) {
+        model.addAttribute("difficulties", ge.tsepesh.motorental.enums.Difficulty.values());
+        return "admin/routes/create";
+    }
+
+    @PostMapping("/routes")
+    public String createRoute(@Valid @ModelAttribute RouteCreateDto dto,
+                              @RequestParam(value = "mapImage", required = false) MultipartFile mapImage,
+                              RedirectAttributes redirectAttributes,
+                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/routes/create";
+        }
+
+        try {
+            routeService.createRoute(dto, mapImage);
+            redirectAttributes.addFlashAttribute("success", "Маршрут \"" + dto.getName() + "\" создан");
+        } catch (Exception e) {
+            log.error("Error creating route", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/routes/create";
+        }
+
+        return "redirect:/admin/routes";
+    }
+
+    @GetMapping("/routes/{id}/edit")
+    public String editRouteForm(@PathVariable Integer id, Model model) {
+        Route route = routeService.getRouteById(id);
+        RouteUpdateDto dto = routeService.convertToUpdateDto(route);
+
+        model.addAttribute("route", dto);
+        model.addAttribute("difficulties", ge.tsepesh.motorental.enums.Difficulty.values());
+        return "admin/routes/edit";
+    }
+
+    @PostMapping("/routes/{id}")
+    public String updateRoute(@PathVariable Integer id,
+                              @Valid @ModelAttribute RouteUpdateDto dto,
+                              @RequestParam(value = "mapImage", required = false) MultipartFile mapImage,
+                              RedirectAttributes redirectAttributes,
+                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/routes/" + id + "/edit";
+        }
+
+        try {
+            routeService.updateRoute(id, dto, mapImage);
+            redirectAttributes.addFlashAttribute("success", "Маршрут обновлён");
+        } catch (Exception e) {
+            log.error("Error updating route {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/routes/" + id + "/edit";
+        }
+
+        return "redirect:/admin/routes";
+    }
+
+    @PostMapping("/routes/{id}/delete")
+    public String deleteRoute(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            routeService.deleteRoute(id);
+            redirectAttributes.addFlashAttribute("success", "Маршрут удалён");
+        } catch (Exception e) {
+            log.error("Error deleting route {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+        return "redirect:/admin/routes";
+    }
 }

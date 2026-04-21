@@ -12,15 +12,15 @@ databaseChangeLog:
                   constraints:
                     nullable: true
 
-              - update:
-                  tableName: shifts
-                  columns:
-                    - column:
-                        name: enabled
-                        valueBoolean: true
-                  where: enabled IS NULL
+        - update:
+            tableName: shifts
+            columns:
+              - column:
+                  name: enabled
+                  valueBoolean: true
+            where: enabled IS NULL
 
-              - addNotNullConstraint:
-                  tableName: shifts
-                  columnName: enabled
-                  columnDataType: boolean
+        - addNotNullConstraint:
+            tableName: shifts
+            columnName: enabled
+            columnDataType: boolean

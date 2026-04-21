@@ -1,5 +1,7 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.booking;
 
+import ge.tsepesh.motorental.dto.ClientDto;
+import ge.tsepesh.motorental.dto.ParticipantDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-plus me-2 text-primary"></i>Добавить политику</h1>
+        <p class="text-muted mb-0">Новая версия политики обработки ПДн</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/policies}" method="post" class="vstack gap-3">
+                <div>
+                    <label class="form-label" for="version">Version</label>
+                    <input class="form-control" id="version" name="version" type="text" maxlength="255" required placeholder="1.0">
+                </div>
+
+                <div>
+                    <label class="form-label" for="text">Text</label>
+                    <textarea class="form-control" id="text" name="text" rows="12" required placeholder="Текст политики..."></textarea>
+                    <small class="text-muted">Переносы строк сохраняйте как обычный текст — публичная страница уже рендерит с переводами строк.</small>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Сохранить
+                    </button>
+                </div>
+
+                <a class="btn btn-outline-secondary" th:href="@{/admin/policies}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

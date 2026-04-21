@@ -1,4 +1,4 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.policy;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

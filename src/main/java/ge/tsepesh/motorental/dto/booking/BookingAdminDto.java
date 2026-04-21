@@ -1,5 +1,6 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.booking;
 
+import ge.tsepesh.motorental.dto.ParticipantAdminDto;
 import ge.tsepesh.motorental.enums.BookingStatus;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class BookingAdminDto {
     private String clientEmail;
     private String clientPhone;
     private BigDecimal totalPrice;
-    private BookingStatus status;
+    private BookingStatus bookingStatus;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private List<ParticipantAdminDto> participants;

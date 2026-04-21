@@ -1,4 +1,4 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.booking;
 
 import ge.tsepesh.motorental.enums.BookingStatus;
 import lombok.Builder;

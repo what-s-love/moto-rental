@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1"><i class="fas fa-route me-2 text-primary"></i>Маршруты</h1>
+            <p class="text-muted mb-0">Все маршруты</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/admin/routes/create}">
+            <i class="fas fa-plus me-2"></i>Создать маршрут
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-6" th:each="route : ${routes}">
+            <div class="card route-card shadow-sm position-relative overflow-hidden h-100">
+                <div class="route-image-container position-relative">
+                    <img th:src="@{${route.mapPath}}" alt="Route map" class="route-image w-100" style="height: 200px; object-fit: cover;">
+
+                    <span th:if="${route.isAvailableForBeginners}"
+                          class="badge bg-success position-absolute top-0 end-0 m-2">
+                        <i class="fas fa-check-circle me-1"></i>Для новичков
+                    </span>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h5>
+                        <span class="badge"
+                              th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
+                            <i class="fas fa-mountain me-1"></i>
+                            <span th:text="${route.distance}">15</span> км
+                        </span>
+                    </div>
+
+                    <h6 class="text-muted mb-2" th:text="${route.difficultyDisplayName}">Легкий</h6>
+
+                    <div class="mb-2">
+                        <strong class="text-primary h5" th:text="${route.price}">1500</strong>
+                        <span class="text-muted">₽ / человек</span>
+                    </div>
+
+                    <p class="card-text text-muted small mb-2" th:if="${route.estimatedDuration != null}">
+                        <i class="fas fa-clock me-1"></i>
+                        Примерно <span th:text="${route.estimatedDuration}">90</span> минут
+                    </p>
+
+                    <p class="card-text small mb-3" th:text="${route.description}">Описание маршрута</p>
+
+                    <div class="d-flex gap-2 align-items-center mb-2">
+                        <span class="badge" th:classappend="${route.isAvailableForBeginners} ? 'bg-success' : 'bg-secondary'">
+                            ID: <span th:text="${route.id}">1</span>
+                        </span>
+                        <span class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" disabled
+                                   th:checked="${route.isEnabled}">
+                            <label class="form-check-label small">Enabled</label>
+                        </span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/routes/{id}/edit(id=${route.id})}">
+                            <i class="fas fa-pen me-1"></i>Редактировать
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(routes)}" class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5 text-muted">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p class="mb-0">Пока нет маршрутов</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .route-image-container {
+            overflow: hidden;
+        }
+
+        .route-image {
+            transition: transform 0.3s ease;
+        }
+
+        .route-card:hover .route-image {
+            transform: scale(1.05);
+        }
+
+        .route-card {
+            transition: all 0.3s ease;
+        }
+
+        .route-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+        }
+    </style>
+</div>
+</html>

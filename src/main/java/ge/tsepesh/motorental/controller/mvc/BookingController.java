@@ -1,25 +1,21 @@
 package ge.tsepesh.motorental.controller.mvc;
 
 import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
-import ge.tsepesh.motorental.dto.BookingRequestDto;
-import ge.tsepesh.motorental.dto.BookingResponseDto;
+import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
+import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
 import ge.tsepesh.motorental.dto.RideDto;
-import ge.tsepesh.motorental.dto.RouteDto;
+import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.ShiftDto;
 import ge.tsepesh.motorental.exception.ResourceNotFoundException;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Ride;
-import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
 import ge.tsepesh.motorental.repository.BookingRepository;
 import ge.tsepesh.motorental.repository.RideRepository;
-import ge.tsepesh.motorental.repository.RouteRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
 import ge.tsepesh.motorental.service.RouteService;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +23,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.awt.print.Book;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -130,11 +124,12 @@ public class BookingController {
     }
 
     private ShiftDto mapToShiftDto(Shift shift) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return ShiftDto.builder()
                 .id(shift.getId())
                 .name(shift.getName())
-                .startTime(shift.getStartTime())
-                .endTime(shift.getEndTime())
+                .startTime(shift.getStartTime().format(formatter))
+                .endTime(shift.getEndTime().format(formatter))
                 .build();
     }
 

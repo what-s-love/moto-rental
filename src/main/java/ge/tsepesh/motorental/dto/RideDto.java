@@ -1,10 +1,10 @@
 package ge.tsepesh.motorental.dto;
 
+import ge.tsepesh.motorental.dto.route.RouteDto;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @Builder

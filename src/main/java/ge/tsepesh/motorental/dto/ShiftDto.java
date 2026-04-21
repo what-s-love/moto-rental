@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class ShiftDto {
     private Integer id;
     private String name;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String startTime;
+    private String endTime;
     private String enabled;
 }

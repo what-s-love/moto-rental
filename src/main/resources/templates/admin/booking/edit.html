@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1">
+            <i class="fas fa-pen-to-square me-2 text-primary"></i>Редактировать бронирование
+        </h1>
+        <p class="text-muted mb-0">ID: <span th:text="${booking.id}">1</span></p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/bookings/{id}(id=${booking.id})}" method="post" class="vstack gap-3">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Дата</label>
+                        <input class="form-control" th:value="${#temporals.format(booking.rideDate, 'dd.MM.yyyy')}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Смена</label>
+                        <input class="form-control" th:value="${booking.shiftName}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Сумма</label>
+                        <input class="form-control" th:value="${booking.totalPrice}" readonly>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Статус</label>
+                        <select class="form-select" name="bookingStatus" required>
+                            <option th:value="${booking.bookingStatus}" th:text="${booking.bookingStatus.displayName}" selected>Текущий</option>
+                            <option value="PENDING_PAYMENT">В ожидании оплаты</option>
+                            <option value="PAID">Оплачено</option>
+                            <option value="PAYMENT_FAILED">Ошибка оплаты</option>
+                            <option value="EXPIRED">Просрочено</option>
+                            <option value="CANCELLED">Отменено</option>
+                            <option value="COMPLETED">Завершено</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Сохранить
+                    </button>
+                </div>
+
+                <a class="btn btn-outline-secondary" th:href="@{/admin/bookings}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

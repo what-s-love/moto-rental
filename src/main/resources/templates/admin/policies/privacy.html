@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<head>
+    <title>ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1 class="h2">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h1>
+                        <p class="text-muted mb-0">
+                            Версия: <strong th:text="${policy.version}">X.X.X</strong>
+                            &nbsp;·&nbsp;
+                            Дата публикации:
+                            <strong th:text="${#temporals.format(policy.createdAt, 'dd.MM.yyyy')}">
+                                dd.MM.yyyy
+                            </strong>
+                            &nbsp;·&nbsp;
+                            Статус:
+                            <strong th:classappend="${policy.isActive} ? 'text-success' : 'text-danger'"
+                                    th:text="${policy.isActive} ? 'АКТИВНО' : 'УСТАРЕЛО'">
+                                СТАТУС
+                            </strong>                        </p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body p-4 privacy-text"
+                         th:utext="${#strings.replace(
+                             #strings.escapeXml(policy.text),
+                             '&#xA;', '&lt;br&gt;')}">
+                        Текст политики...
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="/admin/policies" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Назад
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

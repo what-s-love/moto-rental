@@ -1,4 +1,4 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.route;
 
 import ge.tsepesh.motorental.enums.Difficulty;
 import lombok.Builder;
@@ -19,4 +19,5 @@ public class RouteDto {
     private String description;
     private Integer estimatedDuration; // в минутах
     private Boolean isAvailableForBeginners;
+    private Boolean isEnabled;
 }

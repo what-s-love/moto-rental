@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1">
+            <i class="fas fa-pen-to-square me-2 text-primary"></i>Редактировать маршрут
+        </h1>
+        <p class="text-muted mb-0">ID: <span th:text="${route.id}">1</span></p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/routes/{id}(id=${route.id})}" method="post" enctype="multipart/form-data" class="vstack gap-3">
+                <input type="hidden" name="id" th:value="${route.id}">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label" for="name">Название <span class="text-danger">*</span></label>
+                        <input class="form-control" id="name" name="name" type="text" maxlength="255" required
+                               th:value="${route.name}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="distance">Дистанция (км) <span class="text-danger">*</span></label>
+                        <input class="form-control" id="distance" name="distance" type="number" min="1" required
+                               th:value="${route.distance}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="duration">Длительность (мин) <span class="text-danger">*</span></label>
+                        <input class="form-control" id="duration" name="duration" type="number" min="1" required
+                               th:value="${route.duration}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="difficulty">Сложность <span class="text-danger">*</span></label>
+                        <select class="form-select" id="difficulty" name="difficulty" required>
+                            <option th:each="d : ${difficulties}"
+                                    th:value="${d.value}"
+                                    th:text="${d.displayName}"
+                                    th:selected="${d.value == route.difficulty}">
+                                Легкий
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
+                        <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
+                               th:value="${route.price}">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="description">Описание</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" maxlength="1000"
+                                  th:text="${route.description}"></textarea>
+                        <small class="text-muted">Максимум 1000 символов</small>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Текущее изображение</label>
+                        <div class="mb-2">
+                            <img th:src="@{${route.mapPath}}" alt="Current map" class="img-thumbnail" style="max-height: 150px;">
+                        </div>
+
+                        <label class="form-label" for="mapImage">Загрузить новое изображение</label>
+                        <input class="form-control" id="mapImage" name="mapImage" type="file" accept="image/*">
+                        <small class="text-muted">
+                            <i class="fas fa-circle-info me-1"></i>Загрузите новое изображение, если хотите заменить текущее
+                        </small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isSpecial" name="isSpecial"
+                                   th:checked="${route.isSpecial}">
+                            <label class="form-check-label" for="isSpecial">
+                                Специальный маршрут
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="enabled" name="enabled"
+                                   th:checked="${route.enabled}">
+                            <label class="form-check-label" for="enabled">
+                                Enabled (активен)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Сохранить
+                    </button>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-secondary flex-fill" th:href="@{/admin/routes}">
+                        <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                    </a>
+
+                    <button type="button" class="btn btn-outline-danger"
+                            onclick="confirmDelete()">
+                        <i class="fas fa-trash me-2"></i>Удалить маршрут
+                    </button>
+                </div>
+            </form>
+
+            <form th:action="@{/admin/routes/{id}/delete(id=${route.id})}" method="post" id="deleteForm" style="display: none;">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            if (confirm('Вы уверены, что хотите удалить этот маршрут? Это действие необратимо.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+</div>
+</html>

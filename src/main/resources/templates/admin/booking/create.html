@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Создать бронирование</h1>
+        <p class="text-muted mb-0">Быстрая форма для администратора</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form id="adminCreateBookingForm" th:action="@{/admin/bookings}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Дата заезда</label>
+                        <select class="form-select" name="date" required>
+                            <option value="" selected disabled>Выберите дату</option>
+                            <option th:each="d : ${dates}" th:value="${d}" th:text="${#temporals.format(d, 'dd.MM.yyyy')}">01.01.2026</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Смена</label>
+                        <select class="form-select" name="shiftId" required>
+                            <option value="" selected disabled>Выберите смену</option>
+                            <option th:each="s : ${shifts}" th:value="${s.id}"
+                                    th:text="${s.name + ' (' + #temporals.format(s.startTime,'HH:mm') + '-' + #temporals.format(s.endTime,'HH:mm') + ')'}">
+                                Утренняя (10:00-11:30)
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Маршрут</label>
+                        <select class="form-select" name="routeId" required>
+                            <option value="" selected disabled>Выберите маршрут</option>
+                            <option th:each="r : ${routes}" th:value="${r.id}"
+                                    th:text="${r.name + ' · ' + r.price + ' ₽/чел'}">
+                                Маршрут
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0"><i class="fas fa-users me-2"></i>Участники</h2>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="addParticipantBtn">
+                        <i class="fas fa-user-plus me-1"></i>Добавить
+                    </button>
+                </div>
+
+                <div id="participantsContainer" class="vstack gap-3"></div>
+
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="paidCheckbox" name="paid">
+                    <label class="form-check-label" for="paidCheckbox">
+                        Оплачено (создать сразу в статусе PAID)
+                    </label>
+                </div>
+
+                <div class="d-grid mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-check me-2"></i>Создать
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const availableBikes = /*[[${availableBikes}]]*/ [];
+        const maxParticipants = /*[[${maxParticipants}]]*/ 8;
+        let idx = 0;
+
+        function bikeOptionsHtml(i) {
+            return [
+                `<option value="" selected disabled>Выберите мотоцикл</option>`,
+                ...availableBikes.map(b => {
+                    const label = `${b.brand} ${b.model} · ${b.engineCc}cc`;
+                    return `<option value="${b.id}">${label}</option>`;
+                })
+            ].join('');
+        }
+
+        function participantBlockHtml(i) {
+            return `
+            <div class="card bg-light border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <strong>Участник #${i + 1}</strong>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeParticipant(${i})">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Пол</label>
+                            <select class="form-select" name="participants[${i}].gender" required>
+                                <option value="" selected disabled>Выберите</option>
+                                <option value="MALE">Мужской</option>
+                                <option value="FEMALE">Женский</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Возраст</label>
+                            <input class="form-control" type="number" min="12" max="99"
+                                   name="participants[${i}].age" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Рост (см)</label>
+                            <input class="form-control" type="number" min="130" max="220"
+                                   name="participants[${i}].height" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Опыт</label>
+                            <select class="form-select" name="participants[${i}].experienceLevel" required>
+                                <option value="" selected disabled>Выберите</option>
+                                <option value="NONE">NONE</option>
+                                <option value="BEGINNER">BEGINNER</option>
+                                <option value="INTERMEDIATE">INTERMEDIATE</option>
+                                <option value="ADVANCED">ADVANCED</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Мотоцикл</label>
+                            <select class="form-select" name="participants[${i}].bikeId" required>
+                                ${bikeOptionsHtml(i)}
+                            </select>
+                            <small class="text-muted">Список не “умный” — при желании можно подключить фильтрацию как в публичном `booking.html`.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function addParticipant() {
+            const count = document.querySelectorAll('#participantsContainer .card').length;
+            if (count >= maxParticipants) return;
+            const container = document.getElementById('participantsContainer');
+            container.insertAdjacentHTML('beforeend', participantBlockHtml(idx));
+            idx++;
+        }
+
+        function removeParticipant(i) {
+            // простое удаление: удаляем ближайший card по кнопке, а индексацию оставляем “как есть”
+            // (на сервере лучше принимать списком по факту пришедших participants[*])
+            const btn = event.target.closest('button');
+            const card = btn.closest('.card');
+            card.remove();
+        }
+
+        document.getElementById('addParticipantBtn').addEventListener('click', addParticipant);
+        document.addEventListener('DOMContentLoaded', () => addParticipant());
+    </script>
+</div>
+</html>
