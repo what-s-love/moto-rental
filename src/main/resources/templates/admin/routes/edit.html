@@ -15,40 +15,59 @@
                 <input type="hidden" name="id" th:value="${route.id}">
 
                 <div class="row g-3">
-                    <div class="col-md-8">
+                    <div class="col-md-12 mb-2 pe-4">
                         <label class="form-label" for="name">Название <span class="text-danger">*</span></label>
                         <input class="form-control" id="name" name="name" type="text" maxlength="255" required
                                th:value="${route.name}">
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="distance">Дистанция (км) <span class="text-danger">*</span></label>
-                        <input class="form-control" id="distance" name="distance" type="number" min="1" required
-                               th:value="${route.distance}">
-                    </div>
+                    <div class="row ps-2 pe-0">
+                        <div class="col-md-7">
+                            <div class="col-12">
+                                <label class="form-label">Текущее изображение</label>
+                                <div class="mb-2">
+                                    <img th:src="@{${route.mapPath}}" alt="Current map" class="img-thumbnail">
+                                </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="duration">Длительность (мин) <span class="text-danger">*</span></label>
-                        <input class="form-control" id="duration" name="duration" type="number" min="1" required
-                               th:value="${route.duration}">
-                    </div>
+                                <label class="form-label" for="mapImage">Загрузить новое изображение</label>
+                                <input class="form-control" id="mapImage" name="mapImage" type="file" accept="image/*">
+                                <small class="text-muted">
+                                    <i class="fas fa-circle-info me-1"></i>Загрузите новое изображение, если хотите заменить текущее
+                                </small>
+                            </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="difficulty">Сложность <span class="text-danger">*</span></label>
-                        <select class="form-select" id="difficulty" name="difficulty" required>
-                            <option th:each="d : ${difficulties}"
-                                    th:value="${d.value}"
-                                    th:text="${d.displayName}"
-                                    th:selected="${d.value == route.difficulty}">
-                                Легкий
-                            </option>
-                        </select>
-                    </div>
+                        </div>
+                        <div class="col-md-5 mt-2 mt-md-4">
+                            <div class="col-12">
+                                <label class="form-label" for="distance">Дистанция (км) <span class="text-danger">*</span></label>
+                                <input class="form-control" id="distance" name="distance" type="number" min="1" required
+                                       th:value="${route.distance}">
+                            </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
-                        <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
-                               th:value="${route.price}">
+                            <div class="col-12">
+                                <label class="form-label" for="duration">Длительность (мин) <span class="text-danger">*</span></label>
+                                <input class="form-control" id="duration" name="duration" type="number" min="1" required
+                                       th:value="${route.duration}">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="difficulty">Сложность <span class="text-danger">*</span></label>
+                                <select class="form-select" id="difficulty" name="difficulty" required>
+                                    <option th:each="d : ${difficulties}"
+                                            th:value="${d.value}"
+                                            th:text="${d.displayName}"
+                                            th:selected="${d.value == route.difficulty}">
+                                        Легкий
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
+                                <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
+                                       th:value="${route.price}">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-12">
@@ -56,19 +75,6 @@
                         <textarea class="form-control" id="description" name="description" rows="3" maxlength="1000"
                                   th:text="${route.description}"></textarea>
                         <small class="text-muted">Максимум 1000 символов</small>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Текущее изображение</label>
-                        <div class="mb-2">
-                            <img th:src="@{${route.mapPath}}" alt="Current map" class="img-thumbnail" style="max-height: 150px;">
-                        </div>
-
-                        <label class="form-label" for="mapImage">Загрузить новое изображение</label>
-                        <input class="form-control" id="mapImage" name="mapImage" type="file" accept="image/*">
-                        <small class="text-muted">
-                            <i class="fas fa-circle-info me-1"></i>Загрузите новое изображение, если хотите заменить текущее
-                        </small>
                     </div>
 
                     <div class="col-md-6">

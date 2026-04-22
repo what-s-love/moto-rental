@@ -158,6 +158,10 @@ header {
     position: fixed;
 }
 
+[data-bs-theme="dark"] .sidebar {
+    background-color: #212529 !important;
+}
+
 .admin-content {
     margin-left: 250px;
     padding: 20px;
