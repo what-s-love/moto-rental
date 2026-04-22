@@ -4,7 +4,9 @@ import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.ShiftUpdateDto;
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
+import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateDto;
+import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.policy.PolicyAdminDto;
 import ge.tsepesh.motorental.dto.policy.PolicyCreateDto;
 import ge.tsepesh.motorental.dto.policy.PolicyDto;
@@ -138,13 +140,13 @@ public class AdminController {
         model.addAttribute("shifts", shifts);
         model.addAttribute("routes", routes);
         model.addAttribute("availableBikes", availableBikes);
-        model.addAttribute("maxParticipants", 8);
+        model.addAttribute("maxParticipants", availableBikes.size());
 
         return "admin/booking/create";
     }
 
     @PostMapping("/bookings")
-    public String createBooking(@ModelAttribute BookingCreateDto dto,
+    public String createBooking(@ModelAttribute BookingCreateAdminDto dto,
                                 RedirectAttributes redirectAttributes) {
         try {
             BookingAdminDto created = bookingService.createBookingByAdmin(dto);

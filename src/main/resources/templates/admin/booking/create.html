@@ -1,21 +1,95 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/base}">
+
 <div layout:fragment="content">
     <div class="mb-4">
-        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Создать бронирование</h1>
+        <h1 class="h3 mb-1">
+            <i class="fas fa-plus-circle me-2 text-primary"></i>Создать бронирование
+        </h1>
         <p class="text-muted mb-0">Быстрая форма для администратора</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body p-4">
             <form id="adminCreateBookingForm" th:action="@{/admin/bookings}" method="post">
+                <div class="my-4">
+                    <h2 class="h5 mb-3">
+                        <i class="fas fa-user me-2"></i>
+                        Контактное лицо
+                    </h2>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Имя и Фамилия <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="client.name"
+                                   required
+                                   maxlength="255"
+                                   placeholder="Иван Иванов">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input type="email"
+                                   class="form-control"
+                                   name="client.email"
+                                   required
+                                   maxlength="255"
+                                   placeholder="ivan@example.com">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Телефон
+                            </label>
+                            <input type="tel"
+                                   class="form-control"
+                                   name="client.phone"
+                                   pattern="^\+?[0-9]{9,15}$"
+                                   placeholder="+79161234567">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Telegram ID
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="client.telegramId"
+                                   maxlength="100"
+                                   placeholder="@username">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Основные поля -->
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Дата заезда</label>
                         <select class="form-select" name="date" required>
                             <option value="" selected disabled>Выберите дату</option>
-                            <option th:each="d : ${dates}" th:value="${d}" th:text="${#temporals.format(d, 'dd.MM.yyyy')}">01.01.2026</option>
+                            <option th:each="d : ${dates}"
+                                    th:value="${d}"
+                                    th:text="${#temporals.format(d, 'dd.MM.yyyy')}">
+                            </option>
                         </select>
                     </div>
 
@@ -23,9 +97,9 @@
                         <label class="form-label">Смена</label>
                         <select class="form-select" name="shiftId" required>
                             <option value="" selected disabled>Выберите смену</option>
-                            <option th:each="s : ${shifts}" th:value="${s.id}"
+                            <option th:each="s : ${shifts}"
+                                    th:value="${s.id}"
                                     th:text="${s.name + ' (' + #temporals.format(s.startTime,'HH:mm') + '-' + #temporals.format(s.endTime,'HH:mm') + ')'}">
-                                Утренняя (10:00-11:30)
                             </option>
                         </select>
                     </div>
@@ -34,9 +108,9 @@
                         <label class="form-label">Маршрут</label>
                         <select class="form-select" name="routeId" required>
                             <option value="" selected disabled>Выберите маршрут</option>
-                            <option th:each="r : ${routes}" th:value="${r.id}"
+                            <option th:each="r : ${routes}"
+                                    th:value="${r.id}"
                                     th:text="${r.name + ' · ' + r.price + ' ₽/чел'}">
-                                Маршрут
                             </option>
                         </select>
                     </div>
@@ -44,9 +118,14 @@
 
                 <hr class="my-4">
 
+                <!-- Участники -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h2 class="h5 mb-0"><i class="fas fa-users me-2"></i>Участники</h2>
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="addParticipantBtn">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-users me-2"></i>Участники
+                    </h2>
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            id="addParticipantBtn">
                         <i class="fas fa-user-plus me-1"></i>Добавить
                     </button>
                 </div>
@@ -69,28 +148,61 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
+    <!-- JS -->
+    <script th:inline="javascript" defer>
         const availableBikes = /*[[${availableBikes}]]*/ [];
         const maxParticipants = /*[[${maxParticipants}]]*/ 8;
-        let idx = 0;
 
-        function bikeOptionsHtml(i) {
-            return [
-                `<option value="" selected disabled>Выберите мотоцикл</option>`,
-                ...availableBikes.map(b => {
-                    const label = `${b.brand} ${b.model} · ${b.engineCc}cc`;
-                    return `<option value="${b.id}">${label}</option>`;
-                })
-            ].join('');
+        // Получить все выбранные мотоциклы
+        function getSelectedBikes() {
+            const selects = document.querySelectorAll('#participantsContainer select[name$=".bikeId"]');
+            return Array.from(selects)
+                .map(s => s.value)
+                .filter(v => v !== '');
+        }
+
+        // Обновить все селекты мотоциклов с учетом фильтрации
+        function updateBikeSelects() {
+            const selectedBikes = getSelectedBikes();
+            const selects = document.querySelectorAll('#participantsContainer select[name$=".bikeId"]');
+
+            selects.forEach(select => {
+                const currentValue = select.value;
+
+                // Очистить и пересоздать опции
+                select.innerHTML = `<option value="" selected disabled>Выберите мотоцикл</option>`;
+
+                availableBikes.forEach(bike => {
+                    const label = `${bike.brand} ${bike.model} · ${bike.engineCc}cc`;
+                    const option = document.createElement('option');
+                    option.value = bike.id;
+                    option.textContent = label;
+
+                    // Отключить опцию, если мотоцикл уже выбран другим участником
+                    if (selectedBikes.includes(String(bike.id)) && String(bike.id) !== currentValue) {
+                        option.disabled = true;
+                        option.textContent = label + ' (занят)';
+                    }
+
+                    select.appendChild(option);
+                });
+
+                // Восстановить текущее значение
+                if (currentValue) {
+                    select.value = currentValue;
+                }
+            });
         }
 
         function participantBlockHtml(i) {
             return `
-            <div class="card bg-light border">
+            <div class="card bg-light border" data-participant-index="${i}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <strong>Участник #${i + 1}</strong>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeParticipant(${i})">
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                onclick="removeParticipant(event)">
                             <i class="fas fa-xmark"></i>
                         </button>
                     </div>
@@ -107,19 +219,23 @@
 
                         <div class="col-md-3">
                             <label class="form-label">Возраст</label>
-                            <input class="form-control" type="number" min="12" max="99"
-                                   name="participants[${i}].age" required>
+                            <input class="form-control" type="number"
+                                   name="participants[${i}].age"
+                                   min="12" max="99" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Рост (см)</label>
-                            <input class="form-control" type="number" min="130" max="220"
-                                   name="participants[${i}].height" required>
+                            <input class="form-control" type="number"
+                                   name="participants[${i}].height"
+                                   min="130" max="220" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Опыт</label>
-                            <select class="form-select" name="participants[${i}].experienceLevel" required>
+                            <select class="form-select"
+                                    name="participants[${i}].experienceLevel"
+                                    required>
                                 <option value="" selected disabled>Выберите</option>
                                 <option value="NONE">NONE</option>
                                 <option value="BEGINNER">BEGINNER</option>
@@ -130,10 +246,11 @@
 
                         <div class="col-md-12">
                             <label class="form-label">Мотоцикл</label>
-                            <select class="form-select" name="participants[${i}].bikeId" required>
-                                ${bikeOptionsHtml(i)}
+                            <select class="form-select bike-select"
+                                    name="participants[${i}].bikeId"
+                                    required>
+                                <option value="" selected disabled>Выберите мотоцикл</option>
                             </select>
-                            <small class="text-muted">Список не “умный” — при желании можно подключить фильтрацию как в публичном `booking.html`.</small>
                         </div>
                     </div>
                 </div>
@@ -143,21 +260,69 @@
         function addParticipant() {
             const count = document.querySelectorAll('#participantsContainer .card').length;
             if (count >= maxParticipants) return;
+
             const container = document.getElementById('participantsContainer');
-            container.insertAdjacentHTML('beforeend', participantBlockHtml(idx));
-            idx++;
+            container.insertAdjacentHTML('beforeend', participantBlockHtml(count));
+
+            // Обновить все селекты мотоциклов после добавления нового участника
+            updateBikeSelects();
+
+            // Добавить слушатель изменений для нового селекта мотоцикла
+            const newCard = container.lastElementChild;
+            const bikeSelect = newCard.querySelector('.bike-select');
+            if (bikeSelect) {
+                bikeSelect.addEventListener('change', updateBikeSelects);
+            }
         }
 
-        function removeParticipant(i) {
-            // простое удаление: удаляем ближайший card по кнопке, а индексацию оставляем “как есть”
-            // (на сервере лучше принимать списком по факту пришедших participants[*])
+        function removeParticipant(event) {
             const btn = event.target.closest('button');
             const card = btn.closest('.card');
-            card.remove();
+            if (card) {
+                card.remove();
+                reindexParticipants();
+                updateBikeSelects();
+            }
         }
 
-        document.getElementById('addParticipantBtn').addEventListener('click', addParticipant);
-        document.addEventListener('DOMContentLoaded', () => addParticipant());
+        // Переиндексация участников после удаления
+        function reindexParticipants() {
+            const cards = document.querySelectorAll('#participantsContainer .card');
+
+            cards.forEach((card, newIndex) => {
+                // Обновить атрибут data-participant-index
+                card.setAttribute('data-participant-index', newIndex);
+
+                // Обновить заголовок "Участник #N"
+                const header = card.querySelector('strong');
+                if (header) {
+                    header.textContent = `Участник #${newIndex + 1}`;
+                }
+
+                // Обновить все имена полей внутри карточки
+                const inputs = card.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name && name.startsWith('participants[')) {
+                        // Заменить старый индекс на новый
+                        const newName = name.replace(/participants\[\d+\]/, `participants[${newIndex}]`);
+                        input.setAttribute('name', newName);
+                    }
+                });
+            });
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function () {
+            const addBtn = document.getElementById('addParticipantBtn');
+
+            if (addBtn) {
+                addBtn.addEventListener('click', addParticipant);
+            }
+
+            // Добавить первого участника
+            addParticipant();
+        });
     </script>
 </div>
 </html>

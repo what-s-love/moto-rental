@@ -438,6 +438,27 @@ header {
     opacity: 0.8;
 }
 
+.bikes-selection {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.bike-checkbox {
+    padding: 6px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    transition: 0.2s;
+}
+
+.bike-checkbox:hover {
+    background: #f8f9fa;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
 /* Dark theme variables */
 [data-bs-theme="dark"] {
     --bs-body-bg: #212529;

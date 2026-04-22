@@ -1,6 +1,7 @@
 package ge.tsepesh.motorental.service;
 
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
+import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -134,27 +136,16 @@ public class BookingService {
      * Создать бронирование администратором (с возможностью сразу установить статус PAID)
      */
     @Transactional
-    public BookingAdminDto createBookingByAdmin(BookingCreateDto dto) {
+    public BookingAdminDto createBookingByAdmin(BookingCreateAdminDto dto) {
         log.info("Admin creating booking for date {} shift {} route {}",
-                dto.getRideDate(), dto.getShiftId(), dto.getRouteId());
+                dto.getDate(), dto.getShiftId(), dto.getRouteId());
+
         // 1. Найти или создать клиента
-        Client client;
-        if (dto.getClientId() != null) {
-            client = clientRepository.findById(dto.getClientId())
-                    .orElseThrow(() -> new IllegalArgumentException("Client not found: " + dto.getClientId()));
-        } else {
-            client = new Client();
-            client.setName(dto.getNewClientName());
-            client.setEmail(dto.getNewClientEmail());
-            client.setPhone(dto.getNewClientPhone());
-            client.setCreatedAt(LocalDateTime.now());
-            client = clientRepository.save(client);
-            log.info("Created new client: {}", client.getEmail());
-        }
+        Client client = findOrCreateClient(dto.getClient());
         // 2. Найти или создать заезд
-        Ride ride = findOrCreateRide(dto.getRideDate(), dto.getShiftId(), dto.getRouteId());
+        Ride ride = findOrCreateRide(dto.getDate(), dto.getShiftId(), dto.getRouteId());
         // 3. Валидация доступности мотоциклов
-        List<Integer> requestedBikeIds = dto.getBikeIds();
+        List<Integer> requestedBikeIds = dto.getParticipants().stream().map(ParticipantDto::getBikeId).toList();
         List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(
                 ride.getDate(), ride.getShift().getId()
         );
@@ -164,23 +155,8 @@ public class BookingService {
                 throw new IllegalStateException("Bike " + bikeId + " is already occupied");
             }
         }
-        // 4. Создать участников (упрощённо — без детальных параметров, админ задаёт только байки)
-        Client finalClient = client;
-        List<Participant> participants = requestedBikeIds.stream()
-                .map(bikeId -> {
-                    Bike bike = bikeRepository.findById(bikeId)
-                            .orElseThrow(() -> new IllegalArgumentException("Bike not found: " + bikeId));
-
-                    Participant p = new Participant();
-                    p.setRide(ride);
-                    p.setBike(bike);
-                    p.setClient(finalClient);
-                    // Минимальные дефолтные значения (или админ может передать в dto)
-                    p.setAge(18);
-                    p.setHeight(170);
-                    return participantRepository.save(p);
-                })
-                .toList();
+        // 4. Создать участников
+        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
         // 5. Рассчитать стоимость
         BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size());
         // 6. Создать бронирование
@@ -192,6 +168,7 @@ public class BookingService {
         booking.setTotalPrice(totalPrice);
 
         // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
+        //ToDo Если PENDING_PAYMENT, то сгенерировать и отобразить ссылку на оплату
         booking.setBookingStatus(Boolean.TRUE.equals(dto.getIsPrepaid())
                 ? BookingStatus.PAID
                 : BookingStatus.PENDING_PAYMENT);
@@ -251,11 +228,6 @@ public class BookingService {
                 .weekExpiredCount(weekExpired)
                 .build();
     }
-//    public List<BookingAdminDto> getBookingsByMonth(YearMonth yearMonth);
-//    public BookingAdminDto getBookingById(Integer id);
-//    public BookingAdminDto createBookingByAdmin(BookingCreateDto dto);
-//    public BookingAdminDto updateBookingStatus(Integer id, BookingStatus newStatus);
-//    public String generatePaymentLink(Integer bookingId);
 
     // Вспомогательные методы
     private Client findOrCreateClient(ClientDto clientDto) {
