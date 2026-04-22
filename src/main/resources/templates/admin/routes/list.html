@@ -25,18 +25,14 @@
     <div class="row g-3">
         <div class="col-12 col-lg-6" th:each="route : ${routes}">
             <div class="card route-card shadow-sm position-relative overflow-hidden h-100">
-                <div class="route-image-container position-relative">
-                    <img th:src="@{${route.mapPath}}" alt="Route map" class="route-image w-100" style="height: 200px; object-fit: cover;">
-
-                    <span th:if="${route.isAvailableForBeginners}"
-                          class="badge bg-success position-absolute top-0 end-0 m-2">
-                        <i class="fas fa-check-circle me-1"></i>Для новичков
-                    </span>
-                </div>
+                <img th:src="@{${route.mapPath}}"
+                     alt="Route map"
+                     class="admin-route-image card-img-top"
+                     style="height: 200px; object-fit: cover;">
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h5>
+                        <h5 class="card-title mb-0" th:text="${route.name}">Название маршрута</h5>
                         <span class="badge"
                               th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
                             <i class="fas fa-mountain me-1"></i>
@@ -57,23 +53,20 @@
                     </p>
 
                     <p class="card-text small mb-3" th:text="${route.description}">Описание маршрута</p>
-
-                    <div class="d-flex gap-2 align-items-center mb-2">
-                        <span class="badge" th:classappend="${route.isAvailableForBeginners} ? 'bg-success' : 'bg-secondary'">
-                            ID: <span th:text="${route.id}">1</span>
-                        </span>
-                        <span class="form-check form-switch mb-0">
-                            <input class="form-check-input" type="checkbox" disabled
-                                   th:checked="${route.isEnabled}">
-                            <label class="form-check-label small">Enabled</label>
-                        </span>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/routes/{id}/edit(id=${route.id})}">
-                            <i class="fas fa-pen me-1"></i>Редактировать
-                        </a>
-                    </div>
+                </div>
+                <div class="mx-2 align-items-center">
+                    <span class="badge bg-secondary">
+                        ID: <span th:text="${route.id}">1</span>
+                    </span>
+                    <span class="badge" th:classappend="${route.isEnabled} ? 'bg-success' : 'bg-secondary'">
+                        <i class="fas" th:classappend="${route.isEnabled} ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
+                        <span th:text="${route.isEnabled ? 'Enabled' : 'Disabled'}">Enabled</span>
+                    </span>
+                </div>
+                <div class="d-grid m-2">
+                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/routes/{id}/edit(id=${route.id})}">
+                        <i class="fas fa-pen me-1"></i>Редактировать
+                    </a>
                 </div>
             </div>
         </div>
