@@ -15,6 +15,7 @@ public class RouteDto {
     private Difficulty difficulty;
     private String difficultyDisplayName;
     private BigDecimal price;
+    private BigDecimal weekendPrice;
     private String mapPath;
     private String description;
     private Integer estimatedDuration; // в минутах

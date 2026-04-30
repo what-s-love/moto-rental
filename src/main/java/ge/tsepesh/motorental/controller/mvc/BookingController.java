@@ -16,6 +16,7 @@ import ge.tsepesh.motorental.repository.ShiftRepository;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
 import ge.tsepesh.motorental.service.RouteService;
+import ge.tsepesh.motorental.util.DateUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,7 @@ public class BookingController {
 
         // Добавление данных в модель
         model.addAttribute("date", date);
+        model.addAttribute("isWeekend", DateUtil.isWeekend(date));
         model.addAttribute("shiftId", shiftId);
         model.addAttribute("shift", mapToShiftDto(shift));
         model.addAttribute("availableBikes", availableBikesList);

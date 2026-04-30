@@ -24,12 +24,14 @@ import ge.tsepesh.motorental.repository.ClientRepository;
 import ge.tsepesh.motorental.repository.ParticipantRepository;
 import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.RouteRepository;
+import ge.tsepesh.motorental.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -75,7 +77,7 @@ public class BookingService {
             List<Participant> participants = createParticipants(request.getParticipants(), ride, client);
             
             // 5. Рассчитать стоимость
-            BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size());
+            BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), request.getDate());
             
             // 6. Создать бронирование
             Booking booking = createBooking(client, ride, totalPrice);
@@ -158,7 +160,7 @@ public class BookingService {
         // 4. Создать участников
         List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
         // 5. Рассчитать стоимость
-        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size());
+        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), dto.getDate());
         // 6. Создать бронирование
         Booking booking = new Booking();
         booking.setClient(client);
@@ -319,8 +321,11 @@ public class BookingService {
         return participantRepository.save(participant);
     }
 
-    private BigDecimal calculateTotalPrice(Route route, int participantCount) {
-        return route.getPrice().multiply(BigDecimal.valueOf(participantCount));
+    private BigDecimal calculateTotalPrice(Route route, int participantCount, LocalDate rideDate) {
+        BigDecimal pricePerPerson = DateUtil.isWeekend(rideDate)
+                ? route.getWeekendPrice()
+                : route.getPrice();
+        return pricePerPerson.multiply(BigDecimal.valueOf(participantCount));
     }
 
     private Booking createBooking(Client client, Ride ride, BigDecimal totalPrice) {

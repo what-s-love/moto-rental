@@ -67,6 +67,12 @@
                                 <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
                                        th:value="${route.price}">
                             </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="weekendPrice">Цена (₽) <span class="text-danger">*</span></label>
+                                <input class="form-control" id="weekendPrice" name="weekendPrice" type="number" step="0.01" min="0" required
+                                       th:value="${route.weekendPrice}">
+                            </div>
                         </div>
                     </div>
 

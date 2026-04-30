@@ -68,7 +68,7 @@
                             <div class="card route-selection-card h-100 position-relative"
                                  onclick="selectRoute(this)"
                                  th:data-route-id="${route.id}"
-                                 th:data-route-price="${route.price}">
+                                 th:data-route-price="${isWeekend ? route.weekendPrice : route.price}">
 
                                 <input type="radio"
                                        name="routeRadio"
@@ -109,7 +109,7 @@
                                     </div>
                                     <h6 class="text-muted pt-2 mb-2" th:text="${route.difficultyDisplayName}">Легкий</h6>
                                     <div class="mb-2">
-                                        <strong class="text-primary h4" th:text="${route.price}">1500</strong>
+                                        <strong class="text-primary h4" th:text="${isWeekend ? route.weekendPrice : route.price}">1500</strong>
                                         <span class="text-muted">₽ / человек</span>
                                     </div>
 
@@ -162,7 +162,7 @@
                                     <h5 class="text-muted pt-2 mb-2" th:text="${existingRide.route.difficultyDisplayName}">Средний</h5>
                                     <div class="mb-3">
                                         <h3 class="text-primary mb-0">
-                                            <span th:text="${existingRide.route.price}">2000</span> ₽
+                                            <span th:text="${isWeekend ? existingRide.route.weekendPrice : existingRide.route.price}">2000</span> ₽
                                             <small class="text-muted fs-6">/ человек</small>
                                         </h3>
                                     </div>
@@ -492,7 +492,7 @@
         // Available bikes data from server
         const availableBikes = /*[[${availableBikes}]]*/ [];
         const maxParticipants = /*[[${maxParticipants}]]*/ 8;
-        const routePrice = /*[[${existingRide != null ? existingRide.route.price : 0}]]*/ 0;
+        const routePrice = /*[[${existingRide != null ? (isWeekend ? existingRide.route.weekendPrice : existingRide.route.price) : 0}]]*/ 0;
         let participantCounter = 1;
         let selectedRoutePrice = routePrice;
 

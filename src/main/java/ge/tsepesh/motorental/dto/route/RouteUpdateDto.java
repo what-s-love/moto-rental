@@ -33,6 +33,10 @@ public class RouteUpdateDto {
     @Min(value = 0)
     private BigDecimal price;
 
+    @NotNull(message = "Выходная цена обязательна")
+    @Min(value = 0)
+    private BigDecimal weekendPrice;
+
     @Size(max = 1000)
     private String description;
 

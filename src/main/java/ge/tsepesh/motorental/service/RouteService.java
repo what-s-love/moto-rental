@@ -100,6 +100,7 @@ public class RouteService {
         route.setDuration(dto.getDuration());
         route.setDifficulty(dto.getDifficulty());
         route.setPrice(dto.getPrice());
+        route.setWeekendPrice(dto.getWeekendPrice());
         route.setDescription(dto.getDescription());
         route.setIsSpecial(dto.getIsSpecial() != null ? dto.getIsSpecial() : false);
         route.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : false);
@@ -147,6 +148,7 @@ public class RouteService {
         dto.setDuration(route.getDuration());
         dto.setDifficulty(route.getDifficulty());
         dto.setPrice(route.getPrice());
+        dto.setWeekendPrice(route.getWeekendPrice());
         dto.setDescription(route.getDescription());
         dto.setMapPath(route.getMapPath());
         dto.setIsSpecial(route.getIsSpecial());
@@ -211,6 +213,7 @@ public class RouteService {
                 .difficulty(difficulty)
                 .difficultyDisplayName(difficulty.getDisplayName())
                 .price(route.getPrice())
+                .weekendPrice(route.getWeekendPrice())
                 .mapPath(route.getMapPath() != null ? route.getMapPath() : "/images/routes/no_route.jpg")
                 .description(route.getDescription())
                 .estimatedDuration(route.getDuration())

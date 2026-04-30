@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-add-weekend-price-to-routes
+      author: Vlad Tsepesh
+      changes:
+        - addColumn:
+            tableName: routes
+            columns:
+              - column:
+                  name: weekend_price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: true
+        - sql:
+            sql: UPDATE routes SET weekend_price = price + 1000
+        - addNotNullConstraint:
+            tableName: routes
+            columnName: weekend_price
+            columnDataType: decimal(10,2)

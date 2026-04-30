@@ -40,13 +40,16 @@ public class Route {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "weekend_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal weekendPrice;
+
     @Column
     private String description;
 
     @Column
     private String mapPath;
 
-    @Column(nullable = false)
+    @Column(name = "is_special", nullable = false)
     private Boolean isSpecial;
 
     @Column(nullable = false)
