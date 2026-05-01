@@ -1,12 +1,13 @@
 package ge.tsepesh.motorental.controller.mvc;
 
+import ge.tsepesh.motorental.dto.BannerCreateDto;
+import ge.tsepesh.motorental.dto.BannerDto;
+import ge.tsepesh.motorental.dto.BannerUpdateDto;
 import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.ShiftUpdateDto;
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
-import ge.tsepesh.motorental.dto.booking.BookingCreateDto;
-import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.policy.PolicyAdminDto;
 import ge.tsepesh.motorental.dto.policy.PolicyCreateDto;
 import ge.tsepesh.motorental.dto.policy.PolicyDto;
@@ -14,8 +15,10 @@ import ge.tsepesh.motorental.dto.route.RouteCreateDto;
 import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.route.RouteUpdateDto;
 import ge.tsepesh.motorental.enums.BookingStatus;
+import ge.tsepesh.motorental.model.Banner;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.service.BannerService;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BikeService;
 import ge.tsepesh.motorental.service.BookingService;
@@ -52,6 +55,7 @@ public class AdminController {
     private final PolicyService policyService;
     private final RouteService routeService;
     private final BikeService bikeService;
+    private final BannerService bannerService;
     private final BikeAvailabilityService bikeAvailabilityService;
 
     // ==================== LOGIN ====================
@@ -301,5 +305,117 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
         return "redirect:/admin/routes";
+    }
+
+    // ==================== BANNERS ====================
+    @GetMapping("/banner/list")
+    public String bannerList(Model model) {
+        List<BannerDto> banners = bannerService.getAllBanners();
+        model.addAttribute("banners", banners);
+        return "admin/banner/list";
+    }
+    @GetMapping("/banner/create")
+    public String createBannerForm(Model model) {
+        // Получить только специальные маршруты
+        List<RouteDto> specialRoutes = routeService.getAllRoutes()
+                .stream()
+                .filter(r -> Boolean.TRUE.equals(r.getIsSpecial()) && Boolean.TRUE.equals(r.getIsEnabled()))
+                .collect(Collectors.toList());
+        if (specialRoutes.isEmpty()) {
+            model.addAttribute("error", "Нет доступных специальных маршрутов. Сначала создайте маршрут с флагом 'Специальный'");
+        }
+        List<Shift> shifts = shiftService.getAllShifts();
+        model.addAttribute("specialRoutes", specialRoutes);
+        model.addAttribute("shifts", shifts);
+
+        return "admin/banner/create";
+    }
+    @PostMapping("/banner")
+    public String createBanner(@Valid @ModelAttribute BannerCreateDto dto,
+                               @RequestParam(value = "bannerImage", required = false) MultipartFile bannerImage,
+                               RedirectAttributes redirectAttributes,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/banner/create";
+        }
+        try {
+            Banner created = bannerService.createBanner(dto, bannerImage);
+            String message = Boolean.TRUE.equals(dto.getEnabled())
+                    ? "Баннер #" + created.getId() + " создан и включен"
+                    : "Баннер #" + created.getId() + " создан";
+            redirectAttributes.addFlashAttribute("success", message);
+        } catch (Exception e) {
+            log.error("Error creating banner", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/banner/create";
+        }
+        return "redirect:/admin/banner/list";
+    }
+    @GetMapping("/banner/{id}/edit")
+    public String editBannerForm(@PathVariable Integer id, Model model) {
+        try {
+            Banner banner = bannerService.getBannerById(id);
+            BannerUpdateDto dto = bannerService.convertToUpdateDto(banner);
+            // Получить специальные маршруты
+            List<RouteDto> specialRoutes = routeService.getAllRoutes()
+                    .stream()
+                    .filter(r -> Boolean.TRUE.equals(r.getIsSpecial()) && Boolean.TRUE.equals(r.getIsEnabled()))
+                    .collect(Collectors.toList());
+            List<Shift> shifts = shiftService.getAllShifts();
+            model.addAttribute("banner", dto);
+            model.addAttribute("specialRoutes", specialRoutes);
+            model.addAttribute("shifts", shifts);
+            return "admin/banner/edit";
+        } catch (Exception e) {
+            log.error("Error loading banner edit form for id {}", id, e);
+            return "redirect:/admin/banner/list";
+        }
+    }
+    @PostMapping("/banner/{id}")
+    public String updateBanner(@PathVariable Integer id,
+                               @Valid @ModelAttribute BannerUpdateDto dto,
+                               @RequestParam(value = "bannerImage", required = false) MultipartFile bannerImage,
+                               RedirectAttributes redirectAttributes,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/banner/" + id + "/edit";
+        }
+        try {
+            bannerService.updateBanner(id, dto, bannerImage);
+            redirectAttributes.addFlashAttribute("success", "Баннер #" + id + " обновлен");
+        } catch (Exception e) {
+            log.error("Error updating banner {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/banner/" + id + "/edit";
+        }
+        return "redirect:/admin/banner/list";
+    }
+    @PostMapping("/banner/{id}/toggle")
+    public String toggleBanner(@PathVariable Integer id,
+                               @RequestParam Boolean enabled,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            bannerService.toggleBanner(id, enabled);
+            String message = enabled ? "Баннер включен" : "Баннер выключен";
+            redirectAttributes.addFlashAttribute("success", message);
+        } catch (Exception e) {
+            log.error("Error toggling banner {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+        return "redirect:/admin/banner/list";
+    }
+    @PostMapping("/banner/{id}/delete")
+    public String deleteBanner(@PathVariable Integer id,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            bannerService.deleteBanner(id);
+            redirectAttributes.addFlashAttribute("success", "Баннер удален");
+        } catch (Exception e) {
+            log.error("Error deleting banner {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+        return "redirect:/admin/banner/list";
     }
 }

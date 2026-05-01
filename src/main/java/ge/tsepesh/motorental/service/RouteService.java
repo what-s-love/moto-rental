@@ -30,8 +30,8 @@ public class RouteService {
 
     public List<RouteDto> getAllActiveRoutes() {
         log.debug("Fetching all active routes");
-        return routeRepository.findAll().stream()
-                .filter(Route::getEnabled)
+        return routeRepository.findActiveNonSpecialRoutes()
+                .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -218,6 +218,7 @@ public class RouteService {
                 .description(route.getDescription())
                 .estimatedDuration(route.getDuration())
                 .isAvailableForBeginners(difficulty.getValue() <= Difficulty.EASY.getValue())
+                .isSpecial(route.getIsSpecial())
                 .isEnabled(route.getEnabled())
                 .build();
     }

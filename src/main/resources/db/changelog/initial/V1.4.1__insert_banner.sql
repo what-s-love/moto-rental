@@ -1,0 +1,2 @@
+INSERT INTO banners (enabled, route_id, ride_date, shift_id, title, description, image_path, created_at, updated_at)
+VALUES (true, 4, '2026-05-03', 2, 'Первомайский заезд', 'МИР, ТРУД, МАЙ - На покатушки выезжай!', '/images/banners/default_banner.jpg', '2026-04-21 09:15:00', '2026-04-21 09:15:00');

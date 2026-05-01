@@ -11,10 +11,10 @@
                 <div class="col-lg-6">
                     <div class="hero-content text-white">
                         <h1 class="display-4 fw-bold mb-4" th:text="#{main.hero.title}">
-                            Эндуро приключения в горах
+                            Горные эндуро приключения
                         </h1>
                         <p class="lead mb-4" th:text="#{main.hero.subtitle}">
-                            Испытайте адреналин на профессиональных мотоциклах с опытным гидом
+                            Испытай адреналин на профессиональных мотоциклах с опытным гидом
                         </p>
                         <a th:href="@{/calendar}" class="btn btn-primary btn-lg">
                             <i class="fas fa-calendar-plus me-2"></i>
@@ -25,6 +25,71 @@
             </div>
         </div>
     </section>
+
+    <!-- Special Banner Section (Sticky, вынесен из потока) -->
+    <a th:if="${banner != null && banner.enabled}"
+       th:href="@{/ride/special(bannerId=${banner.id})}"
+       class="special-banner-floating"
+       style="text-decoration: none;">
+
+        <button type="button"
+                class="banner-close-btn"
+                aria-label="Close"
+                onclick="event.preventDefault(); event.stopPropagation(); this.closest('.special-banner-floating').style.display='none';">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Background Image -->
+        <div class="banner-background-image"
+             th:style="'background-image: url(' + @{${banner.imagePath}} + ');'">
+        </div>
+
+        <!-- Gradient Overlay -->
+        <div class="banner-gradient-overlay"></div>
+
+        <div class="banner-content">
+            <!-- Badge - Left Top -->
+            <span class="banner-badge">
+            <i class="fas fa-star"></i> СПЕЦПРЕДЛОЖЕНИЕ
+            </span>
+
+            <!-- Content - Right Side -->
+            <div class="banner-text-content">
+                <!-- Title -->
+                <h5 class="banner-title text-end text-uppercase" th:text="${banner.title}">
+                    Специальный заезд
+                </h5>
+
+                <!-- Description -->
+                <p class="banner-description text-end" th:text="${banner.description}">
+                    Уникальное предложение на специальный маршрут
+                </p>
+
+                <!-- Date and Shift Info -->
+<!--
+                <div class="banner-info">
+                    <div class="banner-info-item">
+                        <i class="fas fa-calendar"></i>
+                        <span th:text="${#temporals.format(banner.rideDate, 'dd MMMM yyyy')}">15 мая 2026</span>
+                    </div>
+                    <div class="banner-info-item">
+                        <i class="fas fa-clock"></i>
+                        <span th:text="${banner.shiftName}">Утренняя</span>
+                        <small>
+                            (<span th:text="${banner.shiftStartTime}">10:00</span>-<span th:text="${banner.shiftEndTime}">12:00</span>)
+                        </small>
+                    </div>
+                </div>
+-->
+
+                <!-- CTA Icon and Text -->
+                <div class="banner-cta-text text-end">
+                    <i class="fas fa-bolt"></i>
+                    <span>Бронируй сейчас!</span>
+                </div>
+            </div>
+        </div>
+    </a>
 
     <!-- Bikes Section -->
     <section id="bikes" class="py-5 bg-light">

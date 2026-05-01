@@ -12,13 +12,14 @@ public class RouteDto {
     private Integer id;
     private String name;
     private Integer distance;
+    private Integer estimatedDuration; // в минутах
     private Difficulty difficulty;
     private String difficultyDisplayName;
     private BigDecimal price;
     private BigDecimal weekendPrice;
-    private String mapPath;
     private String description;
-    private Integer estimatedDuration; // в минутах
+    private String mapPath;
     private Boolean isAvailableForBeginners;
+    private Boolean isSpecial;
     private Boolean isEnabled;
 }

@@ -7,9 +7,12 @@ import ge.tsepesh.motorental.dto.RideDto;
 import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.ShiftDto;
 import ge.tsepesh.motorental.exception.ResourceNotFoundException;
+import ge.tsepesh.motorental.model.Banner;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Ride;
+import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.repository.BannerRepository;
 import ge.tsepesh.motorental.repository.BookingRepository;
 import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
@@ -41,6 +44,7 @@ public class BookingController {
 
     private final RideRepository rideRepository;
     private final ShiftRepository shiftRepository;
+    private final BannerRepository bannerRepository;
     private final BikeAvailabilityService bikeAvailabilityService;
     private final BookingService bookingService;
     private final RouteService routeService;
@@ -123,6 +127,72 @@ public class BookingController {
         }
         model.addAttribute("bookingId", booking.get().getId());
         return "confirmation";
+    }
+
+    @GetMapping("/ride/special")
+    public String showSpecialRideBookingPage(
+            @RequestParam Integer bannerId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        // Получить баннер
+        Banner banner = bannerRepository.findById(bannerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Banner not found"));
+
+        // Проверить, что баннер активен
+        if (!banner.getEnabled()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Специальное предложение больше не доступно");
+            return "redirect:/";
+        }
+
+        // Проверить, что маршрут специальный
+        Route route = banner.getRoute();
+        if (!route.getIsSpecial() || !route.getEnabled()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Маршрут не доступен");
+            return "redirect:/";
+        }
+
+        // Проверить свободные места
+        long availableBikes = bikeAvailabilityService
+                .getTotalAvailableBikesForDateAndShift(
+                        banner.getRideDate(),
+                        banner.getShift().getId()
+                );
+
+        if (availableBikes <= 0) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Нет свободных мест на этот заезд");
+            return "redirect:/";
+        }
+
+        // Получить существующий заезд или null
+        Optional<Ride> existingRide = rideRepository
+                .findByDateAndShift(banner.getRideDate(), banner.getShift().getId());
+
+        // Получить доступные мотоциклы
+        List<BikeAvailabilityDto> availableBikesList =
+                bikeAvailabilityService.getAvailableBikesForDateAndShift(
+                        banner.getRideDate(),
+                        banner.getShift().getId()
+                );
+
+        // Добавить данные в модель
+        model.addAttribute("date", banner.getRideDate());
+        model.addAttribute("shiftId", banner.getShift().getId());
+        model.addAttribute("shift", mapToShiftDto(banner.getShift()));
+        model.addAttribute("route", routeService.convertToDto(route));
+        model.addAttribute("availableBikes", availableBikesList);
+        model.addAttribute("maxParticipants", (int) availableBikes);
+        model.addAttribute("isSpecialBooking", true);  // Флаг специального бронирования
+        model.addAttribute("routeLocked", true);  // Маршрут нельзя менять
+
+        if (existingRide.isPresent()) {
+            model.addAttribute("existingRide", mapToRideDto(existingRide.get()));
+        }
+
+        return "booking-special";
     }
 
     private ShiftDto mapToShiftDto(Shift shift) {

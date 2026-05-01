@@ -63,4 +63,12 @@ public class FileController {
         String safeName = Paths.get(fileName).getFileName().toString();
         return FileUtil.getOutputFile(safeName, "images/routes");
     }
+
+    @GetMapping("images/banners/{fileName:.+}")
+    public ResponseEntity<InputStreamResource> getBannerImage(
+            @PathVariable String fileName
+    ) {
+        String safeName = Paths.get(fileName).getFileName().toString();
+        return FileUtil.getOutputFile(safeName, "images/banners");
+    }
 }

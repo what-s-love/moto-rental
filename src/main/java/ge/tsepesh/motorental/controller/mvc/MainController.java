@@ -1,5 +1,6 @@
 package ge.tsepesh.motorental.controller.mvc;
 
+import ge.tsepesh.motorental.service.BannerService;
 import ge.tsepesh.motorental.service.BikeService;
 import ge.tsepesh.motorental.service.PolicyService;
 import ge.tsepesh.motorental.service.RouteService;
@@ -14,11 +15,16 @@ public class MainController {
     private final BikeService bikeService;
     private final RouteService routeService;
     private final PolicyService policyService;
-    
+    private final BannerService bannerService;
+
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("bikes", bikeService.getAllActiveBikes());
         model.addAttribute("routes", routeService.getAllActiveRoutes());
+        // Добавить активный баннер, если есть
+        bannerService.getActiveBanner().ifPresent(banner ->
+                model.addAttribute("banner", banner)
+        );
         return "index";
     }
 
