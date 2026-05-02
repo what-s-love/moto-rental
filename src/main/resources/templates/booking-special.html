@@ -524,12 +524,14 @@
             if (!participantBlock) return;
 
             const genderSelect = participantBlock.querySelector('select[name*="gender"]');
+            const experienceLevelSelect = participantBlock.querySelector('select[name*="experienceLevel"]');
             const ageInput = participantBlock.querySelector('input[name*="age"]');
             const heightInput = participantBlock.querySelector('input[name*="height"]');
 
             if (!genderSelect || !ageInput || !heightInput) return;
 
             const gender = genderSelect.value;
+            const experienceLevel = experienceLevelSelect ? experienceLevelSelect.value : '';
             const age = parseInt(ageInput.value) || 0;
             const height = parseInt(heightInput.value) || 0;
 
@@ -562,9 +564,10 @@
                     }
                 }
 
-                if (onlyMen && gender === 'FEMALE') {
+                // Check gender restriction
+                if (onlyMen && gender === 'FEMALE' && experienceLevel !== 'ADVANCED') {
                     isAvailable = false;
-                    reasons.push('Только для мужчин');
+                    reasons.push('Только для мужчин или PRO)');
                 }
 
                 if (occupiedBikeIds.includes(bikeId)) {
