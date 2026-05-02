@@ -1,7 +1,7 @@
 INSERT INTO limits (height_min, height_max, age_min, only_men) VALUES
     (165, 300, 16, true),
-    (152, 170, 12, false),
-    (140, 155, 9, false);
+    (152, 185, 12, false),
+    (140, 185, 9, false);
 
 INSERT INTO bikes (brand, model, engine_cc, transmission_type, limit_id, photo_path, enabled) VALUES
     ('Regulmoto', 'Sport-003 Z', 250, 0, 1, '/images/bikes/sport-003_z_1.jpg', true),

@@ -356,9 +356,11 @@
                                                                   th:text="'от ' + ${bike.limit.heightMin} + ' см'">
                                                                 от 165 см
                                                             </span>
+<!--
                                                             <span th:if="${bike.limit.onlyMen}" class="text-warning">
                                                                 <i class="fas fa-exclamation-circle"></i> только мужчины
                                                             </span>
+-->
                                                         </div>
                                                     </label>
                                                 </div>
@@ -747,7 +749,7 @@
                              alt="Bike photo">
                         <div class="flex-grow-1">
                             <div class="fw-bold">${bike.brand} ${bike.model}</div>
-                            <small class="text-muted">${bike.engineCc} куб.см</small>
+                            <small class="text-muted">${bike.engineCc} куб.см, ${bike.transmissionType === 'AUTOMATIC' ? 'автомат' : 'механика'}</small>
                         </div>
                     </div>
                     <div class="text-muted small mt-1">
@@ -755,7 +757,7 @@
                         ${bike.limit.heightMax && bike.limit.heightMax > 0
                 ? bike.limit.heightMin + '–' + bike.limit.heightMax + ' см'
                 : 'от ' + bike.limit.heightMin + ' см'}
-                        ${bike.limit.onlyMen ? '<span class="text-warning"><i class="fas fa-exclamation-circle"></i> только мужчины</span>' : ''}
+<!--                        ${bike.limit.onlyMen ? '<span class="text-warning"><i class="fas fa-exclamation-circle"></i> только мужчины</span>' : ''}-->
                     </div>
                 </label>
             </div>
