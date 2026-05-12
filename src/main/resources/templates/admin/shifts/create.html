@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Создать смену</h1>
+        <p class="text-muted mb-0">Добавление новой смены</p>
+    </div>
+
+    <!-- Error Messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/shifts/create}" method="post" class="vstack gap-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="name">
+                            Название смены <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="name"
+                               name="name"
+                               type="text"
+                               maxlength="50"
+                               required
+                               placeholder="Например: Утренняя смена">
+                        <small class="text-muted">Максимум 50 символов</small>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="startTime">
+                            Время начала <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="startTime"
+                               name="startTime"
+                               type="time"
+                               required
+                               value="10:00">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="endTime">
+                            Время окончания <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="endTime"
+                               name="endTime"
+                               type="time"
+                               required
+                               value="11:30">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="enabled"
+                                   name="enabled"
+                                   checked>
+                            <label class="form-check-label" for="enabled">
+                                <i class="fas fa-eye me-1"></i>Enabled (смена активна и видна пользователям)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Создать смену
+                    </button>
+                </div>
+
+                <a class="btn btn-outline-secondary" th:href="@{/admin/shifts}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к списку смен
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Info Block -->
+    <div class="alert alert-info mt-4">
+        <h6 class="alert-heading">
+            <i class="fas fa-circle-info me-2"></i>Информация
+        </h6>
+        <ul class="mb-0 small">
+            <li>Название смены отображается пользователям при выборе времени заезда</li>
+            <li>Время начала должно быть раньше времени окончания</li>
+            <li>Рекомендуется оставлять промежуток между сменами для подготовки</li>
+            <li>Смену можно отключить после создания на странице редактирования</li>
+        </ul>
+    </div>
+</div>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1"><i class="fas fa-ruler-vertical me-2 text-primary"></i>Ограничения</h1>
+            <p class="text-muted mb-0">Редактируйте ограничения для мотоциклов</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/admin/limits/create}">
+            <i class="fas fa-plus me-2"></i>Создать ограничение
+        </a>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Form -->
+    <form th:action="@{/admin/limits}" method="post">
+        <div class="row g-3">
+            <div class="col-12" th:each="limit, it : ${limits}">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>
+                                <i class="fas fa-tag me-2"></i>Лимит #<span th:text="${limit.id}">1</span>
+                            </strong>
+                            <span class="badge bg-info">
+                                <i class="fas fa-motorcycle me-1"></i>
+                                Мотоциклов: <span th:text="${limit.bikes.size()}">0</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <input type="hidden" th:name="'limits[' + ${it.index} + '].id'" th:value="${limit.id}">
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    <i class="fas fa-arrow-down me-1"></i>Минимальный рост (см)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input class="form-control"
+                                       type="number"
+                                       min="100"
+                                       max="300"
+                                       th:name="'limits[' + ${it.index} + '].heightMin'"
+                                       th:value="${limit.heightMin}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    <i class="fas fa-arrow-up me-1"></i>Максимальный рост (см)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input class="form-control"
+                                       type="number"
+                                       min="100"
+                                       max="300"
+                                       th:name="'limits[' + ${it.index} + '].heightMax'"
+                                       th:value="${limit.heightMax}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    <i class="fas fa-child me-1"></i>Минимальный возраст (лет)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input class="form-control"
+                                       type="number"
+                                       min="1"
+                                       max="99"
+                                       th:name="'limits[' + ${it.index} + '].ageMin'"
+                                       th:value="${limit.ageMin}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input type="hidden"
+                                           th:name="'_limits[' + ${it.index} + '].onlyMen'"
+                                           value="on">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:id="'limit-onlyMen-' + ${limit.id}"
+                                           th:name="'limits[' + ${it.index} + '].onlyMen'"
+                                           th:checked="${limit.onlyMen}">
+                                    <label class="form-check-label" th:for="'limit-onlyMen-' + ${limit.id}">
+                                        <i class="fas fa-mars me-1"></i>Men only
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Associated Bikes Info -->
+                        <div class="mt-3" th:if="${!limit.bikes.isEmpty()}">
+                            <small class="text-muted d-block mb-2">
+                                <i class="fas fa-motorcycle me-2"></i><strong>Мотоциклы с этим ограничением:</strong>
+                            </small>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-secondary" th:each="bike : ${limit.bikes}">
+                                    <span th:text="${bike.brand + ' ' + bike.model}">Honda CRF</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <small class="text-muted d-block mt-3">
+                            ID: <span th:text="${limit.id}">1</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(limits)}" class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5 text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p class="mb-0">Нет ограничений в базе данных</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid mt-4" th:if="${!#lists.isEmpty(limits)}">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save me-2"></i>Сохранить все изменения
+            </button>
+        </div>
+    </form>
+
+    <!-- Info Block -->
+    <div class="alert alert-info mt-4">
+        <h6 class="alert-heading">
+            <i class="fas fa-circle-info me-2"></i>Информация
+        </h6>
+        <ul class="mb-0 small">
+            <li>Ограничения применяются для фильтрации мотоциклов при бронировании</li>
+            <li>Рост указывается в сантиметрах (например: 140-180)</li>
+            <li>Возраст указывается в полных годах</li>
+            <li>Чекбокс "Только мужчины" ограничивает доступность мотоцикла для женщин</li>
+            <li>Каждое ограничение может быть привязано к нескольким мотоциклам</li>
+        </ul>
+    </div>
+</div>
+</html>

@@ -1,5 +1,6 @@
 package ge.tsepesh.motorental.service;
 
+import ge.tsepesh.motorental.dto.ShiftCreateDto;
 import ge.tsepesh.motorental.dto.ShiftDto;
 import ge.tsepesh.motorental.dto.ShiftUpdateDto;
 import ge.tsepesh.motorental.model.Shift;
@@ -53,6 +54,23 @@ public class ShiftService {
         shift.setEnabled(!shift.getEnabled());
         shiftRepository.save(shift);
         log.info("Shift {} enabled status toggled to {}", id, shift.getEnabled());
+    }
+
+    /**
+     * Создать новую смену
+     */
+    public Shift createShift(ShiftCreateDto dto) {
+        log.info("Creating new shift: {}", dto.getName());
+
+        Shift shift = new Shift();
+        shift.setName(dto.getName());
+        shift.setStartTime(dto.getStartTime());
+        shift.setEndTime(dto.getEndTime());
+        shift.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true);
+
+        Shift saved = shiftRepository.save(shift);
+        log.info("Shift created with id: {}", saved.getId());
+        return saved;
     }
 
     /**

@@ -5,7 +5,10 @@ import ge.tsepesh.motorental.dto.BannerDto;
 import ge.tsepesh.motorental.dto.BannerUpdateDto;
 import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
+import ge.tsepesh.motorental.dto.LimitUpdateDto;
+import ge.tsepesh.motorental.dto.LimitCreateDto;
 import ge.tsepesh.motorental.dto.ShiftUpdateDto;
+import ge.tsepesh.motorental.dto.ShiftCreateDto;
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.policy.PolicyAdminDto;
@@ -16,12 +19,14 @@ import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.route.RouteUpdateDto;
 import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Banner;
+import ge.tsepesh.motorental.model.Limit;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
 import ge.tsepesh.motorental.service.BannerService;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BikeService;
 import ge.tsepesh.motorental.service.BookingService;
+import ge.tsepesh.motorental.service.LimitService;
 import ge.tsepesh.motorental.service.PolicyService;
 import ge.tsepesh.motorental.service.RouteService;
 import ge.tsepesh.motorental.service.ShiftService;
@@ -52,6 +57,7 @@ public class AdminController {
 
     private final BookingService bookingService;
     private final ShiftService shiftService;
+    private final LimitService limitService;
     private final PolicyService policyService;
     private final RouteService routeService;
     private final BikeService bikeService;
@@ -93,7 +99,7 @@ public class AdminController {
     public String shifts(Model model) {
         List<Shift> shifts = shiftService.getAllShifts();
         model.addAttribute("shifts", shifts);
-        return "admin/shifts";
+        return "admin/shifts/list";
     }
 
     @PostMapping("/shifts")
@@ -107,6 +113,86 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Ошибка при обновлении смен: " + e.getMessage());
         }
         return "redirect:/admin/shifts";
+    }
+
+    @GetMapping("/shifts/create")
+    public String createShiftForm() {
+        return "admin/shifts/create";
+    }
+
+    @PostMapping("/shifts/create")
+    public String createShift(@Valid @ModelAttribute ShiftCreateDto dto,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/shifts/create";
+        }
+
+        try {
+            Shift created = shiftService.createShift(dto);
+            redirectAttributes.addFlashAttribute("success", "Смена \"" + created.getName() + "\" создана");
+        } catch (Exception e) {
+            log.error("Error creating shift", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/shifts/create";
+        }
+
+        return "redirect:/admin/shifts";
+    }
+
+    // ==================== LIMITS ====================
+
+    @GetMapping("/limits")
+    public String limits(Model model) {
+        List<Limit> limits = limitService.getAllLimits();
+        model.addAttribute("limits", limits);
+        return "admin/limits/list";
+    }
+    @PostMapping("/limits")
+    public String updateLimits(@ModelAttribute LimitUpdateDto.LimitsUpdateForm limitsForm,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            limitService.updateLimits(limitsForm.getLimits());
+            redirectAttributes.addFlashAttribute("success", "Ограничения успешно обновлены");
+        } catch (Exception e) {
+            log.error("Error updating limits", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка при обновлении ограничений: " + e.getMessage());
+        }
+        return "redirect:/admin/limits";
+    }
+
+    @GetMapping("/limits/create")
+    public String createLimitForm() {
+        return "admin/limits/create";
+    }
+
+    @PostMapping("/limits/create")
+    public String createLimit(@Valid @ModelAttribute LimitCreateDto dto,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/limits/create";
+        }
+
+        // Валидация: heightMax должен быть больше heightMin
+        if (dto.getHeightMax() <= dto.getHeightMin()) {
+            redirectAttributes.addFlashAttribute("error", "Максимальный рост должен быть больше минимального");
+            return "redirect:/admin/limits/create";
+        }
+
+        try {
+            Limit created = limitService.createLimit(dto);
+            redirectAttributes.addFlashAttribute("success",
+                    "Ограничение создано (ID: " + created.getId() + ")");
+        } catch (Exception e) {
+            log.error("Error creating limit", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/limits/create";
+        }
+
+        return "redirect:/admin/limits";
     }
 
     // ==================== BOOKINGS ====================

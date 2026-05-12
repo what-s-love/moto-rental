@@ -38,15 +38,6 @@
             <div class="card banner-card shadow-sm position-relative overflow-hidden h-100"
                  th:classappend="${banner.enabled} ? 'border-success border-2' : ''">
 
-                <!-- Active Badge -->
-                <div th:if="${banner.enabled}"
-                     class="position-absolute top-0 start-0 m-2"
-                     style="z-index: 10;">
-                    <span class="badge bg-success shadow-sm">
-                        <i class="fas fa-circle-check me-1"></i>Активен
-                    </span>
-                </div>
-
                 <!-- Status Badge -->
                 <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
                     <span class="badge"
@@ -81,13 +72,13 @@
                     <!-- Route Info -->
                     <div class="mb-2">
                         <span class="badge bg-primary me-1">
-                            <i class="fas fa-route me-1"></i>Маршрут
+                            <i class="fas fa-route"></i>
                         </span>
                         <span class="fw-bold" th:text="${banner.routeName}">Название маршрута</span>
                     </div>
 
                     <!-- Date and Shift Info -->
-                    <div class="small text-muted mb-2">
+                    <div class="small text-muted ms-2 mb-2">
                         <div class="mb-1">
                             <i class="fas fa-calendar text-primary me-1"></i>
                             <strong>Дата:</strong>
@@ -152,13 +143,14 @@
                     </div>
                 </div>
 
-                <!-- Meta Info -->
+                <!-- Meta Info (Banner ID)-->
+<!--
                 <div class="card-footer bg-white border-top-0 pt-0">
                     <small class="text-muted">
-                        <i class="fas fa-hashtag me-1"></i>ID:
-                        <span th:text="${banner.id}">1</span>
+                        ID: <span th:text="${banner.id}">1</span>
                     </small>
                 </div>
+-->
             </div>
         </div>
 

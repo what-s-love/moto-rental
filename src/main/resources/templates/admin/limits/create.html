@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Создать ограничение</h1>
+        <p class="text-muted mb-0">Добавление нового ограничения для мотоциклов</p>
+    </div>
+
+    <!-- Error Messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/limits/create}" method="post" class="vstack gap-3">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="heightMin">
+                            <i class="fas fa-arrow-down me-1"></i>Минимальный рост (см)
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="heightMin"
+                               name="heightMin"
+                               type="number"
+                               min="100"
+                               max="250"
+                               required
+                               placeholder="140">
+                        <small class="text-muted">От 100 до 250 см</small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="heightMax">
+                            <i class="fas fa-arrow-up me-1"></i>Максимальный рост (см)
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="heightMax"
+                               name="heightMax"
+                               type="number"
+                               min="100"
+                               max="250"
+                               required
+                               placeholder="180">
+                        <small class="text-muted">От 100 до 250 см</small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="ageMin">
+                            <i class="fas fa-child me-1"></i>Минимальный возраст (лет)
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               id="ageMin"
+                               name="ageMin"
+                               type="number"
+                               min="1"
+                               max="99"
+                               required
+                               placeholder="12">
+                        <small class="text-muted">От 1 до 99 лет</small>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="onlyMen"
+                                   name="onlyMen">
+                            <label class="form-check-label" for="onlyMen">
+                                <i class="fas fa-mars me-1"></i>Только мужчины
+                            </label>
+                            <small class="text-muted d-block ms-4">
+                                Отметьте, если мотоциклы с этим ограничением доступны только для мужчин
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Создать ограничение
+                    </button>
+                </div>
+
+                <a class="btn btn-outline-secondary" th:href="@{/admin/limits}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к списку ограничений
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Info Block -->
+    <div class="alert alert-info mt-4">
+        <h6 class="alert-heading">
+            <i class="fas fa-circle-info me-2"></i>Информация
+        </h6>
+        <ul class="mb-0 small">
+            <li><strong>Минимальный рост:</strong> указывается в сантиметрах (например: 140 см)</li>
+            <li><strong>Максимальный рост:</strong> должен быть больше минимального (например: 180 см)</li>
+            <li><strong>Минимальный возраст:</strong> указывается в полных годах (например: 12 лет)</li>
+            <li><strong>Только мужчины:</strong> ограничивает доступность мотоциклов с этим лимитом для женщин</li>
+            <li>После создания ограничение нужно будет привязать к мотоциклам</li>
+            <li>Ограничения автоматически фильтруют доступные мотоциклы при бронировании</li>
+        </ul>
+    </div>
+
+    <!-- Example Block -->
+    <div class="alert alert-secondary mt-3">
+        <h6 class="alert-heading">
+            <i class="fas fa-lightbulb me-2"></i>Примеры ограничений
+        </h6>
+        <div class="row small">
+            <div class="col-md-4 mb-2">
+                <strong>Питбайк детский:</strong><br>
+                Рост: 120-150 см<br>
+                Возраст: от 8 лет
+            </div>
+            <div class="col-md-4 mb-2">
+                <strong>Питбайк взрослый:</strong><br>
+                Рост: 150-190 см<br>
+                Возраст: от 12 лет
+            </div>
+            <div class="col-md-4 mb-2">
+                <strong>Эндуро:</strong><br>
+                Рост: 165-210 см<br>
+                Возраст: от 16 лет<br>
+                Только мужчины: ✓
+            </div>
+        </div>
+    </div>
+</div>
+</html>
