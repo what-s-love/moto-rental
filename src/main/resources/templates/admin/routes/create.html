@@ -11,7 +11,7 @@
         <div class="card-body p-4">
             <form th:action="@{/admin/routes}" method="post" enctype="multipart/form-data" class="vstack gap-3">
                 <div class="row g-3">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <label class="form-label" for="name">Название <span class="text-danger">*</span></label>
                         <input class="form-control" id="name" name="name" type="text" maxlength="255" required
                                placeholder="Миражи на виражах">
@@ -41,6 +41,12 @@
                         <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
                         <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
                                placeholder="1500">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="weekendPrice">Цена выходной (₽) <span class="text-danger">*</span></label>
+                        <input class="form-control" id="weekendPrice" name="weekendPrice" type="number" step="0.01" min="0" required
+                               placeholder="2500">
                     </div>
 
                     <div class="col-12">

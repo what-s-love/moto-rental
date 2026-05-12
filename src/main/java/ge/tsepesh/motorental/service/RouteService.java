@@ -68,6 +68,7 @@ public class RouteService {
         route.setDuration(dto.getDuration());
         route.setDifficulty(dto.getDifficulty());
         route.setPrice(dto.getPrice());
+        route.setWeekendPrice(dto.getWeekendPrice());
         route.setDescription(dto.getDescription());
         route.setIsSpecial(dto.getIsSpecial() != null ? dto.getIsSpecial() : false);
         route.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true);

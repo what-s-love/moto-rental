@@ -30,6 +30,7 @@
                     <th>ID</th>
                     <th>Дата</th>
                     <th>Смена</th>
+                    <th>Кол.уч.</th>
                     <th>Сумма</th>
                     <th>Статус</th>
                     <th class="text-end">Действия</th>
@@ -40,6 +41,7 @@
                     <td class="fw-semibold" th:text="${booking.id}">X</td>
                     <td th:text="${#temporals.format(booking.rideDate, 'dd.MM.yyyy')}">dd.MM.yyyy</td>
                     <td th:text="${booking.shiftName}">XXX</td>
+                    <td class="text-center" th:text="${booking.participants.size()}">XXX</td>
                     <td>
                         <span th:text="${booking.totalPrice}">0</span> ₽
                     </td>

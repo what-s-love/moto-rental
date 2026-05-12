@@ -28,25 +28,13 @@
         <div class="row g-3">
             <div class="col-12" th:each="limit, it : ${limits}">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-light">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>
-                                <i class="fas fa-tag me-2"></i>Лимит #<span th:text="${limit.id}">1</span>
-                            </strong>
-                            <span class="badge bg-info">
-                                <i class="fas fa-motorcycle me-1"></i>
-                                Мотоциклов: <span th:text="${limit.bikes.size()}">0</span>
-                            </span>
-                        </div>
-                    </div>
-
                     <div class="card-body">
                         <input type="hidden" th:name="'limits[' + ${it.index} + '].id'" th:value="${limit.id}">
 
                         <div class="row g-3 align-items-end">
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-arrow-down me-1"></i>Минимальный рост (см)
+                                    <i class="fas fa-arrow-down me-1"></i>Мин. рост (см)
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input class="form-control"
@@ -60,7 +48,7 @@
 
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-arrow-up me-1"></i>Максимальный рост (см)
+                                    <i class="fas fa-arrow-up me-1"></i>Макс. рост (см)
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input class="form-control"
@@ -74,7 +62,7 @@
 
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-child me-1"></i>Минимальный возраст (лет)
+                                    <i class="fas fa-child me-1"></i>Мин. возраст (лет)
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input class="form-control"

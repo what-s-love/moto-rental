@@ -64,6 +64,10 @@
                         <i class="fas" th:classappend="${route.isEnabled} ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
                         <span th:text="${route.isEnabled ? 'Enabled' : 'Disabled'}">Enabled</span>
                     </span>
+                    <span class="badge bg-primary" th:if="${route.isSpecial}">
+                        <i class="fas fa-star"></i>
+                        <span>Special</span>
+                    </span>
                 </div>
                 <div class="d-grid m-2">
                     <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/routes/{id}/edit(id=${route.id})}">

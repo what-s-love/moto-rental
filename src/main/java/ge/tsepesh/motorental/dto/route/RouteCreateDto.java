@@ -30,6 +30,10 @@ public class RouteCreateDto {
     @Min(value = 0)
     private BigDecimal price;
 
+    @NotNull(message = "Цена в выходной обязательна")
+    @Min(value = 0)
+    private BigDecimal weekendPrice;
+
     @Size(max = 1000)
     private String description;
 
