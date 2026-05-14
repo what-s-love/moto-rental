@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Добавить мотоцикл</h1>
+        <p class="text-muted mb-0">Новый мотоцикл в парке</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/bikes}" method="post" enctype="multipart/form-data" class="vstack gap-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="brand">Марка <span class="text-danger">*</span></label>
+                        <input class="form-control" id="brand" name="brand" type="text" maxlength="100" required
+                               placeholder="Regulmoto">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="model">Модель <span class="text-danger">*</span></label>
+                        <input class="form-control" id="model" name="model" type="text" maxlength="100" required
+                               placeholder="Sport-003 Z">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="engineCc">Объём (см³) <span class="text-danger">*</span></label>
+                        <input class="form-control" id="engineCc" name="engineCc" type="number" min="1" max="5000" required
+                               placeholder="250">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="transmissionType">Трансмиссия <span class="text-danger">*</span></label>
+                        <select class="form-select" id="transmissionType" name="transmissionType" required>
+                            <option value="" selected disabled>Выберите</option>
+                            <option th:each="t : ${transmissionTypes}"
+                                    th:value="${t.value}"
+                                    th:text="#{${t.displayName}}">механика</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="limitId">Ограничение (рост / возраст) <span class="text-danger">*</span></label>
+                        <select class="form-select" id="limitId" name="limitId" required>
+                            <option value="" selected disabled>Выберите</option>
+                            <option th:each="lim : ${limits}" th:value="${lim.id}"
+                                    th:text="|№${lim.id}: ${lim.heightMin}–${lim.heightMax} см, от ${lim.ageMin} лет${lim.onlyMen ? ' (только муж.)' : ''}|">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="bikePhoto">Фото</label>
+                        <input class="form-control" id="bikePhoto" name="bikePhoto" type="file" accept="image/*">
+                        <small class="text-muted">Необязательно — на карточке будет значок по умолчанию</small>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="enabled" name="enabled" checked>
+                            <label class="form-check-label" for="enabled">Активен (доступен для брони)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Создать
+                    </button>
+                </div>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/bikes}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

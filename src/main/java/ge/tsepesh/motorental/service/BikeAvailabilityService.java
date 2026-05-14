@@ -51,6 +51,7 @@ public class BikeAvailabilityService {
         List<Bike> allBikes = bikeRepository.findAll();
         List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
         return allBikes.stream()
+                .filter(Bike::getEnabled)
                 .filter(bike -> !occupiedBikeIds.contains(bike.getId()))
                 .map(this::mapToBikeAvailabilityDto)
                 .collect(Collectors.toList());
@@ -76,9 +77,11 @@ public class BikeAvailabilityService {
 
     @Transactional(readOnly = true)
     public long getTotalAvailableBikesForDateAndShift(LocalDate date, Integer shiftId) {
-        long totalBikes = bikeRepository.count();
-        long occupiedBikes = participantRepository.countByDateAndShift(date, shiftId);
-        return totalBikes - occupiedBikes;
+        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
+        return bikeRepository.findAll().stream()
+                .filter(Bike::getEnabled)
+                .filter(bike -> !occupiedBikeIds.contains(bike.getId()))
+                .count();
     }
 
     private BikeAvailabilityDto mapToBikeAvailabilityDto(Bike bike) {

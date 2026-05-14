@@ -27,4 +27,13 @@ public interface BikeRepository extends JpaRepository<Bike, Integer> {
 
     @Query("SELECT b FROM Bike b WHERE b.id NOT IN (SELECT p.bike.id FROM Participant p WHERE p.ride.id = :rideId)")
     List<Bike> findAvailableBikesForRide(@Param("rideId") Integer rideId);
+
+    @Query("SELECT b FROM Bike b JOIN FETCH b.limits ORDER BY b.id ASC")
+    List<Bike> findAllWithLimits();
+
+    @Query("SELECT b FROM Bike b JOIN FETCH b.limits WHERE b.id = :id")
+    Optional<Bike> findByIdWithLimits(@Param("id") Integer id);
+
+    @Query("SELECT COUNT(p) FROM Participant p WHERE p.bike.id = :bikeId")
+    long countParticipantsByBikeId(@Param("bikeId") Integer bikeId);
 }

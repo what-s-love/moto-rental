@@ -4,6 +4,8 @@ import ge.tsepesh.motorental.dto.BannerCreateDto;
 import ge.tsepesh.motorental.dto.BannerDto;
 import ge.tsepesh.motorental.dto.BannerUpdateDto;
 import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
+import ge.tsepesh.motorental.dto.bike.BikeCreateDto;
+import ge.tsepesh.motorental.dto.bike.BikeUpdateDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.LimitUpdateDto;
 import ge.tsepesh.motorental.dto.LimitCreateDto;
@@ -18,7 +20,9 @@ import ge.tsepesh.motorental.dto.route.RouteCreateDto;
 import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.route.RouteUpdateDto;
 import ge.tsepesh.motorental.enums.BookingStatus;
+import ge.tsepesh.motorental.enums.TransmissionType;
 import ge.tsepesh.motorental.model.Banner;
+import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.model.Limit;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
@@ -391,6 +395,84 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
         return "redirect:/admin/routes";
+    }
+
+    // ==================== BIKES ====================
+
+    @GetMapping("/bikes")
+    public String bikesList(Model model) {
+        model.addAttribute("bikes", bikeService.getAllBikesForAdmin());
+        return "admin/bikes/list";
+    }
+
+    @GetMapping("/bikes/create")
+    public String createBikeForm(Model model) {
+        model.addAttribute("limits", limitService.getAllLimits());
+        model.addAttribute("transmissionTypes", TransmissionType.values());
+        return "admin/bikes/create";
+    }
+
+    @PostMapping("/bikes")
+    public String createBike(@Valid @ModelAttribute BikeCreateDto dto,
+                             BindingResult bindingResult,
+                             @RequestParam(value = "bikePhoto", required = false) MultipartFile bikePhoto,
+                             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/bikes/create";
+        }
+        try {
+            bikeService.createBike(dto, bikePhoto);
+            redirectAttributes.addFlashAttribute("success",
+                    "Мотоцикл \"" + dto.getBrand() + " " + dto.getModel() + "\" создан");
+        } catch (Exception e) {
+            log.error("Error creating bike", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/bikes/create";
+        }
+        return "redirect:/admin/bikes";
+    }
+
+    @GetMapping("/bikes/{id}/edit")
+    public String editBikeForm(@PathVariable Integer id, Model model) {
+        Bike bike = bikeService.getBikeEntityById(id);
+        model.addAttribute("bike", bikeService.convertToUpdateDto(bike));
+        model.addAttribute("limits", limitService.getAllLimits());
+        model.addAttribute("transmissionTypes", TransmissionType.values());
+        return "admin/bikes/edit";
+    }
+
+    @PostMapping("/bikes/{id}")
+    public String updateBike(@PathVariable Integer id,
+                             @Valid @ModelAttribute BikeUpdateDto dto,
+                             BindingResult bindingResult,
+                             @RequestParam(value = "bikePhoto", required = false) MultipartFile bikePhoto,
+                             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
+            return "redirect:/admin/bikes/" + id + "/edit";
+        }
+        try {
+            bikeService.updateBike(id, dto, bikePhoto);
+            redirectAttributes.addFlashAttribute("success", "Мотоцикл обновлён");
+        } catch (Exception e) {
+            log.error("Error updating bike {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+            return "redirect:/admin/bikes/" + id + "/edit";
+        }
+        return "redirect:/admin/bikes";
+    }
+
+    @PostMapping("/bikes/{id}/delete")
+    public String deleteBike(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            bikeService.deleteBike(id);
+            redirectAttributes.addFlashAttribute("success", "Мотоцикл удалён");
+        } catch (Exception e) {
+            log.error("Error deleting bike {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+        return "redirect:/admin/bikes";
     }
 
     // ==================== BANNERS ====================

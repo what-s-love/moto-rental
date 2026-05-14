@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+    <div class="mb-4">
+        <h1 class="h3 mb-1"><i class="fas fa-pen-to-square me-2 text-primary"></i>Редактировать мотоцикл</h1>
+        <p class="text-muted mb-0">ID: <span th:text="${bike.id}">1</span></p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/bikes/{id}(id=${bike.id})}" method="post" enctype="multipart/form-data" class="vstack gap-3">
+                <input type="hidden" name="id" th:value="${bike.id}">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="brand">Марка <span class="text-danger">*</span></label>
+                        <input class="form-control" id="brand" name="brand" type="text" maxlength="100" required
+                               th:value="${bike.brand}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="model">Модель <span class="text-danger">*</span></label>
+                        <input class="form-control" id="model" name="model" type="text" maxlength="100" required
+                               th:value="${bike.model}">
+                    </div>
+
+                    <div class="col-lg-5">
+                        <label class="form-label">Текущее фото</label>
+                        <div class="mb-2 border rounded p-2 text-center bg-light" style="min-height: 160px;">
+                            <img th:if="${bike.photoPath != null}" th:src="@{${bike.photoPath}}" alt="Bike" class="img-fluid rounded" style="max-height: 220px;">
+                            <div th:unless="${bike.photoPath != null}" class="text-muted py-5">
+                                <i class="fas fa-motorcycle fa-3x"></i>
+                                <p class="mb-0 small mt-2">Фото не загружено</p>
+                            </div>
+                        </div>
+                        <label class="form-label" for="bikePhoto">Загрузить новое фото</label>
+                        <input class="form-control" id="bikePhoto" name="bikePhoto" type="file" accept="image/*">
+                        <small class="text-muted">Оставьте пустым, чтобы сохранить текущее изображение</small>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="engineCc">Объём (см³) <span class="text-danger">*</span></label>
+                                <input class="form-control" id="engineCc" name="engineCc" type="number" min="1" max="5000" required
+                                       th:value="${bike.engineCc}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="transmissionType">Трансмиссия <span class="text-danger">*</span></label>
+                                <select class="form-select" id="transmissionType" name="transmissionType" required>
+                                    <option th:each="t : ${transmissionTypes}"
+                                            th:value="${t.value}"
+                                            th:text="#{${t.displayName}}"
+                                            th:selected="${t.value == bike.transmissionType}">
+                                        механика
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="limitId">Ограничение <span class="text-danger">*</span></label>
+                                <select class="form-select" id="limitId" name="limitId" required>
+                                    <option th:each="lim : ${limits}" th:value="${lim.id}"
+                                            th:selected="${lim.id == bike.limitId}"
+                                            th:text="|№${lim.id}: ${lim.heightMin}–${lim.heightMax} см, от ${lim.ageMin} лет${lim.onlyMen ? ' (только муж.)' : ''}|">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enabled" name="enabled"
+                                           th:checked="${bike.enabled}">
+                                    <label class="form-check-label" for="enabled">Активен</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Сохранить
+                    </button>
+                </div>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-secondary flex-fill" th:href="@{/admin/bikes}">
+                        <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                        <i class="fas fa-trash me-2"></i>Удалить
+                    </button>
+                </div>
+            </form>
+
+            <form th:action="@{/admin/bikes/{id}/delete(id=${bike.id})}" method="post" id="deleteForm" style="display: none;">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            if (confirm('Удалить этот мотоцикл? Если есть участники в заездах, удаление будет запрещено.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+</div>
+</html>
