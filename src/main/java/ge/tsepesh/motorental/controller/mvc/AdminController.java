@@ -3,7 +3,7 @@ package ge.tsepesh.motorental.controller.mvc;
 import ge.tsepesh.motorental.dto.BannerCreateDto;
 import ge.tsepesh.motorental.dto.BannerDto;
 import ge.tsepesh.motorental.dto.BannerUpdateDto;
-import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
+import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.LimitUpdateDto;
 import ge.tsepesh.motorental.dto.LimitCreateDto;

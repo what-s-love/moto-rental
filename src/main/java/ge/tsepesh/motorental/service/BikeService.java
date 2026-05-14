@@ -1,6 +1,6 @@
 package ge.tsepesh.motorental.service;
 
-import ge.tsepesh.motorental.dto.BikeDto;
+import ge.tsepesh.motorental.dto.bike.BikeDto;
 import ge.tsepesh.motorental.dto.LimitDto;
 import ge.tsepesh.motorental.enums.TransmissionType;
 import ge.tsepesh.motorental.model.Bike;

@@ -1,6 +1,6 @@
 package ge.tsepesh.motorental.controller.mvc;
 
-import ge.tsepesh.motorental.dto.BikeAvailabilityDto;
+import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
 import ge.tsepesh.motorental.dto.RideDto;
