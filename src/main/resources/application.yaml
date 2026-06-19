@@ -62,7 +62,7 @@ yookassa:
   return-url: ${YOOKASSA_RETURN_URL}
   receipt:
     # Описание позиции в фискальном чеке (до 128 символов)
-    item-description: ${YOOKASSA_RECEIPT_ITEM_DESCRIPTION:Предоплата за бронирование}
+    item-description: "Оплата бронирования Moto Trip №%s"
     # Код ставки НДС: 1 — без НДС, 2 — 0%, 3 — 10%, 4 — 20%, 5 — 10/110, 6 — 20/120
     vat-code: ${YOOKASSA_RECEIPT_VAT_CODE:1}
     # Количество единиц товара/услуги (строка с 2–4 знаками после запятой)
