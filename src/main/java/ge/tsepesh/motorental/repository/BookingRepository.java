@@ -2,6 +2,8 @@ package ge.tsepesh.motorental.repository;
 
 import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +34,15 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "WHERE YEAR(r.date) = :year AND MONTH(r.date) = :month " +
             "ORDER BY r.date, r.shift.startTime")
     List<Booking> findBookingsByYearAndMonth(@Param("year") int year, @Param("month") int month);
+
+    /**
+     * Все бронирования в указанном статусе, у которых уже привязан платёж
+     * (используется polling-сервисом для опроса незавершённых платежей).
+     */
+    @Query("SELECT b FROM Booking b JOIN FETCH b.payment p " +
+            "WHERE b.bookingStatus = :status AND p.transactionRef IS NOT NULL")
+    List<Booking> findByStatusWithPayment(@Param("status") BookingStatus status);
+
+    @Query("SELECT b FROM Booking b ORDER BY b.createdAt DESC")
+    Page<Booking> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

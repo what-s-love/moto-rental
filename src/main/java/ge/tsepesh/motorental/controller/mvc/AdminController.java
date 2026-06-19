@@ -37,6 +37,7 @@ import ge.tsepesh.motorental.service.ShiftService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -202,15 +203,22 @@ public class AdminController {
     // ==================== BOOKINGS ====================
 
     @GetMapping("/bookings")
-    public String bookingsList(Model model) {
-        List<BookingAdminDto> bookings = bookingService.getAllBookings();
-        model.addAttribute("bookings", bookings);
+    public String bookingsList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Page<BookingAdminDto> bookingPage = bookingService.getAllBookings(page, size);
+        model.addAttribute("bookingPage", bookingPage);
+        model.addAttribute("bookings", bookingPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bookingPage.getTotalPages());
         return "admin/booking/list";
     }
 
     @GetMapping("/bookings/create")
     public String createBookingForm(Model model) {
-        // Даты: с завтрашнего дня + 30 дней
+        //ToDo Сделано: Заменить select даты заезда на календарик как на странцие создания баннера
+        //ToDo Сделать?: Добавить проброс ошибки на страницу, если выбрана дата из прошлого
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<LocalDate> dates = tomorrow.datesUntil(tomorrow.plusDays(30))
                 .collect(Collectors.toList());

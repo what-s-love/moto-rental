@@ -1,11 +1,14 @@
 package ge.tsepesh.motorental.controller.mvc;
 
+import ge.tsepesh.motorental.client.YooKassaApiClient;
 import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
 import ge.tsepesh.motorental.dto.RideDto;
 import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.ShiftDto;
+import ge.tsepesh.motorental.dto.yookassa.YooKassaNotification;
+import ge.tsepesh.motorental.dto.yookassa.YooKassaPaymentResponse;
 import ge.tsepesh.motorental.exception.ResourceNotFoundException;
 import ge.tsepesh.motorental.model.Banner;
 import ge.tsepesh.motorental.model.Booking;
@@ -18,6 +21,7 @@ import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
+import ge.tsepesh.motorental.service.PaymentConfirmationService;
 import ge.tsepesh.motorental.service.RouteService;
 import ge.tsepesh.motorental.util.DateUtil;
 import jakarta.validation.Valid;
@@ -48,6 +52,8 @@ public class BookingController {
     private final BikeAvailabilityService bikeAvailabilityService;
     private final BookingService bookingService;
     private final RouteService routeService;
+    private final YooKassaApiClient yooKassaApiClient;
+    private final PaymentConfirmationService paymentConfirmationService;
 
     @GetMapping("/ride")
     public String showRideBookingPage(
@@ -193,6 +199,51 @@ public class BookingController {
         }
 
         return "booking-special";
+    }
+
+    /**
+     * Принимает входящие уведомления (webhook) от YooKassa об изменении статуса платежа.
+     *
+     * <p>URL настраивается в Личном кабинете YooKassa:
+     * Интеграция → HTTP-уведомления → URL для уведомлений.</p>
+     *
+     * <p>Алгоритм обработки согласно рекомендациям YooKassa:
+     * <ol>
+     *   <li>Принять уведомление.</li>
+     *   <li>Верифицировать платёж запросом GET /v3/payments/{id} (защита от поддельных уведомлений).</li>
+     *   <li>Передать актуальный объект в {@link PaymentConfirmationService} для обновления брони.</li>
+     *   <li>Вернуть HTTP 200 (без тела) — YooKassa игнорирует тело ответа.</li>
+     * </ol>
+     *
+     * <p>При любом статусе, отличном от 200, YooKassa будет повторять доставку до 24 часов.</p>
+     */
+    @PostMapping(value = "/booking/payment/return",
+            consumes = "application/json",
+            produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Void> handleYooKassaWebhook(@RequestBody YooKassaNotification notification) {
+        log.info("Received YooKassa notification: type={}, event={}, paymentId={}",
+                notification.type(),
+                notification.event(),
+                notification.object() != null ? notification.object().id() : "null");
+
+        if (!"notification".equals(notification.type())) {
+            log.warn("Unexpected notification type: {}, skipping", notification.type());
+            return ResponseEntity.ok().build();
+        }
+
+        String event = notification.event();
+        if (event == null || (!event.equals("payment.succeeded") && !event.equals("payment.canceled"))) {
+            log.debug("Ignoring event '{}' — no action needed", event);
+            return ResponseEntity.ok().build();
+        }
+
+        String paymentId = notification.object().id();
+        // Верификация: берём актуальный статус из API, а не доверяем телу уведомления
+        YooKassaPaymentResponse verified = yooKassaApiClient.getPayment(paymentId);
+        paymentConfirmationService.processVerifiedPayment(verified);
+
+        return ResponseEntity.ok().build();
     }
 
     private ShiftDto mapToShiftDto(Shift shift) {

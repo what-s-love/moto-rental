@@ -83,14 +83,19 @@
                 <!-- Основные поля -->
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Дата заезда</label>
-                        <select class="form-select" name="date" required>
-                            <option value="" selected disabled>Выберите дату</option>
-                            <option th:each="d : ${dates}"
-                                    th:value="${d}"
-                                    th:text="${#temporals.format(d, 'dd.MM.yyyy')}">
-                            </option>
-                        </select>
+                        <label for="date" class="form-label">Дата заезда</label>
+<!--                        <select class="form-select" name="date" required>-->
+<!--                            <option value="" selected disabled>Выберите дату</option>-->
+<!--                            <option th:each="d : ${dates}"-->
+<!--                                    th:value="${d}"-->
+<!--                                    th:text="${#temporals.format(d, 'dd.MM.yyyy')}">-->
+<!--                            </option>-->
+<!--                        </select>-->
+                        <input type="date"
+                               class="form-control"
+                               id="date"
+                               name="date"
+                               required>
                     </div>
 
                     <div class="col-md-4">
@@ -221,14 +226,18 @@
                             <label class="form-label">Возраст</label>
                             <input class="form-control" type="number"
                                    name="participants[${i}].age"
-                                   min="12" max="99" required>
+                                   min="12" max="99"
+                                   placeholder="18"
+                                   required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Рост (см)</label>
                             <input class="form-control" type="number"
                                    name="participants[${i}].height"
-                                   min="130" max="220" required>
+                                   min="130" max="220"
+                                   placeholder="180"
+                                   required>
                         </div>
 
                         <div class="col-md-3">

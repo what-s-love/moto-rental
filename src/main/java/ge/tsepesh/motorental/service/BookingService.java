@@ -1,43 +1,34 @@
 package ge.tsepesh.motorental.service;
 
-import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
-import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
-import ge.tsepesh.motorental.dto.booking.BookingCreateDto;
-import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
-import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
-import ge.tsepesh.motorental.dto.ClientDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.ParticipantAdminDto;
 import ge.tsepesh.motorental.dto.ParticipantDto;
+import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
+import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
+import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
+import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
 import ge.tsepesh.motorental.enums.BookingStatus;
-import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Client;
 import ge.tsepesh.motorental.model.Participant;
 import ge.tsepesh.motorental.model.Policy;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
-import ge.tsepesh.motorental.model.Shift;
-import ge.tsepesh.motorental.repository.BikeRepository;
 import ge.tsepesh.motorental.repository.BookingRepository;
-import ge.tsepesh.motorental.repository.ClientRepository;
-import ge.tsepesh.motorental.repository.ParticipantRepository;
-import ge.tsepesh.motorental.repository.RideRepository;
-import ge.tsepesh.motorental.repository.RouteRepository;
 import ge.tsepesh.motorental.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,28 +37,25 @@ public class BookingService {
     //ToDo Проверить код
     //ToDo Зачем передаётся sessionId и как это связано с Redis
     //ToDo Дописать необходимые DTO
-    //ToDo Перейти на использование сервисов
 
-    private final ClientRepository clientRepository;
-    private final RideRepository rideRepository;
-    private final RouteRepository routeRepository;
-    private final ParticipantRepository participantRepository;
+    private final ClientService clientService;
+    private final RideService rideService;
+    private final ParticipantService participantService;
     private final BookingRepository bookingRepository;
-    private final BikeRepository bikeRepository;
-    private final BikeReservationService bikeReservationService;
     private final EmailService emailService;
     private final PolicyService policyService;
     private final ConsentService consentService;
+    private final YooKassaPaymentService yooKassaPaymentService;
 
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
         log.info("Creating booking for session {} with {} participants", sessionId, request.getParticipants().size());
         
         // 1. Найти или создать клиента
-        Client client = findOrCreateClient(request.getClient());
+        Client client = clientService.findOrCreate(request.getClient());
         
         // 2. Найти или создать заезд
-        Ride ride = findOrCreateRide(request.getDate(), request.getShiftId(), request.getRouteId());
+        Ride ride = rideService.findOrCreate(request.getDate(), request.getShiftId(), request.getRouteId());
         
         // 3. Валидация доступности мотоциклов с пессимистической блокировкой
         validateAndLockBikes(request.getParticipants(), ride);
@@ -92,16 +80,16 @@ public class BookingService {
             
             log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
 
-            // 9. Создание ссылки на оплату
-            //ToDo Добавить генерацию ссылки на оплату
+            // 9. Создание ссылки на оплату в YooKassa (Умный платёж, Redirect)
+            String paymentUrl = yooKassaPaymentService.createPrepaymentLink(booking);
 
             // 10. Отправка пользователю письма с подтверждением и ссылкой на оплату
-            emailService.sendPaymentLink(booking, "test_payment_link");
+            emailService.sendPaymentLink(booking, paymentUrl);
 
             // 11. Отправка уведомления админу в Телеграм-бот
             //ToDo Добавить связку с ТГ-ботом
 
-            return mapToBookingResponse(booking, participants);
+            return mapToBookingResponse(booking, participants, paymentUrl);
             
         } catch (Exception e) {
             log.error("Error creating booking for session {}", sessionId, e);
@@ -112,11 +100,10 @@ public class BookingService {
     //ToDo Дописать методы для админки
 
     // Методы для админки
-    public List<BookingAdminDto> getAllBookings() {
-        List<Booking> bookings = bookingRepository.findAll();
-        return bookings.stream()
-                .map(this::mapToBookingAdminDto)
-                .toList();
+    public Page<BookingAdminDto> getAllBookings(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return bookingRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(this::mapToBookingAdminDto);
     }
 
     public List<BookingAdminDto> getBookingsByMonth(YearMonth yearMonth) {
@@ -143,12 +130,16 @@ public class BookingService {
                 dto.getDate(), dto.getShiftId(), dto.getRouteId());
 
         // 1. Найти или создать клиента
-        Client client = findOrCreateClient(dto.getClient());
+        Client client = clientService.findOrCreate(dto.getClient());
         // 2. Найти или создать заезд
-        Ride ride = findOrCreateRide(dto.getDate(), dto.getShiftId(), dto.getRouteId());
+        Ride ride = rideService.findOrCreate(dto.getDate(), dto.getShiftId(), dto.getRouteId());
         // 3. Валидация доступности мотоциклов
-        List<Integer> requestedBikeIds = dto.getParticipants().stream().map(ParticipantDto::getBikeId).toList();
-        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(
+        List<Integer> requestedBikeIds = dto.getParticipants()
+                .stream()
+                .map(ParticipantDto::getBikeId)
+                .toList();
+
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(
                 ride.getDate(), ride.getShift().getId()
         );
 
@@ -157,6 +148,7 @@ public class BookingService {
                 throw new IllegalStateException("Bike " + bikeId + " is already occupied");
             }
         }
+
         // 4. Создать участников
         List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
         // 5. Рассчитать стоимость
@@ -194,6 +186,7 @@ public class BookingService {
         return mapToBookingAdminDto(booking);
     }
 
+    //ToDo Исправить страницу Dashboard. Статистика не отображается. Убрать белые окна.
     public DashboardStatsDto getDashboardStats() {
         List<Booking> allBookings = bookingRepository.findAll();
 
@@ -232,54 +225,6 @@ public class BookingService {
     }
 
     // Вспомогательные методы
-    private Client findOrCreateClient(ClientDto clientDto) {
-        Optional<Client> existingClient = clientRepository.findByEmailOrPhone(
-            clientDto.getEmail(), clientDto.getPhone()
-        );
-        
-        if (existingClient.isPresent()) {
-            log.info("Found existing client: {}", clientDto.getEmail());
-            return existingClient.get();
-        }
-        
-        Client newClient = new Client();
-        newClient.setName(clientDto.getName());
-        newClient.setEmail(clientDto.getEmail());
-        newClient.setPhone(clientDto.getPhone());
-        newClient.setTelegramId(clientDto.getTelegramId());
-        newClient.setCreatedAt(LocalDateTime.now());
-        
-        Client savedClient = clientRepository.save(newClient);
-        log.info("Created new client: {}", savedClient.getEmail());
-        
-        return savedClient;
-    }
-
-    private Ride findOrCreateRide(LocalDate date, Integer shiftId, Integer routeId) {
-        Optional<Ride> existingRide = rideRepository.findByDateAndShift(date, shiftId);
-        
-        if (existingRide.isPresent()) {
-            log.info("Found existing ride for date {} and shift {}", date, shiftId);
-            return existingRide.get();
-        }
-        
-        // Создать новый заезд
-        Route route = routeRepository.findById(routeId)
-            .orElseThrow(() -> new IllegalArgumentException("Route not found: " + routeId));
-        
-        Shift shift = new Shift();
-        shift.setId(shiftId);
-        
-        Ride newRide = new Ride();
-        newRide.setDate(date);
-        newRide.setShift(shift);
-        newRide.setRoute(route);
-        
-        Ride savedRide = rideRepository.save(newRide);
-        log.info("Created new ride {} for date {} and shift {}", savedRide.getId(), date, shiftId);
-        
-        return savedRide;
-    }
 
     private void validateAndLockBikes(List<ParticipantDto> participantDtos, Ride ride) {
         List<Integer> requestedBikeIds = participantDtos.stream()
@@ -287,7 +232,7 @@ public class BookingService {
                 .toList();
 
         // Получаем уже занятые байки на эту дату/смену
-        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(
                 ride.getDate(), ride.getShift().getId()
         );
 
@@ -301,24 +246,8 @@ public class BookingService {
     private List<Participant> createParticipants(List<ParticipantDto> participantDtos,
                                                Ride ride, Client client) {
         return participantDtos.stream()
-            .map(dto -> createParticipant(dto, ride, client))
+            .map(dto -> participantService.create(dto, ride, client))
             .toList();
-    }
-
-    private Participant createParticipant(ParticipantDto dto, Ride ride, Client client) {
-        Bike bike = bikeRepository.findById(dto.getBikeId())
-            .orElseThrow(() -> new IllegalArgumentException("Bike not found: " + dto.getBikeId()));
-        
-        Participant participant = new Participant();
-        participant.setGender(dto.getGender());
-        participant.setAge(dto.getAge());
-        participant.setHeight(dto.getHeight());
-        participant.setExperienceLevel(dto.getExperienceLevel());
-        participant.setRide(ride);
-        participant.setBike(bike);
-        participant.setClient(client);
-        
-        return participantRepository.save(participant);
     }
 
     private BigDecimal calculateTotalPrice(Route route, int participantCount, LocalDate rideDate) {
@@ -333,25 +262,28 @@ public class BookingService {
         booking.setClient(client);
         booking.setRide(ride);
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(24)); // 24 часа на оплату //ToDo Проставить нужное время
+        booking.setExpiresAt(LocalDateTime.now().plusHours(24)); // 24 часа на оплату //ToDo Проставить нужное время, вынести занчение в таблицу настроек
         booking.setTotalPrice(totalPrice);
         booking.setBookingStatus(BookingStatus.PENDING_PAYMENT);
         
         return bookingRepository.save(booking);
     }
 
-    private BookingResponseDto mapToBookingResponse(Booking booking, List<Participant> participants) {
+    private BookingResponseDto mapToBookingResponse(Booking booking, List<Participant> participants,
+                                                    String paymentUrl) {
         return BookingResponseDto.builder()
             .bookingId(booking.getId())
             .totalPrice(booking.getTotalPrice())
+            .currency("RUB")
             .expiresAt(booking.getExpiresAt())
             .status(booking.getBookingStatus())
             .participantCount(participants.size())
+            .paymentUrl(paymentUrl)
             .build();
     }
 
     private BookingAdminDto mapToBookingAdminDto(Booking booking) {
-        List<ParticipantAdminDto> participantDtos = participantRepository
+        List<ParticipantAdminDto> participantDtos = participantService
                 .findByRideIdOrderByClientName(booking.getRide().getId())
                 .stream()
                 .map(this::mapToParticipantAdminDto)
