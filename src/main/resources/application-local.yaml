@@ -1,12 +1,16 @@
 server:
-  port: ${PORT:8080}
+  port: ${SERVER_PORT:8080}
 
 spring:
+  application:
+    name: moto-rental
+  messages:
+    encoding: UTF-8
   datasource:
-    url: jdbc:h2:mem:moto_rental_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:5050/moto_rental_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
@@ -14,17 +18,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-    database-platform: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:db/changelog/master.yaml
     enabled: true
     default-schema: public
-  # H2 Console (опционально, для отладки)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -39,6 +46,13 @@ spring:
           starttls:
             enable: ${MAIL_STARTTLS_ENABLE:true}
           from: ${MAIL_USERNAME:email@example.com}
+          localhost: ${MAIL_LOCALHOST:localhost}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 
 yookassa:
   shop-id: ${YOOKASSA_SHOP_ID}
@@ -56,9 +70,8 @@ yookassa:
     # Количество единиц товара/услуги (строка с 2–4 знаками после запятой)
     quantity: ${YOOKASSA_RECEIPT_QUANTITY:1.00}
 
-
 logging:
   level:
     liquibase: INFO
-    org.hibernate.SQL: WARN
-    ge.tsepesh.motorental: INFO
+    org.hibernate.SQL: DEBUG
+    ge.tsepesh.motorental: DEBUG

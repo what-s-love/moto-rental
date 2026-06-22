@@ -32,4 +32,7 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75"
 EXPOSE 8080
 
 # Запуск с профилем H2
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-h2} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
+#ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-h2} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
+
+# Запуск без H2
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
