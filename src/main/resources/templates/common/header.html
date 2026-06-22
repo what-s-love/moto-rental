@@ -35,13 +35,13 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" th:href="@{''(lang=ru)}">
-                                <i class="fas fa-flag me-2"></i>Русский
+                            <a class="dropdown-item" th:href="${langRuUrl}">
+                                <i class="fas fa-flag me-2"></i><span th:text="#{language.russian}">Русский</span>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" th:href="@{''(lang=en)}">
-                                <i class="fas fa-flag me-2"></i>English
+                            <a class="dropdown-item" th:href="${langEnUrl}">
+                                <i class="fas fa-flag me-2"></i><span th:text="#{language.english}">English</span>
                             </a>
                         </li>
                     </ul>

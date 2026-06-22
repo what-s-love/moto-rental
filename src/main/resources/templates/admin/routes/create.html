@@ -3,8 +3,8 @@
       layout:decorate="~{admin/base}">
 <div layout:fragment="content">
     <div class="mb-4">
-        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i>Создать маршрут</h1>
-        <p class="text-muted mb-0">Добавление нового маршрута</p>
+        <h1 class="h3 mb-1"><i class="fas fa-plus-circle me-2 text-primary"></i><span th:text="#{admin.routes.create}">Создать маршрут</span></h1>
+        <p class="text-muted mb-0" th:text="#{admin.routes.create.subtitle}">Добавление нового маршрута</p>
     </div>
 
     <div class="card shadow-sm">
@@ -12,63 +12,62 @@
             <form th:action="@{/admin/routes}" method="post" enctype="multipart/form-data" class="vstack gap-3">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label" for="name">Название <span class="text-danger">*</span></label>
+                        <label class="form-label" for="name"><span th:text="#{admin.label.name}">Название</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="name" name="name" type="text" maxlength="255" required
-                               placeholder="Миражи на виражах">
+                               th:placeholder="#{admin.hint.route.name}" placeholder="Миражи на виражах">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label" for="distance">Дистанция (км) <span class="text-danger">*</span></label>
+                        <label class="form-label" for="distance"><span th:text="#{admin.label.distance}">Дистанция (км)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="distance" name="distance" type="number" min="1" required
                                placeholder="15">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label" for="duration">Длительность (мин) <span class="text-danger">*</span></label>
+                        <label class="form-label" for="duration"><span th:text="#{admin.label.duration}">Длительность (мин)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="duration" name="duration" type="number" min="1" required
                                placeholder="90">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label" for="difficulty">Сложность <span class="text-danger">*</span></label>
+                        <label class="form-label" for="difficulty"><span th:text="#{admin.label.difficulty}">Сложность</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <select class="form-select" id="difficulty" name="difficulty" required>
-                            <option value="" selected disabled>Выберите</option>
+                            <option value="" selected disabled th:text="#{admin.select.choose}">Выберите</option>
                             <option th:each="d : ${difficulties}" th:value="${d.value}" th:text="${d.displayName}">Легкий</option>
                         </select>
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
+                        <label class="form-label" for="price"><span th:text="#{admin.label.price}">Цена (₽)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
                                placeholder="1500">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label" for="weekendPrice">Цена выходной (₽) <span class="text-danger">*</span></label>
+                        <label class="form-label" for="weekendPrice"><span th:text="#{admin.label.weekend.price}">Цена выходной (₽)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="weekendPrice" name="weekendPrice" type="number" step="0.01" min="0" required
                                placeholder="2500">
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label" for="description">Описание</label>
+                        <label class="form-label" for="description" th:text="#{admin.label.description}">Описание</label>
                         <textarea class="form-control" id="description" name="description" rows="3" maxlength="1000"
-                                  placeholder="Описание маршрута..."></textarea>
-                        <small class="text-muted">Максимум 1000 символов</small>
+                                  th:placeholder="#{admin.hint.route.description}" placeholder="Описание маршрута..."></textarea>
+                        <small class="text-muted" th:text="#{admin.hint.max.chars.1000}">Максимум 1000 символов</small>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label" for="mapImage">Изображение карты маршрута</label>
+                        <label class="form-label" for="mapImage" th:text="#{admin.label.map.image}">Изображение карты маршрута</label>
                         <input class="form-control" id="mapImage" name="mapImage" type="file" accept="image/*">
                         <small class="text-muted">
-                            <i class="fas fa-circle-info me-1"></i>Загрузите изображение карты маршрута (PNG, JPG).
-                            Если не загружено, будет использовано изображение по умолчанию.
+                            <i class="fas fa-circle-info me-1"></i><span th:text="#{admin.photo.optional}">Необязательно — на карточке будет значок по умолчанию</span>
                         </small>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="isSpecial" name="isSpecial">
-                            <label class="form-check-label" for="isSpecial">
+                            <label class="form-check-label" for="isSpecial" th:text="#{booking.special.route.title}">
                                 Специальный маршрут
                             </label>
                         </div>
@@ -77,7 +76,7 @@
                     <div class="col-md-6">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="enabled" name="enabled" checked>
-                            <label class="form-check-label" for="enabled">
+                            <label class="form-check-label" for="enabled" th:text="#{admin.route.enabled}">
                                 Enabled (активен)
                             </label>
                         </div>
@@ -86,12 +85,12 @@
 
                 <div class="d-grid mt-2">
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-save me-2"></i>Создать
+                        <i class="fas fa-save me-2"></i><span th:text="#{admin.button.create}">Создать</span>
                     </button>
                 </div>
 
                 <a class="btn btn-outline-secondary" th:href="@{/admin/routes}">
-                    <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                    <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад к списку</span>
                 </a>
             </form>
         </div>

@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/base}">
 <head>
-    <title>ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</title>
+    <title th:text="#{privacy.title}">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -13,20 +13,21 @@
 
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div>
-                        <h1 class="h2">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h1>
+                        <h1 class="h2" th:text="#{privacy.title}">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h1>
                         <p class="text-muted mb-0">
-                            Версия: <strong th:text="${policy.version}">X.X.X</strong>
+                            <span th:text="#{privacy.version}">Версия:</span> <strong th:text="${policy.version}">X.X.X</strong>
                             &nbsp;·&nbsp;
-                            Дата публикации:
+                            <span th:text="#{privacy.published}">Дата публикации:</span>
                             <strong th:text="${#temporals.format(policy.createdAt, 'dd.MM.yyyy')}">
                                 dd.MM.yyyy
                             </strong>
                             &nbsp;·&nbsp;
-                            Статус:
+                            <span th:text="#{admin.label.status}">Статус:</span>
                             <strong th:classappend="${policy.isActive} ? 'text-success' : 'text-danger'"
-                                    th:text="${policy.isActive} ? 'АКТИВНО' : 'УСТАРЕЛО'">
+                                    th:text="${policy.isActive} ? #{admin.banner.enabled} : #{admin.banner.disabled}">
                                 СТАТУС
-                            </strong>                        </p>
+                            </strong>
+                        </p>
                     </div>
                 </div>
 
@@ -41,7 +42,7 @@
 
                 <div class="mt-4 text-center">
                     <a href="/admin/policies" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Назад
+                        <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад</span>
                     </a>
                 </div>
 

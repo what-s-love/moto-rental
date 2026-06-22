@@ -6,16 +6,15 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-1">
-                <i class="fas fa-bullhorn me-2 text-warning"></i>Баннеры
+                <i class="fas fa-bullhorn me-2 text-warning"></i><span th:text="#{admin.banner.title}">Баннеры</span>
             </h1>
-            <p class="text-muted mb-0">Управление специальными предложениями</p>
+            <p class="text-muted mb-0" th:text="#{admin.banner.subtitle}">Управление специальными предложениями</p>
         </div>
         <a class="btn btn-primary" th:href="@{/admin/banner/create}">
-            <i class="fas fa-plus me-2"></i>Создать баннер
+            <i class="fas fa-plus me-2"></i><span th:text="#{admin.banner.create}">Создать баннер</span>
         </a>
     </div>
 
-    <!-- Success/Error Messages -->
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -25,51 +24,43 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Info Alert -->
     <div class="alert alert-info mb-4">
         <i class="fas fa-info-circle me-2"></i>
-        <strong>Важно:</strong> Одновременно на главной странице может отображаться только один включенный баннер.
-        При включении нового баннера, предыдущий автоматически выключается.
+        <strong th:text="#{admin.banner.important}">Важно:</strong> <span th:text="#{admin.banner.warning}">Одновременно на главной странице может отображаться только один включенный баннер.</span>
     </div>
 
-    <!-- Banners List -->
     <div class="row g-3">
         <div class="col-12 col-lg-6" th:each="banner : ${banners}">
             <div class="card banner-card shadow-sm position-relative overflow-hidden h-100"
                  th:classappend="${banner.enabled} ? 'border-success border-2' : ''">
 
-                <!-- Status Badge -->
                 <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
                     <span class="badge"
                           th:classappend="${banner.enabled} ? 'bg-success' : 'bg-secondary'">
                         <i class="fas"
                            th:classappend="${banner.enabled} ? 'fa-eye' : 'fa-eye-slash'"></i>
-                        <span th:text="${banner.enabled ? 'Включен' : 'Выключен'}">Статус</span>
+                        <span th:text="${banner.enabled} ? #{admin.banner.enabled} : #{admin.banner.disabled}">Статус</span>
                     </span>
                 </div>
 
-                <!-- Banner Image -->
                 <img th:src="@{${banner.imagePath}}"
                      alt="Banner image"
                      class="admin-banner-image card-img-top"
                      style="height: 200px; object-fit: cover;">
 
                 <div class="card-body">
-                    <!-- Title -->
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="card-title mb-0 flex-grow-1" th:text="${banner.title}">
                             Заголовок баннера
                         </h5>
                     </div>
 
-                    <!-- Description -->
                     <p class="card-text text-muted small mb-3" th:text="${banner.description}">
                         Описание баннера
                     </p>
 
                     <hr class="my-2">
 
-                    <!-- Route Info -->
                     <div class="mb-2">
                         <span class="badge bg-primary me-1">
                             <i class="fas fa-route"></i>
@@ -77,18 +68,17 @@
                         <span class="fw-bold" th:text="${banner.routeName}">Название маршрута</span>
                     </div>
 
-                    <!-- Date and Shift Info -->
                     <div class="small text-muted ms-2 mb-2">
                         <div class="mb-1">
                             <i class="fas fa-calendar text-primary me-1"></i>
-                            <strong>Дата:</strong>
+                            <strong th:text="#{admin.banner.label.date}">Дата:</strong>
                             <span th:text="${#temporals.format(banner.rideDate, 'dd MMMM yyyy')}">
                                 15 мая 2026
                             </span>
                         </div>
                         <div>
                             <i class="fas fa-clock text-primary me-1"></i>
-                            <strong>Смена:</strong>
+                            <strong th:text="#{admin.banner.label.shift}">Смена:</strong>
                             <span th:text="${banner.shiftName}">Утренняя</span>
                             (<span th:text="${banner.shiftStartTime}">10:00</span> -
                             <span th:text="${banner.shiftEndTime}">12:00</span>)
@@ -96,18 +86,15 @@
                     </div>
                 </div>
 
-                <!-- Card Footer with Actions -->
                 <div class="card-footer bg-light">
                     <div class="row g-2">
-                        <!-- Edit Button -->
                         <div class="col-6">
                             <a class="btn btn-outline-primary btn-sm w-100"
                                th:href="@{/admin/banner/{id}/edit(id=${banner.id})}">
-                                <i class="fas fa-pen me-1"></i>Редактировать
+                                <i class="fas fa-pen me-1"></i><span th:text="#{admin.button.edit}">Редактировать</span>
                             </a>
                         </div>
 
-                        <!-- Toggle Status Button -->
                         <div class="col-6">
                             <form th:action="@{/admin/banner/{id}/toggle(id=${banner.id})}"
                                   method="post"
@@ -118,93 +105,47 @@
                                 <button type="submit"
                                         class="btn btn-sm w-100"
                                         th:classappend="${banner.enabled} ? 'btn-warning' : 'btn-success'"
-                                        onclick="return confirm('Вы уверены?')">
+                                        th:attr="onclick=|return confirm('${#messages.msg('admin.banner.warning')}')|">
                                     <i class="fas"
                                        th:classappend="${banner.enabled} ? 'fa-eye-slash' : 'fa-eye'"></i>
-                                    <span th:text="${banner.enabled ? 'Выключить' : 'Включить'}">
+                                    <span th:text="${banner.enabled} ? #{admin.banner.disabled} : #{admin.banner.enabled}">
                                         Переключить
                                     </span>
                                 </button>
                             </form>
                         </div>
 
-                        <!-- Delete Button -->
                         <div class="col-12">
                             <form th:action="@{/admin/banner/{id}/delete(id=${banner.id})}"
                                   method="post"
                                   class="d-inline w-100">
                                 <button type="submit"
                                         class="btn btn-outline-danger btn-sm w-100"
-                                        onclick="return confirm('Вы уверены, что хотите удалить этот баннер?')">
-                                    <i class="fas fa-trash me-1"></i>Удалить
+                                        th:attr="onclick=|return confirm('${#messages.msg('admin.button.delete')}')|">
+                                    <i class="fas fa-trash me-1"></i><span th:text="#{admin.button.delete}">Удалить</span>
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
-
-                <!-- Meta Info (Banner ID)-->
-<!--
-                <div class="card-footer bg-white border-top-0 pt-0">
-                    <small class="text-muted">
-                        ID: <span th:text="${banner.id}">1</span>
-                    </small>
-                </div>
--->
             </div>
         </div>
 
-        <!-- Empty State -->
         <div th:if="${#lists.isEmpty(banners)}" class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body text-center py-5">
                     <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Пока нет баннеров</h5>
-                    <p class="text-muted mb-3">
+                    <h5 class="text-muted" th:text="#{admin.empty.banners}">Пока нет баннеров</h5>
+                    <p class="text-muted mb-3" th:text="#{admin.banner.subtitle}">
                         Создайте первый баннер для специального предложения
                     </p>
                     <a class="btn btn-primary" th:href="@{/admin/banner/create}">
-                        <i class="fas fa-plus me-2"></i>Создать баннер
+                        <i class="fas fa-plus me-2"></i><span th:text="#{admin.banner.create}">Создать баннер</span>
                     </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Statistics Card (optional) -->
-<!--
-    <div th:if="${!#lists.isEmpty(banners)}" class="card shadow-sm mt-4">
-        <div class="card-header bg-light">
-            <h5 class="mb-0">
-                <i class="fas fa-chart-simple me-2"></i>Статистика
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <div class="p-3">
-                        <h3 class="text-primary mb-1" th:text="${#lists.size(banners)}">0</h3>
-                        <p class="text-muted small mb-0">Всего баннеров</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3">
-                        <h3 class="text-success mb-1"
-                            th:text="${#lists.size(#lists.select(banners, 'enabled'))}">0</h3>
-                        <p class="text-muted small mb-0">Активных</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3">
-                        <h3 class="text-secondary mb-1"
-                            th:text="${#lists.size(banners) - #lists.size(#lists.select(banners, 'enabled'))}">0</h3>
-                        <p class="text-muted small mb-0">Неактивных</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
--->
 
     <style>
         .banner-card {
@@ -228,7 +169,6 @@
             box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
         }
 
-        /* Animation for active badge */
         @keyframes pulse-glow {
             0%, 100% {
                 box-shadow: 0 0 5px rgba(25, 135, 84, 0.5);

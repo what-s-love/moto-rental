@@ -4,7 +4,7 @@
 <div layout:fragment="content">
     <div class="mb-4">
         <h1 class="h3 mb-1">
-            <i class="fas fa-pen-to-square me-2 text-primary"></i>Редактировать маршрут
+            <i class="fas fa-pen-to-square me-2 text-primary"></i><span th:text="#{admin.routes.edit}">Редактировать маршрут</span>
         </h1>
         <p class="text-muted mb-0">ID: <span th:text="${route.id}">1</span></p>
     </div>
@@ -16,7 +16,7 @@
 
                 <div class="row g-3">
                     <div class="col-md-12 mb-2 pe-4">
-                        <label class="form-label" for="name">Название <span class="text-danger">*</span></label>
+                        <label class="form-label" for="name"><span th:text="#{admin.label.name}">Название</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <input class="form-control" id="name" name="name" type="text" maxlength="255" required
                                th:value="${route.name}">
                     </div>
@@ -24,34 +24,34 @@
                     <div class="row ps-2 pe-0">
                         <div class="col-md-7">
                             <div class="col-12">
-                                <label class="form-label">Текущее изображение</label>
+                                <label class="form-label" th:text="#{admin.label.current.photo}">Текущее изображение</label>
                                 <div class="mb-2">
                                     <img th:src="@{${route.mapPath}}" alt="Current map" class="img-thumbnail">
                                 </div>
 
-                                <label class="form-label" for="mapImage">Загрузить новое изображение</label>
+                                <label class="form-label" for="mapImage" th:text="#{admin.label.upload.photo}">Загрузить новое изображение</label>
                                 <input class="form-control" id="mapImage" name="mapImage" type="file" accept="image/*">
                                 <small class="text-muted">
-                                    <i class="fas fa-circle-info me-1"></i>Загрузите новое изображение, если хотите заменить текущее
+                                    <i class="fas fa-circle-info me-1"></i><span th:text="#{admin.photo.keep.current}">Загрузите новое изображение, если хотите заменить текущее</span>
                                 </small>
                             </div>
 
                         </div>
                         <div class="col-md-5 mt-2 mt-md-4">
                             <div class="col-12">
-                                <label class="form-label" for="distance">Дистанция (км) <span class="text-danger">*</span></label>
+                                <label class="form-label" for="distance"><span th:text="#{admin.label.distance}">Дистанция (км)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                                 <input class="form-control" id="distance" name="distance" type="number" min="1" required
                                        th:value="${route.distance}">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="duration">Длительность (мин) <span class="text-danger">*</span></label>
+                                <label class="form-label" for="duration"><span th:text="#{admin.label.duration}">Длительность (мин)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                                 <input class="form-control" id="duration" name="duration" type="number" min="1" required
                                        th:value="${route.duration}">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="difficulty">Сложность <span class="text-danger">*</span></label>
+                                <label class="form-label" for="difficulty"><span th:text="#{admin.label.difficulty}">Сложность</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                                 <select class="form-select" id="difficulty" name="difficulty" required>
                                     <option th:each="d : ${difficulties}"
                                             th:value="${d.value}"
@@ -63,13 +63,13 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="price">Цена (₽) <span class="text-danger">*</span></label>
+                                <label class="form-label" for="price"><span th:text="#{admin.label.price}">Цена (₽)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                                 <input class="form-control" id="price" name="price" type="number" step="0.01" min="0" required
                                        th:value="${route.price}">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="weekendPrice">Цена (₽) <span class="text-danger">*</span></label>
+                                <label class="form-label" for="weekendPrice"><span th:text="#{admin.label.weekend.price}">Цена (₽)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                                 <input class="form-control" id="weekendPrice" name="weekendPrice" type="number" step="0.01" min="0" required
                                        th:value="${route.weekendPrice}">
                             </div>
@@ -77,17 +77,17 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label" for="description">Описание</label>
+                        <label class="form-label" for="description" th:text="#{admin.label.description}">Описание</label>
                         <textarea class="form-control" id="description" name="description" rows="3" maxlength="1000"
                                   th:text="${route.description}"></textarea>
-                        <small class="text-muted">Максимум 1000 символов</small>
+                        <small class="text-muted" th:text="#{admin.hint.max.chars.1000}">Максимум 1000 символов</small>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="isSpecial" name="isSpecial"
                                    th:checked="${route.isSpecial}">
-                            <label class="form-check-label" for="isSpecial">
+                            <label class="form-check-label" for="isSpecial" th:text="#{booking.special.route.title}">
                                 Специальный маршрут
                             </label>
                         </div>
@@ -97,7 +97,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="enabled" name="enabled"
                                    th:checked="${route.enabled}">
-                            <label class="form-check-label" for="enabled">
+                            <label class="form-check-label" for="enabled" th:text="#{admin.route.enabled}">
                                 Enabled (активен)
                             </label>
                         </div>
@@ -106,18 +106,18 @@
 
                 <div class="d-grid mt-2">
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-save me-2"></i>Сохранить
+                        <i class="fas fa-save me-2"></i><span th:text="#{admin.button.save}">Сохранить</span>
                     </button>
                 </div>
 
                 <div class="d-flex gap-2">
                     <a class="btn btn-outline-secondary flex-fill" th:href="@{/admin/routes}">
-                        <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                        <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад к списку</span>
                     </a>
 
                     <button type="button" class="btn btn-outline-danger"
                             onclick="confirmDelete()">
-                        <i class="fas fa-trash me-2"></i>Удалить маршрут
+                        <i class="fas fa-trash me-2"></i><span th:text="#{admin.button.delete}">Удалить маршрут</span>
                     </button>
                 </div>
             </form>
@@ -127,9 +127,9 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         function confirmDelete() {
-            if (confirm('Вы уверены, что хотите удалить этот маршрут? Это действие необратимо.')) {
+            if (confirm(/*[[#{admin.button.delete}]]*/ 'Вы уверены, что хотите удалить этот маршрут? Это действие необратимо.')) {
                 document.getElementById('deleteForm').submit();
             }
         }

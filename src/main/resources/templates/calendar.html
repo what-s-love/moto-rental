@@ -26,9 +26,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="shiftModalLabel">
                         <i class="fas fa-calendar-day me-2"></i>
-                        Выберите смену
+                        <span th:text="#{calendar.shift.select}">Выберите смену</span>
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{aria.close}" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
                     <p class="text-muted mb-3" id="selectedDate"></p>
@@ -50,6 +50,23 @@
             const calendarEl = document.getElementById('calendar');
             const ridesData = /*[[${rides}]]*/ [];
             const allShifts = /*[[${shifts}]]*/ [];
+            const i18n = {
+                peopleShort: /*[[#{calendar.people.short}]]*/ 'чел.',
+                today: /*[[#{calendar.today}]]*/ 'Сегодня',
+                month: /*[[#{calendar.month}]]*/ 'Месяц',
+                list: /*[[#{calendar.list}]]*/ 'Список',
+                shift: /*[[#{calendar.shift.label}]]*/ 'Смена:',
+                time: /*[[#{calendar.time.label}]]*/ 'Время:',
+                participants: /*[[#{calendar.participants.label}]]*/ 'Участников:',
+                available: /*[[#{calendar.available.label}]]*/ 'Свободно мест:',
+                route: /*[[#{calendar.route.label}]]*/ 'Маршрут:',
+                routeNotSpecified: /*[[#{calendar.route.not.specified}]]*/ 'не указан',
+                statusFull: /*[[#{calendar.status.full}]]*/ 'Полностью забронирован',
+                statusAvailable: /*[[#{calendar.status.available}]]*/ 'Есть свободные места',
+                availableShort: /*[[#{calendar.available.short}]]*/ 'свободно',
+                status: /*[[#{calendar.status.label}]]*/ 'Статус:',
+                noSpots: /*[[#{calendar.no.spots}]]*/ 'Нет свободных мест'
+            };
 
             console.log('Rides data:', ridesData);
             console.log('All shifts:', allShifts);
@@ -58,7 +75,7 @@
 
             const events = ridesData.map(ride => ({
                 id: 'ride-' + ride.rideId,
-                title: `${ride.startTime.substring(0, 5)}-${ride.endTime.substring(0, 5)} | ${ride.participantCount} чел.`,
+                title: `${ride.startTime.substring(0, 5)}-${ride.endTime.substring(0, 5)} | ${ride.participantCount} ${i18n.peopleShort}`,
                 start: ride.date,
                 allDay: true,
                 backgroundColor: ride.isFull ? '#0059ff' : '#22bbff',
@@ -88,9 +105,9 @@
                     right: 'dayGridMonth,listWeek'
                 },
                 buttonText: {
-                    today: 'Сегодня',
-                    month: 'Месяц',
-                    list: 'Список'
+                    today: i18n.today,
+                    month: i18n.month,
+                    list: i18n.list
                 },
                 height: 'auto',
                 events: events,
@@ -117,12 +134,12 @@
                 eventClick: function(info) {
                     const props = info.event.extendedProps;
                     alert(
-                        `Смена: ${props.shiftName}\n` +
-                        `Время: ${props.startTime} - ${props.endTime}\n` +
-                        `Участников: ${props.participantCount}\n` +
-                        `Свободно мест: ${props.availableBikes}\n` +
-                        `Маршрут:  ${props.routeName}` + `: ` + `${props.routeDescription || 'не указан'}\n` +
-                        `Статус: ${props.isFull ? 'Полностью забронирован' : 'Есть свободные места'}`
+                        `${i18n.shift} ${props.shiftName}\n` +
+                        `${i18n.time} ${props.startTime} - ${props.endTime}\n` +
+                        `${i18n.participants} ${props.participantCount}\n` +
+                        `${i18n.available} ${props.availableBikes}\n` +
+                        `${i18n.route}  ${props.routeName}` + `: ` + `${props.routeDescription || i18n.routeNotSpecified}\n` +
+                        `${i18n.status} ${props.isFull ? i18n.statusFull : i18n.statusAvailable}`
                     );
                 },
                 dateClick: function(info) {
@@ -169,16 +186,16 @@
                                 </div>
                                 <div class="text-end">
                                     <span class="badge bg-custom-primary">
-                                        <i class="fas fa-users me-1"></i>${ride.participantCount} чел.
+                                        <i class="fas fa-users me-1"></i>${ride.participantCount} ${i18n.peopleShort}
                                     </span><br>
-                                    <small>${ride.availableBikes} свободно</small>
+                                    <small>${ride.availableBikes} ${i18n.availableShort}</small>
                                 </div>
                             </div>
                         `;
 
                         if (isFull) {
                             button.disabled = true;
-                            button.innerHTML += '<div class="mt-1"><small>Нет свободных мест</small></div>';
+                            button.innerHTML += `<div class="mt-1"><small>${i18n.noSpots}</small></div>`;
                         }
                     } else {
                         // Нет заезда - показываем только смену

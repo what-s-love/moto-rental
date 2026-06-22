@@ -4,11 +4,11 @@
 <div layout:fragment="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1"><i class="fas fa-route me-2 text-primary"></i>Маршруты</h1>
-            <p class="text-muted mb-0">Все маршруты</p>
+            <h1 class="h3 mb-1"><i class="fas fa-route me-2 text-primary"></i><span th:text="#{admin.nav.routes}">Маршруты</span></h1>
+            <p class="text-muted mb-0" th:text="#{admin.routes.all}">Все маршруты</p>
         </div>
         <a class="btn btn-primary" th:href="@{/admin/routes/create}">
-            <i class="fas fa-plus me-2"></i>Создать маршрут
+            <i class="fas fa-plus me-2"></i><span th:text="#{admin.routes.create}">Создать маршрут</span>
         </a>
     </div>
 
@@ -46,12 +46,12 @@
                         <strong class="text-primary h5" th:text="${route.price}">1500</strong>
                         -
                         <strong class="text-primary h5" th:text="${route.weekendPrice}">2500</strong>
-                        <span class="text-muted">₽ / человек</span>
+                        <span class="text-muted" th:text="#{booking.route.per.person}">₽ / человек</span>
                     </div>
 
                     <p class="card-text text-muted small mb-2" th:if="${route.estimatedDuration != null}">
                         <i class="fas fa-clock me-1"></i>
-                        Примерно <span th:text="${route.estimatedDuration}">90</span> минут
+                        <span th:text="#{admin.route.approximately(${route.estimatedDuration})}">Примерно 90 минут</span>
                     </p>
 
                     <p class="card-text small mb-3" th:text="${route.description}">Описание маршрута</p>
@@ -62,16 +62,16 @@
                     </span>
                     <span class="badge" th:classappend="${route.isEnabled} ? 'bg-success' : 'bg-secondary'">
                         <i class="fas" th:classappend="${route.isEnabled} ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
-                        <span th:text="${route.isEnabled ? 'Enabled' : 'Disabled'}">Enabled</span>
+                        <span th:text="${route.isEnabled} ? #{admin.route.enabled} : #{admin.route.disabled}">Enabled</span>
                     </span>
                     <span class="badge bg-primary" th:if="${route.isSpecial}">
                         <i class="fas fa-star"></i>
-                        <span>Special</span>
+                        <span th:text="#{booking.special.route.title}">Special</span>
                     </span>
                 </div>
                 <div class="d-grid m-2">
                     <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/routes/{id}/edit(id=${route.id})}">
-                        <i class="fas fa-pen me-1"></i>Редактировать
+                        <i class="fas fa-pen me-1"></i><span th:text="#{admin.button.edit}">Редактировать</span>
                     </a>
                 </div>
             </div>
@@ -81,7 +81,7 @@
             <div class="card shadow-sm">
                 <div class="card-body text-center py-5 text-muted">
                     <i class="fas fa-inbox fa-3x mb-3"></i>
-                    <p class="mb-0">Пока нет маршрутов</p>
+                    <p class="mb-0" th:text="#{admin.empty.routes}">Пока нет маршрутов</p>
                 </div>
             </div>
         </div>

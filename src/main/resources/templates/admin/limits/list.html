@@ -4,15 +4,14 @@
 <div layout:fragment="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1"><i class="fas fa-ruler-vertical me-2 text-primary"></i>Ограничения</h1>
-            <p class="text-muted mb-0">Редактируйте ограничения для мотоциклов</p>
+            <h1 class="h3 mb-1"><i class="fas fa-ruler-vertical me-2 text-primary"></i><span th:text="#{admin.limits.title}">Ограничения</span></h1>
+            <p class="text-muted mb-0" th:text="#{admin.limits.subtitle}">Редактируйте ограничения для мотоциклов</p>
         </div>
         <a class="btn btn-primary" th:href="@{/admin/limits/create}">
-            <i class="fas fa-plus me-2"></i>Создать ограничение
+            <i class="fas fa-plus me-2"></i><span th:text="#{admin.limits.create}">Создать ограничение</span>
         </a>
     </div>
 
-    <!-- Success/Error Messages -->
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -23,7 +22,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Form -->
     <form th:action="@{/admin/limits}" method="post">
         <div class="row g-3">
             <div class="col-12" th:each="limit, it : ${limits}">
@@ -34,8 +32,8 @@
                         <div class="row g-3 align-items-end">
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-arrow-down me-1"></i>Мин. рост (см)
-                                    <span class="text-danger">*</span>
+                                    <i class="fas fa-arrow-down me-1"></i><span th:text="#{admin.label.min.height}">Мин. рост (см)</span>
+                                    <span class="text-danger" th:text="#{form.required}">*</span>
                                 </label>
                                 <input class="form-control"
                                        type="number"
@@ -48,8 +46,8 @@
 
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-arrow-up me-1"></i>Макс. рост (см)
-                                    <span class="text-danger">*</span>
+                                    <i class="fas fa-arrow-up me-1"></i><span th:text="#{admin.label.max.height}">Макс. рост (см)</span>
+                                    <span class="text-danger" th:text="#{form.required}">*</span>
                                 </label>
                                 <input class="form-control"
                                        type="number"
@@ -62,8 +60,8 @@
 
                             <div class="col-md-3">
                                 <label class="form-label">
-                                    <i class="fas fa-child me-1"></i>Мин. возраст (лет)
-                                    <span class="text-danger">*</span>
+                                    <i class="fas fa-child me-1"></i><span th:text="#{admin.label.min.age}">Мин. возраст (лет)</span>
+                                    <span class="text-danger" th:text="#{form.required}">*</span>
                                 </label>
                                 <input class="form-control"
                                        type="number"
@@ -85,16 +83,15 @@
                                            th:name="'limits[' + ${it.index} + '].onlyMen'"
                                            th:checked="${limit.onlyMen}">
                                     <label class="form-check-label" th:for="'limit-onlyMen-' + ${limit.id}">
-                                        <i class="fas fa-mars me-1"></i>Men only
+                                        <i class="fas fa-mars me-1"></i><span th:text="#{admin.limits.only.men}">Men only</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Associated Bikes Info -->
                         <div class="mt-3" th:if="${!limit.bikes.isEmpty()}">
                             <small class="text-muted d-block mb-2">
-                                <i class="fas fa-motorcycle me-2"></i><strong>Мотоциклы с этим ограничением:</strong>
+                                <i class="fas fa-motorcycle me-2"></i><strong th:text="#{admin.limits.bikes.with}">Мотоциклы с этим ограничением:</strong>
                             </small>
                             <div class="d-flex flex-wrap gap-2">
                                 <span class="badge bg-secondary" th:each="bike : ${limit.bikes}">
@@ -114,7 +111,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body text-center py-5 text-muted">
                         <i class="fas fa-inbox fa-3x mb-3"></i>
-                        <p class="mb-0">Нет ограничений в базе данных</p>
+                        <p class="mb-0" th:text="#{admin.empty.limits}">Нет ограничений в базе данных</p>
                     </div>
                 </div>
             </div>
@@ -122,22 +119,21 @@
 
         <div class="d-grid mt-4" th:if="${!#lists.isEmpty(limits)}">
             <button type="submit" class="btn btn-primary btn-lg">
-                <i class="fas fa-save me-2"></i>Сохранить все изменения
+                <i class="fas fa-save me-2"></i><span th:text="#{admin.save.all}">Сохранить все изменения</span>
             </button>
         </div>
     </form>
 
-    <!-- Info Block -->
     <div class="alert alert-info mt-4">
         <h6 class="alert-heading">
-            <i class="fas fa-circle-info me-2"></i>Информация
+            <i class="fas fa-circle-info me-2"></i><span th:text="#{admin.info}">Информация</span>
         </h6>
         <ul class="mb-0 small">
-            <li>Ограничения применяются для фильтрации мотоциклов при бронировании</li>
-            <li>Рост указывается в сантиметрах (например: 140-180)</li>
-            <li>Возраст указывается в полных годах</li>
-            <li>Чекбокс "Только мужчины" ограничивает доступность мотоцикла для женщин</li>
-            <li>Каждое ограничение может быть привязано к нескольким мотоциклам</li>
+            <li th:text="#{admin.limits.info.1}">Ограничения применяются для фильтрации мотоциклов при бронировании</li>
+            <li th:text="#{admin.limits.info.2}">Рост указывается в сантиметрах (например: 140-180)</li>
+            <li th:text="#{admin.limits.info.3}">Возраст указывается в полных годах</li>
+            <li th:text="#{admin.limits.info.4}">Чекбокс "Только мужчины" ограничивает доступность мотоцикла для женщин</li>
+            <li th:text="#{admin.limits.info.5}">Каждое ограничение может быть привязано к нескольким мотоциклам</li>
         </ul>
     </div>
 </div>

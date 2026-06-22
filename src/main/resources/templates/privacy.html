@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/base}">
 <head>
-    <title>ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</title>
+    <title th:text="#{privacy.title}">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -13,11 +13,11 @@
 
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div>
-                        <h1 class="h2">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h1>
+                        <h1 class="h2" th:text="#{privacy.title}">ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h1>
                         <p class="text-muted mb-0">
-                            Версия: <strong th:text="${policy.version}">1.0</strong>
+                            <span th:text="#{privacy.version}">Версия:</span> <strong th:text="${policy.version}">1.0</strong>
                             &nbsp;·&nbsp;
-                            Дата публикации:
+                            <span th:text="#{privacy.published}">Дата публикации:</span>
                             <strong th:text="${#temporals.format(policy.createdAt, 'dd.MM.yyyy')}">
                                 25.03.2026
                             </strong>
@@ -30,13 +30,13 @@
                          th:utext="${#strings.replace(
                              #strings.escapeXml(policy.text),
                              '&#xA;', '&lt;br&gt;')}">
-                        Текст политики...
+                        <span th:text="#{privacy.placeholder}">Текст политики...</span>
                     </div>
                 </div>
 
                 <div class="mt-4 text-center">
                     <a href="/" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>На главную
+                        <i class="fas fa-arrow-left me-2"></i><span th:text="#{privacy.back.home}">На главную</span>
                     </a>
                 </div>
 

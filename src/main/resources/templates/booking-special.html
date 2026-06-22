@@ -7,10 +7,10 @@
         <!-- Header Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <nav aria-label="breadcrumb">
+                <nav th:aria-label="#{aria.breadcrumb}" aria-label="Навигация">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Специальное бронирование</li>
+                        <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{booking.breadcrumb.home}">Главная</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" th:text="#{booking.special.breadcrumb}">Специальное бронирование</li>
                     </ol>
                 </nav>
 
@@ -25,7 +25,7 @@
 
                 <h1 class="h2 mb-3">
                     <i class="fas fa-bolt me-2 text-warning"></i>
-                    Бронирование специального заезда
+                    <span th:text="#{booking.special.title}">Бронирование специального заезда</span>
                 </h1>
 
                 <!-- Date and Shift Info -->
@@ -53,10 +53,10 @@
                 <!-- Availability Info -->
                 <div class="alert alert-success">
                     <i class="fas fa-motorcycle me-2"></i>
-                    <strong>Доступно мест:</strong>
+                    <strong th:text="#{booking.available.bikes}">Доступно мест</strong>:
                     <span th:text="${maxParticipants}">X</span>
                     <span th:if="${existingRide != null}">
-                        (занято: <span th:text="${existingRide.participantCount}">3</span>)
+                        (<span th:text="#{booking.occupied}">занято</span>: <span th:text="${existingRide.participantCount}">3</span>)
                     </span>
                 </div>
             </div>
@@ -79,7 +79,7 @@
 
                 <h3 class="mb-3">
                     <i class="fas fa-route me-2"></i>
-                    Маршрут заезда
+                    <span th:text="#{booking.route.title}">Маршрут заезда</span>
                 </h3>
 
                 <!-- Special Route Card (Display Only) -->
@@ -87,7 +87,7 @@
                     <div class="card-header bg-warning text-dark">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-0">
-                                <i class="fas fa-star me-2"></i>Специальный маршрут
+                                <i class="fas fa-star me-2"></i><span th:text="#{booking.special.route.title}">Специальный маршрут</span>
                             </h4>
 <!--
                             <span class="badge bg-danger">
@@ -104,14 +104,14 @@
                                 <!-- Изображение с position-absolute и object-fit -->
                                 <img th:src="@{${route.mapPath}}"
                                      class="position-absolute top-0 start-0 w-100 h-100 rounded-start"
-                                     alt="Route map"
+                                     th:alt="#{alt.route.map}" alt="Карта маршрута"
                                      style="object-fit: cover;">
 
                                 <!-- Beginner Badge -->
                                 <span th:if="${route.isAvailableForBeginners}"
                                       class="badge bg-success position-absolute top-0 end-0 m-3"
                                       style="z-index: 10;">
-                                    <i class="fas fa-check-circle me-1"></i>Для новичков
+                                    <i class="fas fa-check-circle me-1"></i><span th:text="#{booking.route.for.beginners}">Для новичков</span>
                                 </span>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                                     <span class="badge fs-6"
                                           th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))">
                         <i class="fas fa-mountain me-1"></i>
-                        <span th:text="${route.distance}">25</span> км
+                        <span th:text="${route.distance}">25</span> <span th:text="#{route.distance}">км</span>
                     </span>
                                 </div>
                                 <h5 class="text-muted mb-3">
@@ -134,8 +134,8 @@
                                 <div class="mb-4">
                                     <h2 class="text-warning mb-0 d-flex align-items-center">
                                         <i class="fas fa-tag me-2"></i>
-                                        <span th:text="${route.price}">2000</span> ₽
-                                        <small class="text-muted fs-5 ms-2">/ человек</small>
+                                        <span th:text="${route.price}">2000</span> <span th:text="#{route.currency}">₽</span>
+                                        <small class="text-muted fs-5 ms-2" th:text="#{booking.route.per.person}">/ человек</small>
                                     </h2>
                                 </div>
                                 <p class="card-text lead" th:text="${route.description}">
@@ -143,11 +143,11 @@
                                 </p>
                                 <p class="card-text text-muted" th:if="${route.estimatedDuration != null}">
                                     <i class="fas fa-clock me-2"></i>
-                                    <strong>Продолжительность:</strong> ~<span th:text="${route.estimatedDuration}">120</span> минут
+                                    <span th:text="#{booking.route.duration.label}">Продолжительность:</span> ~<span th:text="${route.estimatedDuration}">120</span> <span th:text="#{booking.route.minutes}">минут</span>
                                 </p>
                                 <div th:if="${existingRide != null}" class="alert alert-info mb-0 mt-3">
                                     <i class="fas fa-users me-2"></i>
-                                    Уже записано: <strong th:text="${existingRide.participantCount}">3</strong> чел.
+                                    <span th:text="#{booking.route.already.registered}">Уже записано</span>: <strong th:text="${existingRide.participantCount}">3</strong> <span th:text="#{booking.route.people}">чел.</span>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0">
                             <i class="fas fa-user-edit me-2"></i>
-                            Данные для бронирования
+                            <span th:text="#{booking.form.title}">Данные для бронирования</span>
                         </h4>
                     </div>
                     <div class="card-body">
@@ -177,13 +177,13 @@
                             <div class="mb-4">
                                 <h5 class="border-bottom pb-2 mb-3">
                                     <i class="fas fa-user me-2"></i>
-                                    Контактное лицо
+                                    <span th:text="#{booking.client.title}">Контактное лицо</span>
                                 </h5>
 
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="clientName" class="form-label">
-                                            Имя и Фамилия <span class="text-danger">*</span>
+                                            <span th:text="#{booking.client.name}">Имя и Фамилия</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                         </label>
                                         <input type="text"
                                                class="form-control"
@@ -191,12 +191,12 @@
                                                name="client.name"
                                                required
                                                maxlength="255"
-                                               placeholder="Иван Иванов">
+                                               th:placeholder="#{placeholder.client.name}" placeholder="Иван Иванов">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="clientEmail" class="form-label">
-                                            Email <span class="text-danger">*</span>
+                                            <span th:text="#{booking.client.email}">Email</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                         </label>
                                         <input type="email"
                                                class="form-control"
@@ -204,24 +204,24 @@
                                                name="client.email"
                                                required
                                                maxlength="255"
-                                               placeholder="ivan@example.com">
+                                               th:placeholder="#{placeholder.client.email}" placeholder="ivan@example.com">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="clientPhone" class="form-label">
-                                            Телефон <span class="text-danger">*</span>
+                                            <span th:text="#{booking.client.phone}">Телефон</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                         </label>
                                         <input type="tel"
                                                class="form-control"
                                                id="clientPhone"
                                                name="client.phone"
                                                pattern="^\+?[0-9]{9,15}$"
-                                               placeholder="+79161234567">
-                                        <div class="form-text">Формат: +79161234567</div>
+                                               th:placeholder="#{placeholder.client.phone}" placeholder="+79161234567">
+                                        <div class="form-text" th:text="#{booking.client.phone.format}">Формат: +79161234567</div>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="clientTelegram" class="form-label">
+                                        <label for="clientTelegram" class="form-label" th:text="#{booking.client.telegram}">
                                             Telegram ID
                                         </label>
                                         <input type="text"
@@ -229,7 +229,7 @@
                                                id="clientTelegram"
                                                name="client.telegramId"
                                                maxlength="100"
-                                               placeholder="@username">
+                                               th:placeholder="#{placeholder.client.telegram}" placeholder="@username">
                                     </div>
                                 </div>
                             </div>
@@ -238,7 +238,7 @@
                             <div class="mb-4">
                                 <h5 class="border-bottom pb-2 mb-3">
                                     <i class="fas fa-users me-2"></i>
-                                    Участники заезда
+                                    <span th:text="#{booking.participants.title}">Участники заезда</span>
                                 </h5>
 
                                 <!-- First Participant (Required) -->
@@ -246,7 +246,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="mb-0">
                                             <i class="fas fa-user me-2"></i>
-                                            Участник #1 <span class="badge bg-primary">Обязательно</span>
+                                            <span th:text="|#{booking.participant.number} #1|">Участник #1</span> <span class="badge bg-primary" th:text="#{booking.participant.required}">Обязательно</span>
                                         </h6>
                                     </div>
 
@@ -256,21 +256,21 @@
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label class="form-label">
-                                                        Пол <span class="text-danger">*</span>
+                                                        <span th:text="#{booking.participant.gender}">Пол</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                                     </label>
                                                     <select class="form-select"
                                                             name="participants[0].gender"
                                                             required
                                                             onchange="updateAvailableBikes(0)">
-                                                        <option value="">Выберите пол</option>
-                                                        <option value="MALE">Мужской</option>
-                                                        <option value="FEMALE">Женский</option>
+                                                        <option value="" th:text="#{booking.participant.gender.select}">Выберите пол</option>
+                                                        <option value="MALE" th:text="#{booking.participant.gender.male}">Мужской</option>
+                                                        <option value="FEMALE" th:text="#{booking.participant.gender.female}">Женский</option>
                                                     </select>
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <label class="form-label">
-                                                        Возраст <span class="text-danger">*</span>
+                                                        <span th:text="#{booking.participant.age}">Возраст</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                                     </label>
                                                     <input type="number"
                                                            class="form-control"
@@ -280,12 +280,12 @@
                                                            max="99"
                                                            required
                                                            onchange="updateAvailableBikes(0)"
-                                                           placeholder="18">
+                                                           th:placeholder="#{placeholder.age}" placeholder="18">
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <label class="form-label">
-                                                        Рост (см) <span class="text-danger">*</span>
+                                                        <span th:text="#{booking.participant.height}">Рост (см)</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                                     </label>
                                                     <input type="number"
                                                            class="form-control"
@@ -294,21 +294,21 @@
                                                            max="220"
                                                            required
                                                            onchange="updateAvailableBikes(0)"
-                                                           placeholder="175">
+                                                           th:placeholder="#{placeholder.height}" placeholder="175">
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <label class="form-label">
-                                                        Опыт вождения <span class="text-danger">*</span>
+                                                        <span th:text="#{booking.participant.experience}">Опыт вождения</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                                     </label>
                                                     <select class="form-select"
                                                             name="participants[0].experienceLevel"
                                                             required>
-                                                        <option value="">Выберите уровень</option>
-                                                        <option value="NONE">Не умею на велосипеде</option>
-                                                        <option value="BEGINNER">Умею на велосипеде, не пробовал на мотоцикле</option>
-                                                        <option value="INTERMEDIATE">Ездил на мотоцикле, но давно и не правда</option>
-                                                        <option value="ADVANCED">Знаете, я и сам своего рода учёный</option>
+                                                        <option value="" th:text="#{booking.participant.experience.select}">Выберите уровень</option>
+                                                        <option value="NONE" th:text="#{booking.participant.experience.none}">Не умею на велосипеде</option>
+                                                        <option value="BEGINNER" th:text="#{booking.participant.experience.beginner}">Умею на велосипеде, не пробовал на мотоцикле</option>
+                                                        <option value="INTERMEDIATE" th:text="#{booking.participant.experience.intermediate}">Ездил на мотоцикле, но давно и не правда</option>
+                                                        <option value="ADVANCED" th:text="#{booking.participant.experience.advanced}">Знаете, я и сам своего рода учёный</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -317,7 +317,7 @@
                                         <!-- Bike Selection Column -->
                                         <div class="col-lg-4">
                                             <label class="form-label">
-                                                Выбор мотоцикла <span class="text-danger">*</span>
+                                                <span th:text="#{booking.bike.select}">Выбор мотоцикла</span> <span class="text-danger" th:text="#{form.required}">*</span>
                                             </label>
                                             <div id="bikes-0" class="bikes-selection">
                                                 <div th:each="bike : ${availableBikes}" class="form-check bike-checkbox">
@@ -336,7 +336,7 @@
                                                             <img th:src="@{${bike.photoPath}}"
                                                                  class="me-2 rounded"
                                                                  style="width: 50px; height: 40px; object-fit: cover;"
-                                                                 alt="Bike photo">
+                                                                 alt="Bike photo" th:alt="#{alt.bike.photo}">
                                                             <div class="flex-grow-1">
                                                                 <div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>
                                                                 <small class="text-muted">
@@ -347,13 +347,13 @@
                                                             </div>
                                                         </div>
                                                         <div class="text-muted small mt-1">
-                                                            <span th:text="'от ' + ${bike.limit.ageMin} + ' лет'">от 12 лет</span>,
+                                                            <span th:text="#{booking.bike.years.from(${bike.limit.ageMin})}">от 12 лет</span>,
                                                             <span th:if="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                  th:text="${bike.limit.heightMin} + '–' + ${bike.limit.heightMax} + ' см'">
+                                                                  th:text="#{booking.bike.height.range(${bike.limit.heightMin}, ${bike.limit.heightMax})}">
                                                                 140–170 см
                                                             </span>
                                                             <span th:unless="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                  th:text="'от ' + ${bike.limit.heightMin} + ' см'">
+                                                                  th:text="#{booking.bike.height.from(${bike.limit.heightMin})}">
                                                                 от 165 см
                                                             </span>
 <!--
@@ -379,10 +379,10 @@
                                             class="btn btn-outline-primary"
                                             onclick="addParticipant()">
                                         <i class="fas fa-user-plus me-2"></i>
-                                        Добавить участника
+                                        <span th:text="#{booking.participant.add}">Добавить участника</span>
                                     </button>
                                     <small class="d-block text-muted mt-2">
-                                        Максимум участников: <span th:text="${maxParticipants}">8</span>
+                                        <span th:text="#{booking.participant.max}">Максимум участников</span>: <span th:text="${maxParticipants}">8</span>
                                     </small>
                                 </div>
                             </div>
@@ -392,14 +392,14 @@
                                 <div class="alert alert-info border-primary">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="h5 mb-0">
-                                            <i class="fas fa-tag me-2"></i>Итоговая стоимость:
+                                            <i class="fas fa-tag me-2"></i><span th:text="#{booking.total.price}">Итоговая стоимость</span>:
                                         </span>
                                         <span class="h3 mb-0 text-muted fw-bold">
-                                            <span id="totalPrice">0</span> ₽
+                                            <span id="totalPrice">0</span> <span th:text="#{route.currency}">₽</span>
                                         </span>
                                     </div>
                                     <small class="text-muted">
-                                        Количество участников: <span id="participantCount">1</span>
+                                        <span th:text="#{booking.participant.count}">Количество участников</span>: <span id="participantCount">1</span>
                                     </small>
                                 </div>
                             </div>
@@ -412,20 +412,19 @@
                                            id="consentCheckbox"
                                            onchange="onConsentChange()">
                                     <label class="form-check-label" for="consentCheckbox">
-                                        Я согласен с
-                                        <a href="/privacy" target="_blank" rel="noopener">
+                                        <span th:text="#{booking.consent.prefix}">Я согласен с</span>
+                                        <a href="/privacy" target="_blank" rel="noopener" th:text="#{booking.consent.policy}">
                                             политикой обработки персональных данных
                                         </a>
-                                        и подтверждаю, что имею согласие третьих лиц
-                                        <span class="text-danger">*</span>
+                                        <span th:text="#{booking.consent.third.party}">и подтверждаю, что имею согласие третьих лиц</span>
+                                        <span class="text-danger" th:text="#{form.required}">*</span>
                                     </label>
                                 </div>
                                 <div id="consentError"
                                      class="alert alert-warning mt-2 py-2 d-none"
                                      role="alert">
                                     <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Пожалуйста, ознакомьтесь с политикой обработки персональных данных
-                                    и подтвердите своё согласие.
+                                    <span th:text="#{booking.consent.error}">Пожалуйста, ознакомьтесь с политикой обработки персональных данных и подтвердите своё согласие.</span>
                                 </div>
                             </div>
 
@@ -436,7 +435,7 @@
                                         class="btn btn-warning btn-lg"
                                         disabled>
                                     <i class="fas fa-bolt me-2"></i>
-                                    Забронировать специальный заезд
+                                    <span th:text="#{booking.special.submit}">Забронировать специальный заезд</span>
                                 </button>
                             </div>
 
@@ -444,8 +443,7 @@
                             <div class="mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    После отправки формы бронирование будет зарезервировано на 24 часа.
-                                    Для подтверждения необходимо внести оплату.
+                                    <span th:text="#{booking.info.text}">После отправки формы бронирование будет зарезервировано на 24 часа. Для подтверждения необходимо внести оплату.</span>
                                 </small>
                             </div>
                         </form>
@@ -463,6 +461,50 @@
         const routePrice = /*[[${route.price}]]*/ 0;
         let participantCounter = 1;
         let selectedRoutePrice = routePrice; // Fixed route price
+
+        const i18n = {
+            ageWarningTitle: /*[[#{booking.age.warning.title}]]*/ 'Внимание!',
+            ageWarningText: /*[[#{booking.age.warning.text}]]*/ 'Участникам младше 16 лет необходимо присутствие взрослого сопровождающего. Пожалуйста, добавьте взрослого участника (от 18 лет).',
+            minAge: /*[[#{booking.bike.age.restriction('__')}]]*/ 'Минимальный возраст: __ лет',
+            minHeight: /*[[#{booking.bike.height.min('__')}]]*/ 'Минимальный рост: __ см',
+            maxHeight: /*[[#{booking.bike.height.max('__')}]]*/ 'Максимальный рост: __ см',
+            onlyMenOrPro: /*[[#{booking.bike.only.men.or.pro}]]*/ 'Только для мужчин или PRO)',
+            bikeOccupied: /*[[#{booking.bike.occupied}]]*/ 'Уже выбран другим участником',
+            participant: /*[[#{booking.participant.number}]]*/ 'Участник',
+            participantRemove: /*[[#{booking.participant.remove}]]*/ 'Удалить',
+            gender: /*[[#{booking.participant.gender}]]*/ 'Пол',
+            genderSelect: /*[[#{booking.participant.gender.select}]]*/ 'Выберите пол',
+            genderMale: /*[[#{booking.participant.gender.male}]]*/ 'Мужской',
+            genderFemale: /*[[#{booking.participant.gender.female}]]*/ 'Женский',
+            age: /*[[#{booking.participant.age}]]*/ 'Возраст',
+            height: /*[[#{booking.participant.height}]]*/ 'Рост (см)',
+            experience: /*[[#{booking.participant.experience}]]*/ 'Опыт вождения',
+            experienceSelect: /*[[#{booking.participant.experience.select}]]*/ 'Выберите уровень',
+            experienceNone: /*[[#{booking.participant.experience.none}]]*/ 'Не умею на велосипеде',
+            experienceBeginner: /*[[#{booking.participant.experience.beginner}]]*/ 'Умею на велосипеде, не пробовал на мотоцикле',
+            experienceIntermediate: /*[[#{booking.participant.experience.intermediate}]]*/ 'Ездил на мотоцикле, но давно и не правда',
+            experienceAdvanced: /*[[#{booking.participant.experience.advanced}]]*/ 'Знаете, я и сам своего рода учёный',
+            bikeSelect: /*[[#{booking.bike.select}]]*/ 'Выбор мотоцикла',
+            bikeCc: /*[[#{bike.cc}]]*/ 'куб.см',
+            transmissionAutomatic: /*[[#{booking.bike.transmission.automatic}]]*/ 'автомат',
+            transmissionManual: /*[[#{booking.bike.transmission.manual}]]*/ 'механика',
+            bikeYearsFrom: /*[[#{booking.bike.years.from('__')}]]*/ 'от __ лет',
+            bikeHeightRange: /*[[#{booking.bike.height.range('__A__', '__B__')}]]*/ '__A__–__B__ см',
+            bikeHeightFrom: /*[[#{booking.bike.height.from('__')}]]*/ 'от __ см',
+            required: /*[[#{form.required}]]*/ '*',
+            maxParticipants: /*[[#{booking.error.max.participants('__')}]]*/ 'Достигнуто максимальное количество участников: __',
+            fillRequired: /*[[#{booking.error.fill.required}]]*/ 'Пожалуйста, заполните все обязательные поля',
+            processing: /*[[#{booking.processing}]]*/ 'Обработка...',
+            errorCreating: /*[[#{booking.error.creating}]]*/ 'Ошибка при создании бронирования',
+            submitSpecial: /*[[#{booking.special.submit}]]*/ 'Забронировать специальный заезд',
+            placeholderAge: /*[[#{placeholder.age}]]*/ '18',
+            placeholderHeight: /*[[#{placeholder.height}]]*/ '175',
+            altBikePhoto: /*[[#{alt.bike.photo}]]*/ 'Фото мотоцикла'
+        };
+
+        function fmt(template, ...values) {
+            return values.reduce((s, v) => s.replace('__', v), template);
+        }
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -502,8 +544,7 @@
                 warningDiv.className = 'alert alert-warning mt-3';
                 warningDiv.innerHTML = `
                     <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Внимание!</strong> Участникам младше 16 лет необходимо присутствие взрослого сопровождающего.
-                    Пожалуйста, добавьте взрослого участника (от 18 лет).
+                    <strong>${i18n.ageWarningTitle}</strong> ${i18n.ageWarningText}
                 `;
 
                 const participantBlock = document.getElementById('participant-0');
@@ -551,28 +592,28 @@
 
                 if (age > 0 && age < ageMin) {
                     isAvailable = false;
-                    reasons.push(`Минимальный возраст: ${ageMin} лет`);
+                    reasons.push(fmt(i18n.minAge, ageMin));
                 }
 
                 if (height > 0) {
                     if (height < heightMin) {
                         isAvailable = false;
-                        reasons.push(`Минимальный рост: ${heightMin} см`);
+                        reasons.push(fmt(i18n.minHeight, heightMin));
                     } else if (heightMax < 999 && height > heightMax) {
                         isAvailable = false;
-                        reasons.push(`Максимальный рост: ${heightMax} см`);
+                        reasons.push(fmt(i18n.maxHeight, heightMax));
                     }
                 }
 
                 // Check gender restriction
                 if (onlyMen && gender === 'FEMALE' && experienceLevel !== 'ADVANCED') {
                     isAvailable = false;
-                    reasons.push('Только для мужчин или PRO)');
+                    reasons.push(i18n.onlyMenOrPro);
                 }
 
                 if (occupiedBikeIds.includes(bikeId)) {
                     isAvailable = false;
-                    reasons.push('Уже выбран другим участником');
+                    reasons.push(i18n.bikeOccupied);
                 }
 
                 if (isAvailable) {
@@ -628,7 +669,7 @@
             const currentCount = document.querySelectorAll('.participant-block').length;
 
             if (currentCount >= maxParticipants) {
-                alert('Достигнуто максимальное количество участников: ' + maxParticipants);
+                alert(fmt(i18n.maxParticipants, maxParticipants));
                 return;
             }
 
@@ -640,12 +681,12 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0">
                         <i class="fas fa-user me-2"></i>
-                        Участник #${index + 1}
+                        ${i18n.participant} #${index + 1}
                     </h6>
                     <button type="button"
                             class="btn btn-sm btn-outline-danger"
                             onclick="removeParticipant(${index})">
-                        <i class="fas fa-times"></i> Удалить
+                        <i class="fas fa-times"></i> ${i18n.participantRemove}
                     </button>
                 </div>
 
@@ -654,21 +695,21 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">
-                                    Пол <span class="text-danger">*</span>
+                                    ${i18n.gender} <span class="text-danger">${i18n.required}</span>
                                 </label>
                                 <select class="form-select"
                                         name="participants[${index}].gender"
                                         required
                                         onchange="updateAvailableBikes(${index})">
-                                    <option value="">Выберите пол</option>
-                                    <option value="MALE">Мужской</option>
-                                    <option value="FEMALE">Женский</option>
+                                    <option value="">${i18n.genderSelect}</option>
+                                    <option value="MALE">${i18n.genderMale}</option>
+                                    <option value="FEMALE">${i18n.genderFemale}</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">
-                                    Возраст <span class="text-danger">*</span>
+                                    ${i18n.age} <span class="text-danger">${i18n.required}</span>
                                 </label>
                                 <input type="number"
                                        class="form-control"
@@ -677,12 +718,12 @@
                                        max="99"
                                        required
                                        onchange="updateAvailableBikes(${index})"
-                                       placeholder="18">
+                                       placeholder="${i18n.placeholderAge}">
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">
-                                    Рост (см) <span class="text-danger">*</span>
+                                    ${i18n.height} <span class="text-danger">${i18n.required}</span>
                                 </label>
                                 <input type="number"
                                        class="form-control"
@@ -691,21 +732,21 @@
                                        max="220"
                                        required
                                        onchange="updateAvailableBikes(${index})"
-                                       placeholder="175">
+                                       placeholder="${i18n.placeholderHeight}">
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">
-                                    Опыт вождения <span class="text-danger">*</span>
+                                    ${i18n.experience} <span class="text-danger">${i18n.required}</span>
                                 </label>
                                 <select class="form-select"
                                         name="participants[${index}].experienceLevel"
                                         required>
-                                    <option value="">Выберите уровень</option>
-                                    <option value="NONE">Не умею на велосипеде</option>
-                                    <option value="BEGINNER">Умею на велосипеде, не пробовал на мотоцикле</option>
-                                    <option value="INTERMEDIATE">Ездил на мотоцикле, но давно и не правда</option>
-                                    <option value="ADVANCED">Знаете, я и сам своего рода учёный</option>
+                                    <option value="">${i18n.experienceSelect}</option>
+                                    <option value="NONE">${i18n.experienceNone}</option>
+                                    <option value="BEGINNER">${i18n.experienceBeginner}</option>
+                                    <option value="INTERMEDIATE">${i18n.experienceIntermediate}</option>
+                                    <option value="ADVANCED">${i18n.experienceAdvanced}</option>
                                 </select>
                             </div>
                         </div>
@@ -713,7 +754,7 @@
 
                     <div class="col-lg-4">
                         <label class="form-label">
-                            Выбор мотоцикла <span class="text-danger">*</span>
+                            ${i18n.bikeSelect} <span class="text-danger">${i18n.required}</span>
                         </label>
                         <div id="bikes-${index}" class="bikes-selection">
                             ${generateBikeOptions(index)}
@@ -749,17 +790,17 @@
                         <img src="${bike.photoPath}"
                              class="me-2 rounded"
                              style="width: 50px; height: 40px; object-fit: cover;"
-                             alt="Bike photo">
+                             alt="${i18n.altBikePhoto}">
                         <div class="flex-grow-1">
                             <div class="fw-bold">${bike.brand} ${bike.model}</div>
-                            <small class="text-muted">${bike.engineCc} куб.см, ${bike.transmissionType === 'AUTOMATIC' ? 'автомат' : 'механика'}</small>
+                            <small class="text-muted">${bike.engineCc} ${i18n.bikeCc}, ${bike.transmissionType === 'AUTOMATIC' ? i18n.transmissionAutomatic : i18n.transmissionManual}</small>
                         </div>
                     </div>
                     <div class="text-muted small mt-1">
-                        от ${bike.limit.ageMin} лет,
+                        ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)},
                         ${bike.limit.heightMax && bike.limit.heightMax > 0
-                ? bike.limit.heightMin + '–' + bike.limit.heightMax + ' см'
-                : 'от ' + bike.limit.heightMin + ' см'}
+                ? i18n.bikeHeightRange.replace('__A__', bike.limit.heightMin).replace('__B__', bike.limit.heightMax)
+                : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
 <!--                        ${bike.limit.onlyMen ? '<span class="text-warning"><i class="fas fa-exclamation-circle"></i> только мужчины</span>' : ''}-->
                     </div>
                 </label>
@@ -840,7 +881,7 @@
             }
 
             if (!validateForm()) {
-                alert('Пожалуйста, заполните все обязательные поля');
+                alert(i18n.fillRequired);
                 return;
             }
 
@@ -884,7 +925,7 @@
             // Disable submit button
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обработка...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + i18n.processing;
 
             // POST request to /booking
             fetch('/booking', {
@@ -902,13 +943,13 @@
                     if (data && data.bookingId) {
                         window.location.href = `/booking/confirmation/${data.bookingId}`;
                     } else {
-                        throw new Error(data?.message || 'Ошибка при создании бронирования');
+                        throw new Error(data?.message || i18n.errorCreating);
                     }
                 })
                 .catch(err => {
-                    alert('Ошибка при создании бронирования: ' + err.message);
+                    alert(i18n.errorCreating + ': ' + err.message);
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-bolt me-2"></i>Забронировать специальный заезд';
+                    submitBtn.innerHTML = '<i class="fas fa-bolt me-2"></i>' + i18n.submitSpecial;
                 });
         }
     </script>

@@ -34,7 +34,7 @@
 
         <button type="button"
                 class="banner-close-btn"
-                aria-label="Close"
+                th:aria-label="#{aria.close}" aria-label="Закрыть"
                 onclick="event.preventDefault(); event.stopPropagation(); this.closest('.special-banner-floating').style.display='none';">
             <i class="fas fa-times"></i>
         </button>
@@ -50,7 +50,7 @@
         <div class="banner-content">
             <!-- Badge - Left Top -->
             <span class="banner-badge">
-            <i class="fas fa-star"></i> СПЕЦПРЕДЛОЖЕНИЕ
+            <i class="fas fa-star"></i> <span th:text="#{main.banner.special}">СПЕЦПРЕДЛОЖЕНИЕ</span>
             </span>
 
             <!-- Content - Right Side -->
@@ -85,7 +85,7 @@
                 <!-- CTA Icon and Text -->
                 <div class="banner-cta-text text-end">
                     <i class="fas fa-bolt"></i>
-                    <span>Бронируй сейчас!</span>
+                    <span th:text="#{main.banner.cta}">Бронируй сейчас!</span>
                 </div>
             </div>
         </div>
@@ -125,12 +125,12 @@
                                     <span th:text="#{bike.years}">лет</span>
                                     <span th:if="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
                                         | <span th:text="#{bike.height}">рост</span>
-                                        <span th:text="${bike.limits.heightMin + '–' + bike.limits.heightMax}">140–155</span> см
+                                        <span th:text="${bike.limits.heightMin + '–' + bike.limits.heightMax}">140–155</span> <span th:text="#{unit.cm}">см</span>
                                     </span>
                                     <span th:unless="${bike.limits.heightMax != null && bike.limits.heightMax > 0}">
                                         | <span th:text="#{bike.height}">рост</span>
                                         <span th:text="#{bike.from}">от</span>
-                                        <span th:text="${bike.limits.heightMin}">165</span> см
+                                        <span th:text="${bike.limits.heightMin}">165</span> <span th:text="#{unit.cm}">см</span>
                                     </span>
                                     <br>
 <!--                                Текст "Только для мужчин" на эндуро

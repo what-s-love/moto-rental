@@ -7,12 +7,11 @@
 <div layout:fragment="content">
     <div class="mb-4">
         <h1 class="h3 mb-1">
-            <i class="fas fa-plus-circle me-2 text-primary"></i>Создать бронирование
+            <i class="fas fa-plus-circle me-2 text-primary"></i><span th:text="#{admin.bookings.create}">Создать бронирование</span>
         </h1>
-        <p class="text-muted mb-0">Быстрая форма для администратора</p>
+        <p class="text-muted mb-0" th:text="#{admin.bookings.create.subtitle}">Быстрая форма для администратора</p>
     </div>
 
-    <!-- Flash Messages -->
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -28,69 +27,65 @@
                 <div class="my-4">
                     <h2 class="h5 mb-3">
                         <i class="fas fa-user me-2"></i>
-                        Контактное лицо
+                        <span th:text="#{booking.client.title}">Контактное лицо</span>
                     </h2>
 
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">
-                                Имя и Фамилия <span class="text-danger">*</span>
+                                <span th:text="#{booking.client.name}">Имя и Фамилия</span> <span class="text-danger" th:text="#{form.required}">*</span>
                             </label>
                             <input type="text"
                                    class="form-control"
                                    name="client.name"
                                    required
                                    maxlength="255"
+                                   th:placeholder="#{placeholder.client.name}"
                                    placeholder="Иван Иванов">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">
-                                Email <span class="text-danger">*</span>
+                                <span th:text="#{booking.client.email}">Email</span> <span class="text-danger" th:text="#{form.required}">*</span>
                             </label>
                             <input type="email"
                                    class="form-control"
                                    name="client.email"
                                    required
                                    maxlength="255"
+                                   th:placeholder="#{placeholder.client.email}"
                                    placeholder="ivan@example.com">
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">
+                            <label class="form-label" th:text="#{booking.client.phone}">
                                 Телефон
                             </label>
                             <input type="tel"
                                    class="form-control"
                                    name="client.phone"
                                    pattern="^\+?[0-9]{9,15}$"
+                                   th:placeholder="#{placeholder.client.phone}"
                                    placeholder="+79161234567">
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">
+                            <label class="form-label" th:text="#{booking.client.telegram}">
                                 Telegram ID
                             </label>
                             <input type="text"
                                    class="form-control"
                                    name="client.telegramId"
                                    maxlength="100"
+                                   th:placeholder="#{placeholder.client.telegram}"
                                    placeholder="@username">
                         </div>
                     </div>
                 </div>
 
-                <!-- Основные поля -->
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label for="date" class="form-label">Дата заезда</label>
-<!--                        <select class="form-select" name="date" required>-->
-<!--                            <option value="" selected disabled>Выберите дату</option>-->
-<!--                            <option th:each="d : ${dates}"-->
-<!--                                    th:value="${d}"-->
-<!--                                    th:text="${#temporals.format(d, 'dd.MM.yyyy')}">-->
-<!--                            </option>-->
-<!--                        </select>-->
+                        <label for="date" class="form-label" th:text="#{booking.date.label}">Дата заезда</label>
                         <input type="date"
                                class="form-control"
                                id="date"
@@ -99,9 +94,9 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Смена</label>
+                        <label class="form-label" th:text="#{admin.label.shift}">Смена</label>
                         <select class="form-select" name="shiftId" required>
-                            <option value="" selected disabled>Выберите смену</option>
+                            <option value="" selected disabled th:text="#{admin.select.shift}">Выберите смену</option>
                             <option th:each="s : ${shifts}"
                                     th:value="${s.id}"
                                     th:text="${s.name + ' (' + #temporals.format(s.startTime,'HH:mm') + '-' + #temporals.format(s.endTime,'HH:mm') + ')'}">
@@ -110,9 +105,9 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Маршрут</label>
+                        <label class="form-label" th:text="#{admin.label.route}">Маршрут</label>
                         <select class="form-select" name="routeId" required>
-                            <option value="" selected disabled>Выберите маршрут</option>
+                            <option value="" selected disabled th:text="#{admin.select.route}">Выберите маршрут</option>
                             <option th:each="r : ${routes}"
                                     th:value="${r.id}"
                                     th:text="${r.name + ' · ' + r.price + ' ₽/чел'}">
@@ -123,15 +118,14 @@
 
                 <hr class="my-4">
 
-                <!-- Участники -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h2 class="h5 mb-0">
-                        <i class="fas fa-users me-2"></i>Участники
+                        <i class="fas fa-users me-2"></i><span th:text="#{admin.participants.title}">Участники</span>
                     </h2>
                     <button type="button"
                             class="btn btn-outline-primary btn-sm"
                             id="addParticipantBtn">
-                        <i class="fas fa-user-plus me-1"></i>Добавить
+                        <i class="fas fa-user-plus me-1"></i><span th:text="#{booking.participant.add}">Добавить</span>
                     </button>
                 </div>
 
@@ -140,25 +134,49 @@
                 <div class="form-check mt-4">
                     <input class="form-check-input" type="checkbox" id="paidCheckbox" name="paid">
                     <label class="form-check-label" for="paidCheckbox">
-                        Оплачено (создать сразу в статусе PAID)
+                        PAID
                     </label>
                 </div>
 
                 <div class="d-grid mt-3">
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-check me-2"></i>Создать
+                        <i class="fas fa-check me-2"></i><span th:text="#{admin.button.create}">Создать</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JS -->
     <script th:inline="javascript" defer>
         const availableBikes = /*[[${availableBikes}]]*/ [];
         const maxParticipants = /*[[${maxParticipants}]]*/ 8;
 
-        // Получить все выбранные мотоциклы
+        const i18n = {
+            selectBike: /*[[#{admin.select.bike}]]*/ 'Выберите мотоцикл',
+            bikeOccupied: /*[[#{booking.occupied}]]*/ 'занят',
+            participant: /*[[#{booking.participant.number}]]*/ 'Участник',
+            gender: /*[[#{booking.participant.gender}]]*/ 'Пол',
+            genderSelect: /*[[#{booking.participant.gender.select}]]*/ 'Выберите',
+            genderMale: /*[[#{booking.participant.gender.male}]]*/ 'Мужской',
+            genderFemale: /*[[#{booking.participant.gender.female}]]*/ 'Женский',
+            age: /*[[#{booking.participant.age}]]*/ 'Возраст',
+            height: /*[[#{booking.participant.height}]]*/ 'Рост (см)',
+            experience: /*[[#{booking.participant.experience}]]*/ 'Опыт',
+            experienceSelect: /*[[#{booking.participant.experience.select}]]*/ 'Выберите',
+            experienceNone: /*[[#{booking.participant.experience.none}]]*/ 'NONE',
+            experienceBeginner: /*[[#{booking.participant.experience.beginner}]]*/ 'BEGINNER',
+            experienceIntermediate: /*[[#{booking.participant.experience.intermediate}]]*/ 'INTERMEDIATE',
+            experienceAdvanced: /*[[#{booking.participant.experience.advanced}]]*/ 'ADVANCED',
+            bike: /*[[#{admin.label.bike}]]*/ 'Мотоцикл',
+            choose: /*[[#{admin.select.choose}]]*/ 'Выберите',
+            placeholderAge: /*[[#{placeholder.age}]]*/ '18',
+            placeholderHeight: /*[[#{placeholder.height}]]*/ '180'
+        };
+
+        function participantLabel(index) {
+            return i18n.participant + ' #' + (index + 1);
+        }
+
         function getSelectedBikes() {
             const selects = document.querySelectorAll('#participantsContainer select[name$=".bikeId"]');
             return Array.from(selects)
@@ -166,16 +184,13 @@
                 .filter(v => v !== '');
         }
 
-        // Обновить все селекты мотоциклов с учетом фильтрации
         function updateBikeSelects() {
             const selectedBikes = getSelectedBikes();
             const selects = document.querySelectorAll('#participantsContainer select[name$=".bikeId"]');
 
             selects.forEach(select => {
                 const currentValue = select.value;
-
-                // Очистить и пересоздать опции
-                select.innerHTML = `<option value="" selected disabled>Выберите мотоцикл</option>`;
+                select.innerHTML = `<option value="" selected disabled>${i18n.selectBike}</option>`;
 
                 availableBikes.forEach(bike => {
                     const label = `${bike.brand} ${bike.model} · ${bike.engineCc}cc`;
@@ -183,16 +198,14 @@
                     option.value = bike.id;
                     option.textContent = label;
 
-                    // Отключить опцию, если мотоцикл уже выбран другим участником
                     if (selectedBikes.includes(String(bike.id)) && String(bike.id) !== currentValue) {
                         option.disabled = true;
-                        option.textContent = label + ' (занят)';
+                        option.textContent = label + ' (' + i18n.bikeOccupied + ')';
                     }
 
                     select.appendChild(option);
                 });
 
-                // Восстановить текущее значение
                 if (currentValue) {
                     select.value = currentValue;
                 }
@@ -204,7 +217,7 @@
             <div class="card bg-light border" data-participant-index="${i}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <strong>Участник #${i + 1}</strong>
+                        <strong>${participantLabel(i)}</strong>
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm"
                                 onclick="removeParticipant(event)">
@@ -214,51 +227,51 @@
 
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <label class="form-label">Пол</label>
+                            <label class="form-label">${i18n.gender}</label>
                             <select class="form-select" name="participants[${i}].gender" required>
-                                <option value="" selected disabled>Выберите</option>
-                                <option value="MALE">Мужской</option>
-                                <option value="FEMALE">Женский</option>
+                                <option value="" selected disabled>${i18n.genderSelect}</option>
+                                <option value="MALE">${i18n.genderMale}</option>
+                                <option value="FEMALE">${i18n.genderFemale}</option>
                             </select>
                         </div>
 
                         <div class="col-md-3">
-                            <label class="form-label">Возраст</label>
+                            <label class="form-label">${i18n.age}</label>
                             <input class="form-control" type="number"
                                    name="participants[${i}].age"
                                    min="12" max="99"
-                                   placeholder="18"
+                                   placeholder="${i18n.placeholderAge}"
                                    required>
                         </div>
 
                         <div class="col-md-3">
-                            <label class="form-label">Рост (см)</label>
+                            <label class="form-label">${i18n.height}</label>
                             <input class="form-control" type="number"
                                    name="participants[${i}].height"
                                    min="130" max="220"
-                                   placeholder="180"
+                                   placeholder="${i18n.placeholderHeight}"
                                    required>
                         </div>
 
                         <div class="col-md-3">
-                            <label class="form-label">Опыт</label>
+                            <label class="form-label">${i18n.experience}</label>
                             <select class="form-select"
                                     name="participants[${i}].experienceLevel"
                                     required>
-                                <option value="" selected disabled>Выберите</option>
-                                <option value="NONE">NONE</option>
-                                <option value="BEGINNER">BEGINNER</option>
-                                <option value="INTERMEDIATE">INTERMEDIATE</option>
-                                <option value="ADVANCED">ADVANCED</option>
+                                <option value="" selected disabled>${i18n.experienceSelect}</option>
+                                <option value="NONE">${i18n.experienceNone}</option>
+                                <option value="BEGINNER">${i18n.experienceBeginner}</option>
+                                <option value="INTERMEDIATE">${i18n.experienceIntermediate}</option>
+                                <option value="ADVANCED">${i18n.experienceAdvanced}</option>
                             </select>
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label">Мотоцикл</label>
+                            <label class="form-label">${i18n.bike}</label>
                             <select class="form-select bike-select"
                                     name="participants[${i}].bikeId"
                                     required>
-                                <option value="" selected disabled>Выберите мотоцикл</option>
+                                <option value="" selected disabled>${i18n.selectBike}</option>
                             </select>
                         </div>
                     </div>
@@ -273,10 +286,8 @@
             const container = document.getElementById('participantsContainer');
             container.insertAdjacentHTML('beforeend', participantBlockHtml(count));
 
-            // Обновить все селекты мотоциклов после добавления нового участника
             updateBikeSelects();
 
-            // Добавить слушатель изменений для нового селекта мотоцикла
             const newCard = container.lastElementChild;
             const bikeSelect = newCard.querySelector('.bike-select');
             if (bikeSelect) {
@@ -294,26 +305,21 @@
             }
         }
 
-        // Переиндексация участников после удаления
         function reindexParticipants() {
             const cards = document.querySelectorAll('#participantsContainer .card');
 
             cards.forEach((card, newIndex) => {
-                // Обновить атрибут data-participant-index
                 card.setAttribute('data-participant-index', newIndex);
 
-                // Обновить заголовок "Участник #N"
                 const header = card.querySelector('strong');
                 if (header) {
-                    header.textContent = `Участник #${newIndex + 1}`;
+                    header.textContent = participantLabel(newIndex);
                 }
 
-                // Обновить все имена полей внутри карточки
                 const inputs = card.querySelectorAll('input, select');
                 inputs.forEach(input => {
                     const name = input.getAttribute('name');
                     if (name && name.startsWith('participants[')) {
-                        // Заменить старый индекс на новый
                         const newName = name.replace(/participants\[\d+\]/, `participants[${newIndex}]`);
                         input.setAttribute('name', newName);
                     }
@@ -321,7 +327,6 @@
             });
         }
 
-        // Инициализация
         document.addEventListener('DOMContentLoaded', function () {
             const addBtn = document.getElementById('addParticipantBtn');
 
@@ -329,7 +334,6 @@
                 addBtn.addEventListener('click', addParticipant);
             }
 
-            // Добавить первого участника
             addParticipant();
         });
     </script>
