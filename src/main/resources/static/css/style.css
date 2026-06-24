@@ -576,26 +576,34 @@ body {
     .sidebar .nav {
         display: flex;
         flex-direction: row !important;
-        justify-content: space-around;
         align-items: center;
         width: 100%;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 0;
+        padding: 0 4px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .sidebar .nav::-webkit-scrollbar {
+        display: none;
     }
     .sidebar .nav-item {
-        flex: 1;
-        text-align: center;
+        flex: 0 0 auto;
+        min-width: 0;
     }
     .sidebar .nav-link {
-        display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        padding: 6px 4px;
-        font-size: 10px;
+        padding: 4px 6px;
+        font-size: 0;
+        line-height: 1;
+    }
+    .sidebar .nav-link span {
+        display: none;
     }
     .sidebar .nav-link i {
-        margin: 0 !important;
-        font-size: 18px;
+        font-size: 16px;
     }
     .sidebar-header {
         display: none;

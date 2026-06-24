@@ -33,7 +33,7 @@
                             th:text="${p.isActive} ? #{admin.banner.enabled} : #{admin.banner.disabled}">СТАТУС</td>
                     <td class="text-end">
                         <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/policies/{id}(id=${p.id})}" target="_blank" rel="noopener">
-                            <i class="fas fa-book-open me-1"></i><span th:text="#{admin.button.edit}">Читать</span>
+                            <i class="fas fa-book-open me-1"></i><span th:text="#{admin.button.read}">Читать</span>
                         </a>
                     </td>
                 </tr>
