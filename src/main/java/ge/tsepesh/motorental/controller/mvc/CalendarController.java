@@ -2,8 +2,7 @@ package ge.tsepesh.motorental.controller.mvc;
 
 import ge.tsepesh.motorental.dto.CalendarDayDto;
 import ge.tsepesh.motorental.dto.RideCalendarDto;
-import ge.tsepesh.motorental.dto.ShiftDto;
-import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.dto.shift.ShiftDto;
 import ge.tsepesh.motorental.service.CalendarService;
 import ge.tsepesh.motorental.service.ShiftService;
 import lombok.RequiredArgsConstructor;

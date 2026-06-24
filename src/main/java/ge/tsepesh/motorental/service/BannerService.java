@@ -1,8 +1,8 @@
 package ge.tsepesh.motorental.service;
 
-import ge.tsepesh.motorental.dto.BannerCreateDto;
-import ge.tsepesh.motorental.dto.BannerDto;
-import ge.tsepesh.motorental.dto.BannerUpdateDto;
+import ge.tsepesh.motorental.dto.banner.BannerCreateDto;
+import ge.tsepesh.motorental.dto.banner.BannerDto;
+import ge.tsepesh.motorental.dto.banner.BannerUpdateDto;
 import ge.tsepesh.motorental.model.Banner;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;

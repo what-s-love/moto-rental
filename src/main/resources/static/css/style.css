@@ -852,30 +852,98 @@ body {
 }
 
 .bikes-selection {
-    max-height: 250px;
+    max-height: 400px;
     overflow-y: auto;
 }
 
-.bike-checkbox {
-    padding: 6px;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    transition: 0.2s;
+.bike-selected-badge {
+    z-index: 2;
+    pointer-events: none;
 }
 
-.bike-checkbox:hover {
-    background: #f8f9fa;
+.bike-checkbox {
+    position: relative;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bike-checkbox:hover:not(:has(input:disabled)) {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.bike-checkbox:has(input:checked) {
+    border-color: var(--primary-color);
+    border-width: 2px;
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.bike-checkbox:has(input:checked) .bike-selected-badge {
+    display: block !important;
+}
+
+.route-selection-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.route-selection-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.route-selection-card.border-primary {
+    border-width: 3px !important;
+}
+
+.route-selected-badge {
+    z-index: 10;
+    pointer-events: none;
+}
+
+.route-preview-image {
+    transition: transform 0.3s ease;
+}
+
+.special-route-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.special-route-card:hover {
+    box-shadow: 0 1rem 3rem rgba(255, 193, 7, 0.3) !important;
+}
+
+.participant-block {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .opacity-50 {
     opacity: 0.5;
 }
 
-/* Dark theme variables */
-[data-bs-theme="dark"] {
-    --bs-body-bg: #212529;
-    --bs-body-color: #fff;
+[data-bs-theme="dark"] .bike-checkbox {
+    border-color: #495057;
+    background-color: transparent;
+}
+
+[data-bs-theme="dark"] .bike-checkbox:hover:not(:has(input:disabled)) {
+    border-color: var(--primary-color);
 }
 
 /* Dark theme for bikes section */

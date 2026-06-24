@@ -331,6 +331,11 @@
                                                            th:data-limit-age-min="${bike.limit.ageMin}"
                                                            th:data-limit-only-men="${bike.limit.onlyMen}"
                                                            required>
+                                                    <div class="bike-selected-badge position-absolute top-0 end-0 m-1 d-none">
+                                                        <span class="badge bg-primary rounded-circle p-1">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
+                                                    </div>
                                                     <label class="form-check-label w-100" th:for="'bike-0-' + ${bike.id}">
                                                         <div class="d-flex align-items-center">
                                                             <img th:src="@{${bike.photoPath}}"
@@ -785,6 +790,11 @@
                        data-limit-only-men="${bike.limit.onlyMen}"
                        onchange="updateAvailableBikes(${index})"
                        required>
+                <div class="bike-selected-badge position-absolute top-0 end-0 m-1 d-none">
+                    <span class="badge bg-primary rounded-circle p-1">
+                        <i class="fas fa-check"></i>
+                    </span>
+                </div>
                 <label class="form-check-label w-100" for="bike-${index}-${bike.id}">
                     <div class="d-flex align-items-center">
                         <img src="${bike.photoPath}"
@@ -953,58 +963,6 @@
                 });
         }
     </script>
-
-    <!-- Custom styles -->
-    <style>
-        .special-route-card {
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .special-route-card:hover {
-            box-shadow: 0 1rem 3rem rgba(255, 193, 7, 0.3) !important;
-        }
-
-        .bikes-selection {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .bike-checkbox {
-            padding: 0.5rem;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .bike-checkbox:hover {
-            background-color: #f8f9fa;
-        }
-
-        .bike-checkbox input:checked + label {
-            font-weight: 600;
-        }
-
-        .bike-checkbox input:checked ~ * {
-            background-color: #e7f3ff;
-        }
-
-        .participant-block {
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </div>
 
 </html>

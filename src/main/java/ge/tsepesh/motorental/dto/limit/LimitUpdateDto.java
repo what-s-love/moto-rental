@@ -1,4 +1,4 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.limit;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

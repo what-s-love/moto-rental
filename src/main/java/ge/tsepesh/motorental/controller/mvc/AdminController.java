@@ -1,16 +1,16 @@
 package ge.tsepesh.motorental.controller.mvc;
 
-import ge.tsepesh.motorental.dto.BannerCreateDto;
-import ge.tsepesh.motorental.dto.BannerDto;
-import ge.tsepesh.motorental.dto.BannerUpdateDto;
+import ge.tsepesh.motorental.dto.banner.BannerCreateDto;
+import ge.tsepesh.motorental.dto.banner.BannerDto;
+import ge.tsepesh.motorental.dto.banner.BannerUpdateDto;
 import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.bike.BikeCreateDto;
 import ge.tsepesh.motorental.dto.bike.BikeUpdateDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
-import ge.tsepesh.motorental.dto.LimitUpdateDto;
-import ge.tsepesh.motorental.dto.LimitCreateDto;
-import ge.tsepesh.motorental.dto.ShiftUpdateDto;
-import ge.tsepesh.motorental.dto.ShiftCreateDto;
+import ge.tsepesh.motorental.dto.limit.LimitUpdateDto;
+import ge.tsepesh.motorental.dto.limit.LimitCreateDto;
+import ge.tsepesh.motorental.dto.shift.ShiftUpdateDto;
+import ge.tsepesh.motorental.dto.shift.ShiftCreateDto;
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.policy.PolicyAdminDto;

@@ -1,6 +1,6 @@
 package ge.tsepesh.motorental.dto.bike;
 
-import ge.tsepesh.motorental.dto.LimitDto;
+import ge.tsepesh.motorental.dto.limit.LimitDto;
 import lombok.Builder;
 import lombok.Data;
 

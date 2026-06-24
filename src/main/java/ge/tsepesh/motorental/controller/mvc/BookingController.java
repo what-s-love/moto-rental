@@ -6,7 +6,7 @@ import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
 import ge.tsepesh.motorental.dto.RideDto;
 import ge.tsepesh.motorental.dto.route.RouteDto;
-import ge.tsepesh.motorental.dto.ShiftDto;
+import ge.tsepesh.motorental.dto.shift.ShiftDto;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaNotification;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaPaymentResponse;
 import ge.tsepesh.motorental.exception.ResourceNotFoundException;

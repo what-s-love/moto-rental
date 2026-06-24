@@ -1,5 +1,6 @@
 package ge.tsepesh.motorental.dto;
 
+import ge.tsepesh.motorental.dto.shift.ShiftAvailabilityDto;
 import lombok.Builder;
 import lombok.Data;
 

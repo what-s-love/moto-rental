@@ -1,8 +1,8 @@
 package ge.tsepesh.motorental.service;
 
-import ge.tsepesh.motorental.dto.ShiftCreateDto;
-import ge.tsepesh.motorental.dto.ShiftDto;
-import ge.tsepesh.motorental.dto.ShiftUpdateDto;
+import ge.tsepesh.motorental.dto.shift.ShiftCreateDto;
+import ge.tsepesh.motorental.dto.shift.ShiftDto;
+import ge.tsepesh.motorental.dto.shift.ShiftUpdateDto;
 import ge.tsepesh.motorental.model.Shift;
 import ge.tsepesh.motorental.repository.ShiftRepository;
 import lombok.RequiredArgsConstructor;

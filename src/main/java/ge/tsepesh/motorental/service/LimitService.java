@@ -1,8 +1,8 @@
 package ge.tsepesh.motorental.service;
 
-import ge.tsepesh.motorental.dto.LimitAdminDto;
-import ge.tsepesh.motorental.dto.LimitCreateDto;
-import ge.tsepesh.motorental.dto.LimitUpdateDto;
+import ge.tsepesh.motorental.dto.limit.LimitAdminDto;
+import ge.tsepesh.motorental.dto.limit.LimitCreateDto;
+import ge.tsepesh.motorental.dto.limit.LimitUpdateDto;
 import ge.tsepesh.motorental.model.Limit;
 import ge.tsepesh.motorental.repository.LimitRepository;
 import lombok.RequiredArgsConstructor;

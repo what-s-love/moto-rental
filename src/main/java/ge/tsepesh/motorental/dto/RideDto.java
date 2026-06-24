@@ -1,6 +1,7 @@
 package ge.tsepesh.motorental.dto;
 
 import ge.tsepesh.motorental.dto.route.RouteDto;
+import ge.tsepesh.motorental.dto.shift.ShiftDto;
 import lombok.Builder;
 import lombok.Data;
 

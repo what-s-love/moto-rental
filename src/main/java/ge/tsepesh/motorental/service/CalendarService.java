@@ -2,7 +2,7 @@ package ge.tsepesh.motorental.service;
 
 import ge.tsepesh.motorental.dto.CalendarDayDto;
 import ge.tsepesh.motorental.dto.RideCalendarDto;
-import ge.tsepesh.motorental.dto.ShiftAvailabilityDto;
+import ge.tsepesh.motorental.dto.shift.ShiftAvailabilityDto;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Shift;
 import ge.tsepesh.motorental.repository.RideRepository;

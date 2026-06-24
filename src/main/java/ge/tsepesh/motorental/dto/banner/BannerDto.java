@@ -1,4 +1,4 @@
-package ge.tsepesh.motorental.dto;
+package ge.tsepesh.motorental.dto.banner;
 
 
 import lombok.AllArgsConstructor;
