@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
         spaceBetween: 20,
         loop: true,
         autoplay: {
-            delay: 3000,
+            delay: 2800,
             disableOnInteraction: false,
+            pauseOnMouseEnter: true,
         },
         pagination: {
             el: '.swiper-pagination',
@@ -56,8 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         spaceBetween: 20,
         loop: true,
         autoplay: {
-            delay: 4000,
+            delay: 3200,
             disableOnInteraction: false,
+            pauseOnMouseEnter: true,
         },
         pagination: {
             el: '.swiper-pagination',
