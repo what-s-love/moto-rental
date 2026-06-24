@@ -149,7 +149,7 @@ public class BookingController {
         if (!banner.getEnabled()) {
             redirectAttributes.addFlashAttribute("error",
                     "Специальное предложение больше не доступно");
-            return "redirect:/";
+            return "redirect:/calendar";
         }
 
         // Проверить, что маршрут специальный
@@ -157,7 +157,7 @@ public class BookingController {
         if (!route.getIsSpecial() || !route.getEnabled()) {
             redirectAttributes.addFlashAttribute("error",
                     "Маршрут не доступен");
-            return "redirect:/";
+            return "redirect:/calendar";
         }
 
         // Проверить свободные места
@@ -170,7 +170,7 @@ public class BookingController {
         if (availableBikes <= 0) {
             redirectAttributes.addFlashAttribute("error",
                     "Нет свободных мест на этот заезд");
-            return "redirect:/";
+            return "redirect:/calendar";
         }
 
         // Получить существующий заезд или null

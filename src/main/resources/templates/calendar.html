@@ -13,6 +13,12 @@
                     <p class="h5 text-center" th:text="#{calendar.info2}">Выберите дату и смену заезда</p>
                 </div>
 
+                <!-- Error Badge -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show text-center pe-3" role="alert">
+                    <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <!-- Calendar Container -->
                 <div id="calendar"></div>
             </div>
@@ -99,6 +105,7 @@
                 themeSystem: 'bootstrap5',
                 initialView: 'dayGridMonth',
                 locale: 'ru',
+                firstDay: 1,
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
