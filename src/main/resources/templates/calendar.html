@@ -46,6 +46,52 @@
         </div>
     </div>
 
+    <!-- Modal с информацией о заезде -->
+    <div class="modal fade" id="rideModal" tabindex="-1" aria-labelledby="rideModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ride-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rideModalLabel">
+                        <i class="fas fa-motorcycle me-2"></i>
+                        <span th:text="#{calendar.ride.details}">Информация о заезде</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{aria.close}" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled ride-details-list mb-0">
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.shift.label}">Смена:</span>
+                            <span class="ride-detail-value" id="rideModalShift"></span>
+                        </li>
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.time.label}">Время:</span>
+                            <span class="ride-detail-value" id="rideModalTime"></span>
+                        </li>
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.participants.label}">Участников:</span>
+                            <span class="ride-detail-value" id="rideModalParticipants"></span>
+                        </li>
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.available.label}">Свободно мест:</span>
+                            <span class="ride-detail-value" id="rideModalAvailable"></span>
+                        </li>
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.route.label}">Маршрут:</span>
+                            <span class="ride-detail-value" id="rideModalRoute"></span>
+                        </li>
+                        <li class="ride-detail-item">
+                            <span class="ride-detail-label" th:text="#{calendar.status.label}">Статус:</span>
+                            <span class="ride-detail-value" id="rideModalStatus"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary w-100 w-sm-auto" data-bs-dismiss="modal" th:text="#{button.close}">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FullCalendar CSS and JS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
@@ -139,15 +185,7 @@
                     };
                 },
                 eventClick: function(info) {
-                    const props = info.event.extendedProps;
-                    alert(
-                        `${i18n.shift} ${props.shiftName}\n` +
-                        `${i18n.time} ${props.startTime} - ${props.endTime}\n` +
-                        `${i18n.participants} ${props.participantCount}\n` +
-                        `${i18n.available} ${props.availableBikes}\n` +
-                        `${i18n.route}  ${props.routeName}` + `: ` + `${props.routeDescription || i18n.routeNotSpecified}\n` +
-                        `${i18n.status} ${props.isFull ? i18n.statusFull : i18n.statusAvailable}`
-                    );
+                    showRideModal(info.event.extendedProps);
                 },
                 dateClick: function(info) {
                     showShiftModal(info.dateStr);
@@ -155,6 +193,31 @@
             });
 
             calendar.render();
+
+            function showRideModal(props) {
+                document.getElementById('rideModalShift').textContent = props.shiftName;
+                document.getElementById('rideModalTime').textContent = `${props.startTime} - ${props.endTime}`;
+                document.getElementById('rideModalParticipants').textContent = props.participantCount;
+
+                const availableEl = document.getElementById('rideModalAvailable');
+                availableEl.textContent = props.availableBikes;
+                availableEl.classList.toggle('text-danger', props.availableBikes === 0);
+                availableEl.classList.toggle('fw-semibold', props.availableBikes === 0);
+
+                const routeDescription = props.routeDescription || i18n.routeNotSpecified;
+                document.getElementById('rideModalRoute').textContent = `${props.routeName}: ${routeDescription}`;
+
+                const statusEl = document.getElementById('rideModalStatus');
+                statusEl.textContent = props.isFull ? i18n.statusFull : i18n.statusAvailable;
+                statusEl.classList.remove('text-danger', 'text-success', 'fw-semibold');
+                if (props.isFull) {
+                    statusEl.classList.add('text-danger', 'fw-semibold');
+                } else {
+                    statusEl.classList.add('text-success');
+                }
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('rideModal')).show();
+            }
 
             function showShiftModal(dateStr) {
                 const date = new Date(dateStr + 'T00:00:00');
@@ -228,178 +291,6 @@
             }
         });
     </script>
-
-    <style>
-        #calendar {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .fc-event {
-            cursor: pointer;
-            font-size: 0.9em;
-            border-radius: 4px;
-            margin: 1px 0;
-        }
-
-        .fc-event:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
-        }
-
-        .fc-event-title {
-            font-weight: 500;
-            padding: 2px 6px;
-        }
-
-        .fc-daygrid-event {
-            margin: 1px 0;
-            border-radius: 3px;
-        }
-
-        .shift-button {
-            padding: 15px;
-            text-align: left;
-            transition: all 0.3s ease;
-        }
-
-        .shift-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .shift-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Стилизация дат как кнопок с кружками */
-        .fc-daygrid-day-number {
-            cursor: pointer;
-            text-decoration: none !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            background-color: rgba(34, 187, 255, 0.2);
-            color: inherit;
-        }
-
-        .fc-daygrid-day-number:hover {
-            background-color: rgba(34, 187, 255, 0.4);
-            transform: scale(1.1);
-        }
-
-        /* Текущий день */
-        .fc-day-today .fc-daygrid-day-number {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: bold;
-        }
-
-        /* Прошедшие дни */
-        .fc-day-past .fc-daygrid-day-number {
-            color: #6c757d;
-        }
-
-        .fc-day-past .fc-daygrid-day-number:hover {
-            background-color: rgba(108, 117, 125, 0.1);
-        }
-
-        /* Выходные дни */
-        .fc-day-sat .fc-daygrid-day-number,
-        .fc-day-sun .fc-daygrid-day-number {
-            color: #dc3545;
-        }
-
-        /* Темная тема */
-        [data-bs-theme="dark"] #calendar {
-            background: #212529;
-            color: #fff;
-        }
-
-        [data-bs-theme="dark"] .fc {
-            --fc-border-color: #495057;
-            --fc-page-bg-color: #212529;
-            --fc-neutral-bg-color: #343a40;
-        }
-
-        [data-bs-theme="dark"] .fc-theme-standard td,
-        [data-bs-theme="dark"] .fc-theme-standard th {
-            border-color: #495057;
-        }
-
-        [data-bs-theme="dark"] .fc-col-header-cell {
-            background-color: #343a40;
-            color: #fff;
-        }
-
-        [data-bs-theme="dark"] .fc-daygrid-day {
-            background-color: #212529;
-        }
-
-        [data-bs-theme="dark"] .fc-day-today {
-            background-color: rgba(34, 187, 255, 0.1) !important;
-        }
-
-        [data-bs-theme="dark"] .fc-daygrid-day-number {
-            background-color: rgb(90, 173, 255, 0.3);
-            color: #e9ecef;
-        }
-
-        [data-bs-theme="dark"] .fc-daygrid-day-number:hover {
-            background-color: rgba(34, 187, 255, 0.2);
-        }
-
-        [data-bs-theme="dark"] .fc-day-today .fc-daygrid-day-number {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        [data-bs-theme="dark"] .fc-day-past .fc-daygrid-day-number {
-            color: #6c757d;
-        }
-
-        [data-bs-theme="dark"] .fc-day-past .fc-daygrid-day-number:hover {
-            background-color: rgba(108, 117, 125, 0.2);
-        }
-
-        [data-bs-theme="dark"] .fc-day-sat .fc-daygrid-day-number,
-        [data-bs-theme="dark"] .fc-day-sun .fc-daygrid-day-number {
-            color: #ff6b6b;
-        }
-
-        [data-bs-theme="dark"] #shiftsContainer .badge {
-            color: #fff;
-        }
-
-        @media (max-width: 768px) {
-            #calendar {
-                padding: 10px;
-            }
-
-            .fc-toolbar {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .fc-event-title {
-                font-size: 0.8em;
-                padding: 1px 4px;
-            }
-
-            .fc-daygrid-day-number {
-                width: 28px;
-                height: 28px;
-                font-size: 0.9em;
-            }
-        }
-    </style>
 </div>
 
 </html>
