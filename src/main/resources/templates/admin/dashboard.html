@@ -18,25 +18,25 @@
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
+                            <div class="p-3 rounded">
                                 <div class="text-muted small" th:text="#{admin.dashboard.total.bookings}">Всего Booking</div>
                                 <div class="h2 mb-0" th:text="${totalBookings}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
+                            <div class="p-3 rounded">
                                 <div class="text-muted small">PAID</div>
                                 <div class="h2 mb-0" th:text="${paidCount}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
-                                <div class="text-muted small">EXPIRED</div>
-                                <div class="h2 mb-0" th:text="${expiredCount}">0</div>
+                            <div class="p-3 rounded">
+                                <div class="text-muted small">FAILED PAYMENT</div>
+                                <div class="h2 mb-0" th:text="${failedCount}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
+                            <div class="p-3 rounded">
                                 <div class="text-muted small">COMPLETED</div>
                                 <div class="h2 mb-0" th:text="${completedCount}">0</div>
                             </div>
@@ -59,33 +59,33 @@
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
+                            <div class="p-3 rounded">
                                 <div class="text-muted small" th:text="#{admin.dashboard.total.bookings}">Всего Booking</div>
                                 <div class="h2 mb-0" th:text="${weekTotalBookings}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
-                                <div class="text-muted small">PENDING_PAYMENT</div>
+                            <div class="p-3 rounded">
+                                <div class="text-muted small">PENDING PAYMENT</div>
                                 <div class="h2 mb-0" th:text="${weekPendingPaymentCount}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
+                            <div class="p-3 rounded">
                                 <div class="text-muted small">PAID</div>
                                 <div class="h2 mb-0" th:text="${weekPaidCount}">0</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="p-3 border rounded bg-white">
-                                <div class="text-muted small">EXPIRED</div>
-                                <div class="h2 mb-0" th:text="${weekExpiredCount}">0</div>
+                            <div class="p-3 rounded">
+                                <div class="text-muted small">FAILED PAYMENT</div>
+                                <div class="h2 mb-0" th:text="${weekFailedCount}">0</div>
                             </div>
                         </div>
                     </div>
-                    <small class="text-muted d-block mt-3">
-                        <i class="fas fa-clock me-1"></i><span th:text="#{admin.dashboard.hint.week}">Период "неделя" лучше считать от понедельника до воскресенья.</span>
-                    </small>
+<!--                    <small class="text-muted d-block mt-3">-->
+<!--                        <i class="fas fa-clock me-1"></i><span th:text="#{admin.dashboard.hint.week}">Период "неделя" лучше считать от понедельника до воскресенья.</span>-->
+<!--                    </small>-->
                 </div>
             </div>
         </div>

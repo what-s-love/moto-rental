@@ -186,13 +186,12 @@ public class BookingService {
         return mapToBookingAdminDto(booking);
     }
 
-    //ToDo Исправить страницу Dashboard. Статистика не отображается. Убрать белые окна.
     public DashboardStatsDto getDashboardStats() {
         List<Booking> allBookings = bookingRepository.findAll();
 
         long totalBookings = allBookings.size();
         long paidCount = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PAID).count();
-        long expiredCount = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.EXPIRED).count();
+        long failedCount = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PAYMENT_FAILED).count();
         long completedCount = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.COMPLETED).count();
 
         // Текущая неделя (понедельник-воскресенье)
@@ -210,17 +209,17 @@ public class BookingService {
         long weekTotal = weekBookings.size();
         long weekPending = weekBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PENDING_PAYMENT).count();
         long weekPaid = weekBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PAID).count();
-        long weekExpired = weekBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.EXPIRED).count();
+        long weekFailed = weekBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PAYMENT_FAILED).count();
 
         return DashboardStatsDto.builder()
                 .totalBookings(totalBookings)
                 .paidCount(paidCount)
-                .expiredCount(expiredCount)
+                .failedCount(failedCount)
                 .completedCount(completedCount)
                 .weekTotalBookings(weekTotal)
                 .weekPendingPaymentCount(weekPending)
                 .weekPaidCount(weekPaid)
-                .weekExpiredCount(weekExpired)
+                .weekFailedCount(weekFailed)
                 .build();
     }
 

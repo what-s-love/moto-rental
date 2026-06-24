@@ -87,13 +87,13 @@ public class AdminController {
 
         model.addAttribute("totalBookings", stats.getTotalBookings());
         model.addAttribute("paidCount", stats.getPaidCount());
-        model.addAttribute("expiredCount", stats.getExpiredCount());
+        model.addAttribute("failedCount", stats.getFailedCount());
         model.addAttribute("completedCount", stats.getCompletedCount());
 
         model.addAttribute("weekTotalBookings", stats.getWeekTotalBookings());
         model.addAttribute("weekPendingPaymentCount", stats.getWeekPendingPaymentCount());
         model.addAttribute("weekPaidCount", stats.getWeekPaidCount());
-        model.addAttribute("weekExpiredCount", stats.getWeekExpiredCount());
+        model.addAttribute("weekFailedCount", stats.getWeekFailedCount());
 
         return "admin/dashboard";
     }

@@ -8,11 +8,11 @@ import lombok.Data;
 public class DashboardStatsDto {
     private Long totalBookings;
     private Long paidCount;
-    private Long expiredCount;
+    private Long failedCount;
     private Long completedCount;
 
     private Long weekTotalBookings;
     private Long weekPendingPaymentCount;
     private Long weekPaidCount;
-    private Long weekExpiredCount;
+    private Long weekFailedCount;
 }
