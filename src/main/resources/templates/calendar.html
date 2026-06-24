@@ -205,7 +205,7 @@
                 availableEl.classList.toggle('fw-semibold', props.availableBikes === 0);
 
                 const routeDescription = props.routeDescription || i18n.routeNotSpecified;
-                document.getElementById('rideModalRoute').textContent = `${props.routeName}: ${routeDescription}`;
+                document.getElementById('rideModalRoute').textContent = `${props.routeName}:\n${routeDescription}`;
 
                 const statusEl = document.getElementById('rideModalStatus');
                 statusEl.textContent = props.isFull ? i18n.statusFull : i18n.statusAvailable;
