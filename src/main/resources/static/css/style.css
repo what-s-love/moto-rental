@@ -95,6 +95,11 @@ body {
     /*background: linear-gradient(135deg, var(--primary-color), var(--success-color));*/
 }
 
+.bike-image .bike-card-photo {
+    max-height: 200px;
+    object-fit: cover;
+}
+
 .badge.bg-custom-success {
     background-color: var(--success-color) !important;
 }
@@ -153,23 +158,37 @@ body {
 }
 
 /* ===================================
-   SPECIAL BANNER - FLOATING STICKY
+   SPECIAL BANNER - STICKY AFTER HERO
    =================================== */
 
+.special-banner-sticky-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    height: 0;
+    pointer-events: none;
+}
+
 .special-banner-floating {
-    position: fixed;
-    top: 90px;
-    right: 10px;
+    position: relative;
     width: calc(33.333% - 4px);
     max-width: 550px;
     height: 280px;
-    z-index: 1020;
+    margin-top: 15px;
+    margin-bottom: -280px;
+    pointer-events: auto;
+    text-decoration: none;
+    color: inherit;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
     cursor: pointer;
     display: block;
+    flex-shrink: 0;
 }
 
 .special-banner-floating:hover {
@@ -405,6 +424,7 @@ body {
         width: calc(40% - 4px);
         max-width: 380px;
         height: 260px;
+        margin-bottom: -260px;
     }
 
     .banner-text-content {
@@ -414,11 +434,15 @@ body {
 
 /* Маленькие планшеты */
 @media (max-width: 992px) {
+    .special-banner-sticky-wrapper {
+        top: 65px;
+    }
+
     .special-banner-floating {
         width: calc(50% - 4px);
         max-width: 350px;
         height: 240px;
-        top: 65px;
+        margin-bottom: -240px;
     }
 
     .banner-title {
@@ -433,13 +457,21 @@ body {
 
 /* Мобильные устройства */
 @media (max-width: 768px) {
-    .special-banner-floating {
+    .special-banner-sticky-wrapper {
         position: relative;
         top: 0;
-        right: 0;
+        height: auto;
+        padding: 12px 6px;
+        pointer-events: auto;
+        display: block;
+    }
+
+    .special-banner-floating {
+        position: relative;
         width: calc(100% - 4px);
         max-width: none;
-        margin: 8px 2px;
+        margin: 0 2px;
+        margin-bottom: 0;
         height: 200px;
     }
 
@@ -501,13 +533,6 @@ body {
     .banner-cta-text {
         font-size: 12px;
         padding: 6px 10px;
-    }
-}
-
-/* Дополнительная защита от перекрытия контента */
-@media (min-width: 769px) {
-    body.has-floating-banner .container {
-        padding-right: calc(33.333% + 20px);
     }
 }
 
