@@ -75,10 +75,14 @@
                             <span class="ride-detail-label" th:text="#{calendar.available.label}">Свободно мест:</span>
                             <span class="ride-detail-value" id="rideModalAvailable"></span>
                         </li>
+
+<!--                        Исключено со страницы, в связи с удалением воможности выбора маршрута пользователем-->
+<!--
                         <li class="ride-detail-item">
                             <span class="ride-detail-label" th:text="#{calendar.route.label}">Маршрут:</span>
                             <span class="ride-detail-value" id="rideModalRoute"></span>
                         </li>
+-->
                         <li class="ride-detail-item">
                             <span class="ride-detail-label" th:text="#{calendar.status.label}">Статус:</span>
                             <span class="ride-detail-value" id="rideModalStatus"></span>
@@ -204,8 +208,9 @@
                 availableEl.classList.toggle('text-danger', props.availableBikes === 0);
                 availableEl.classList.toggle('fw-semibold', props.availableBikes === 0);
 
-                const routeDescription = props.routeDescription || i18n.routeNotSpecified;
-                document.getElementById('rideModalRoute').textContent = `${props.routeName}:\n${routeDescription}`;
+                // Исключено со страницы, в связи с удалением воможности выбора маршрута пользователем
+                // const routeDescription = props.routeDescription || i18n.routeNotSpecified;
+                // document.getElementById('rideModalRoute').textContent = `${props.routeName}:\n${routeDescription}`;
 
                 const statusEl = document.getElementById('rideModalStatus');
                 statusEl.textContent = props.isFull ? i18n.statusFull : i18n.statusAvailable;

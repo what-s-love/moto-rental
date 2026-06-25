@@ -107,10 +107,10 @@ public class BookingController {
             log.info("Found existing ride: {} with {} participants", existingRide.getId(), 
                     existingRide.getParticipants() != null ? existingRide.getParticipants().size() : 0);
         } else {
-            // Заезд не создан - показываем маршруты для выбора
-            List<RouteDto> routes = routeService.getAllActiveRoutes();
-            model.addAttribute("routes", routes);
-            log.info("No existing ride found, showing {} routes for selection", routes.size());
+            // Заезд не создан - передаём маршрут 'standart'
+            Route route = routeService.getRouteByName("standart");
+            model.addAttribute("standartRoute", route);
+            log.info("No existing ride found");
         }
 
         return "booking";

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
@@ -17,4 +18,7 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
 
     @Query("SELECT r FROM Route r WHERE r.difficulty IN :difficulties ORDER BY r.difficulty, r.price")
     List<Route> findByDifficultiesOrderByDifficultyAndPrice(@Param("difficulties") List<Difficulty> difficulties);
+
+    @Query("select r from Route r where r.name = ?1")
+    Optional<Route> findByName(String name);
 }

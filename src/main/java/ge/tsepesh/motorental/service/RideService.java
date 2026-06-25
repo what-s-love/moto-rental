@@ -17,6 +17,9 @@ public class RideService {
     private final RideRepository rideRepository;
     private final RouteService routeService;
     private final ShiftService shiftService;
+
+    @Deprecated
+    // Заменён, в связи с удалением воможности выбора маршрута пользователем
     @Transactional
     public Ride findOrCreate(LocalDate date, Integer shiftId, Integer routeId) {
         return rideRepository.findByDateAndShift(date, shiftId)
@@ -33,6 +36,23 @@ public class RideService {
                     ride.setRoute(route);
                     Ride saved = rideRepository.save(ride);
                     log.info("Created new ride {} for date {} and shift {}", saved.getId(), date, shiftId);
+                    return saved;
+                });
+    }
+
+    @Transactional
+    public Ride findOrCreateWithDefaultRoute(LocalDate date, Integer shiftId) {
+        return rideRepository.findByDateAndShift(date, shiftId)
+                .orElseGet(() -> {
+                    Route route = routeService.getRouteByName("standart");
+                    Shift shift = shiftService.getShiftById(shiftId);
+                    Ride ride = new Ride();
+                    ride.setDate(date);
+                    ride.setShift(shift);
+                    ride.setRoute(route);
+                    Ride saved = rideRepository.save(ride);
+                    log.info("Created new ride {} for date {} and shift {} with 'standart' route",
+                            saved.getId(), date, shiftId);
                     return saved;
                 });
     }

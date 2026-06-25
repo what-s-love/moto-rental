@@ -25,9 +25,12 @@ public class BookingRequestDto {
     @Min(value = 1, message = "Некорректная смена")
     private Integer shiftId;
 
+    // Удалено, в связи с удалением воможности выбора маршрута пользователем
+/*
     @NotNull(message = "Маршрут обязателен")
     @Min(value = 1, message = "Некорректный маршрут")
     private Integer routeId;
+*/
 
     @Valid
     @NotNull(message = "Данные клиента обязательны")

@@ -165,26 +165,14 @@
                             </div>
 
                             <!-- Route Info Overlay -->
-                            <div class="card-img-overlay d-flex flex-column justify-content-end">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0" th:text="${route.name}">Миражи на виражах</h6>
-                                    <span class="badge"
-                                          th:classappend="${route.difficulty.value == 1} ? 'bg-success' : (${route.difficulty.value == 2} ? 'bg-warning text-dark' : (${route.difficulty.value == 3} ? 'bg-info' : 'bg-danger'))"
-                                          th:text="${route.distance + ' км'}">15 км</span>
+                            <div class="card-img-overlay d-flex flex-column justify-content-between">
+                                <!-- Название вверху слева -->
+                                <div class="w-100 text-center">
+                                    <h6 class="card-title mb-0 text-white"
+                                       th:text="${route.name}">Миражи на виражах</h6>
                                 </div>
-                                <p class="card-text text-muted">
-                                    <div>
-                                        <span th:text="${route.difficultyDisplayName}">Легкий</span>
-                                    </div>
-                                    <p>
-                                        <span th:text="#{route.from}">от</span>
-                                        <span th:text="${route.price}">50</span>
-                                        <span th:text="#{route.currency}">₽</span>
-                                    </p>
-                                </p>
-
-                                <!-- Tooltip trigger with full description -->
-                                <div class="mt-1" th:if="${route.description != null}">
+                                <!-- Только описание внизу -->
+                                <div th:if="${route.description != null}" class="mt-auto">
                                     <a href="javascript:void(0)"
                                        class="text-muted small route-desc-tip"
                                        data-bs-toggle="tooltip"

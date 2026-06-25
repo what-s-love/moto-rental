@@ -55,6 +55,11 @@ public class RouteService {
                 .orElseThrow(() -> new IllegalArgumentException("Route not found: " + id));
     }
 
+    public Route getRouteByName(String name) {
+        return routeRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("Route not found by name: " + name));
+    }
+
     /**
      * Создать новый маршрут
      */
