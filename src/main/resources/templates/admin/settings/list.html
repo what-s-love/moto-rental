@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/base}">
+<div layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">
+                <i class="fas fa-gear me-2 text-primary"></i>
+                <span th:text="#{admin.settings.title}">Настройки приложения</span>
+            </h1>
+            <p class="text-muted mb-0" th:text="#{admin.settings.subtitle}">Управление параметрами системы</p>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}">Успешно</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-triangle-exclamation me-2"></i><span th:text="${error}">Ошибка</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <form th:action="@{/admin/settings}" th:object="${settingsForm}" method="post">
+        <div class="row g-3">
+            <div class="col-12" th:each="setting, it : *{settings}">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <input type="hidden" th:field="*{settings[__${it.index}__].id}">
+                        <input type="hidden" th:field="*{settings[__${it.index}__].key}">
+                        <input type="hidden" th:field="*{settings[__${it.index}__].name}">
+                        <input type="hidden" th:field="*{settings[__${it.index}__].description}">
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <p class="fw-semibold mb-1">
+                                    <span th:text="${setting.name}">Название</span>
+                                    <i class="fas fa-circle-info ms-1 text-muted"
+                                       th:if="${setting.description != null and !#strings.isEmpty(setting.description)}"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       th:title="${setting.description}"></i>
+                                </p>
+                                <small class="text-muted font-monospace" th:text="${setting.key}">KEY</small>
+                            </div>
+                            <div class="col-md-8">
+                                <input class="form-control"
+                                       type="text"
+                                       th:field="*{settings[__${it.index}__].value}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save me-2"></i><span th:text="#{admin.button.save}">Сохранить</span>
+            </button>
+        </div>
+    </form>
+
+    <div class="alert alert-info mt-4">
+        <h6 class="alert-heading">
+            <i class="fas fa-circle-info me-2"></i><span th:text="#{admin.info}">Информация</span>
+        </h6>
+        <ul class="mb-0 small">
+            <li th:text="#{admin.settings.info.1}">Изменения вступают в силу немедленно</li>
+            <li th:text="#{admin.settings.info.2}">Сумма предоплаты: число с двумя знаками после запятой (500.00)</li>
+            <li th:text="#{admin.settings.info.3}">Период оплаты: целое число в часах</li>
+            <li th:text="#{admin.settings.info.4}">Код НДС: 1 — без НДС, 2 — 0%, 3 — 10%, 4 — 20%, 5 — 10/110, 6 — 20/120</li>
+            <li th:text="#{admin.settings.info.5}">В описании чека используйте %s для подстановки номера бронирования</li>
+        </ul>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                .forEach(el => new bootstrap.Tooltip(el));
+        });
+    </script>
+</th:block>
+</html>

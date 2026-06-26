@@ -2,6 +2,7 @@ package ge.tsepesh.motorental.service;
 
 import ge.tsepesh.motorental.config.YooKassaProperties;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaPaymentResponse;
+import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.repository.BookingRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,6 +33,7 @@ public class PaymentConfirmationService {
 
     private final BookingRepository bookingRepository;
     private final YooKassaProperties yooKassaProperties;
+    private final AppSettingService appSettingService;
 
     /**
      * Обрабатывает верифицированный объект платежа: переводит бронирование
@@ -85,7 +88,8 @@ public class PaymentConfirmationService {
         if (!isAmountValid(payment)) {
             log.warn("Payment {} amount mismatch: expected={}, got={}",
                     payment.id(),
-                    yooKassaProperties.prepaymentAmount(),
+                    new BigDecimal(appSettingService.getValue(AppSettingKey.PREPAYMENT_AMOUNT))
+                            .setScale(2, RoundingMode.UNNECESSARY),
                     payment.amount() != null ? payment.amount().value() : "null");
             return;
         }
@@ -124,6 +128,9 @@ public class PaymentConfirmationService {
             return false;
         }
         BigDecimal received = new BigDecimal(payment.amount().value());
-        return received.compareTo(yooKassaProperties.prepaymentAmount()) == 0;
+        BigDecimal expected = new BigDecimal(appSettingService.getValue(AppSettingKey.PREPAYMENT_AMOUNT))
+                .setScale(2, RoundingMode.UNNECESSARY);
+
+        return received.compareTo(expected) == 0;
     }
 }

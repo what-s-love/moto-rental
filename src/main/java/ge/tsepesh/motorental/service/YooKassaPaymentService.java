@@ -4,6 +4,7 @@ import ge.tsepesh.motorental.client.YooKassaApiClient;
 import ge.tsepesh.motorental.config.YooKassaProperties;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaCreatePaymentRequest;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaPaymentResponse;
+import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.exception.PaymentException;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Payment;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,7 @@ public class YooKassaPaymentService {
 
     private final YooKassaApiClient yooKassaApiClient;
     private final YooKassaProperties yooKassaProperties;
+    private final AppSettingService appSettingService;
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
 
@@ -67,20 +70,23 @@ public class YooKassaPaymentService {
 
     private YooKassaCreatePaymentRequest buildPaymentRequest(Booking booking) {
         YooKassaProperties.ReceiptItemProperties receiptConfig = yooKassaProperties.receipt();
-        String amountValue = yooKassaProperties.prepaymentAmount()
+
+        String amountValue = new BigDecimal(appSettingService.getValue(AppSettingKey.PREPAYMENT_AMOUNT))
                 .setScale(2, RoundingMode.UNNECESSARY)
                 .toPlainString();
-        String currency = yooKassaProperties.currency();
+        String currency    = appSettingService.getValue(AppSettingKey.PREPAYMENT_CURRENCY);
+        String itemDescription    = appSettingService.getValue(AppSettingKey.ITEM_DESCRIPTION);
+        int vatCode        = Integer.parseInt(appSettingService.getValue(AppSettingKey.YOOKASSA_RECEIPT_VAT_CODE));
 
         YooKassaCreatePaymentRequest.Amount amount =
                 new YooKassaCreatePaymentRequest.Amount(amountValue, currency);
 
         YooKassaCreatePaymentRequest.ReceiptItem item =
                 new YooKassaCreatePaymentRequest.ReceiptItem(
-                        String.format(receiptConfig.itemDescription(), booking.getId()),
+                        String.format(itemDescription, booking.getId()),
                         receiptConfig.quantity(),
                         amount,
-                        receiptConfig.vatCode()
+                        vatCode
                 );
 
         YooKassaCreatePaymentRequest.Customer customer =
@@ -92,7 +98,7 @@ public class YooKassaPaymentService {
         YooKassaCreatePaymentRequest.Confirmation confirmation =
                 new YooKassaCreatePaymentRequest.Confirmation("redirect", yooKassaProperties.returnUrl());
 
-        String description = String.format(receiptConfig.itemDescription(), booking.getId());
+        String description = String.format(itemDescription, booking.getId());
 
         Map<String, String> metadata = Map.of(METADATA_BOOKING_ID, String.valueOf(booking.getId()));
 
@@ -105,8 +111,7 @@ public class YooKassaPaymentService {
                 .receipt(receipt)
                 .build();
 
-        log.info("YooKassa payment request: " + paymentRequest);
-
+        log.info("YooKassa payment request: {}", paymentRequest);
         return paymentRequest;
     }
 
@@ -128,8 +133,8 @@ public class YooKassaPaymentService {
         Payment payment = new Payment();
         payment.setProvider(PROVIDER);
         payment.setTransactionRef(response.id());
-        payment.setAmount(yooKassaProperties.prepaymentAmount());
-        payment.setCurrency(yooKassaProperties.currency());
+        payment.setAmount(new BigDecimal(response.amount().value()).setScale(2, RoundingMode.UNNECESSARY));
+        payment.setCurrency(response.amount().currency());
         payment.setCreatedAt(LocalDateTime.now());
         payment = paymentRepository.save(payment);
 

@@ -18,8 +18,6 @@ public class RideService {
     private final RouteService routeService;
     private final ShiftService shiftService;
 
-    @Deprecated
-    // Заменён, в связи с удалением воможности выбора маршрута пользователем
     @Transactional
     public Ride findOrCreate(LocalDate date, Integer shiftId, Integer routeId) {
         return rideRepository.findByDateAndShift(date, shiftId)

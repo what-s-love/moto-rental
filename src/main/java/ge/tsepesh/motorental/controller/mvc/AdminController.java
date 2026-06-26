@@ -9,6 +9,7 @@ import ge.tsepesh.motorental.dto.bike.BikeUpdateDto;
 import ge.tsepesh.motorental.dto.DashboardStatsDto;
 import ge.tsepesh.motorental.dto.limit.LimitUpdateDto;
 import ge.tsepesh.motorental.dto.limit.LimitCreateDto;
+import ge.tsepesh.motorental.dto.settings.AppSettingsUpdateDto;
 import ge.tsepesh.motorental.dto.shift.ShiftUpdateDto;
 import ge.tsepesh.motorental.dto.shift.ShiftCreateDto;
 import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
@@ -26,6 +27,7 @@ import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.model.Limit;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
+import ge.tsepesh.motorental.service.AppSettingService;
 import ge.tsepesh.motorental.service.BannerService;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BikeService;
@@ -37,6 +39,8 @@ import ge.tsepesh.motorental.service.ShiftService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +72,8 @@ public class AdminController {
     private final BikeService bikeService;
     private final BannerService bannerService;
     private final BikeAvailabilityService bikeAvailabilityService;
+    private final AppSettingService appSettingService;
+    private final MessageSource messageSource;
 
     // ==================== LOGIN ====================
 
@@ -154,6 +160,7 @@ public class AdminController {
         model.addAttribute("limits", limits);
         return "admin/limits/list";
     }
+
     @PostMapping("/limits")
     public String updateLimits(@ModelAttribute LimitUpdateDto.LimitsUpdateForm limitsForm,
                                RedirectAttributes redirectAttributes) {
@@ -490,6 +497,7 @@ public class AdminController {
         model.addAttribute("banners", banners);
         return "admin/banner/list";
     }
+
     @GetMapping("/banner/create")
     public String createBannerForm(Model model) {
         // Получить только специальные маршруты
@@ -506,6 +514,7 @@ public class AdminController {
 
         return "admin/banner/create";
     }
+
     @PostMapping("/banner")
     public String createBanner(@Valid @ModelAttribute BannerCreateDto dto,
                                @RequestParam(value = "bannerImage", required = false) MultipartFile bannerImage,
@@ -528,6 +537,7 @@ public class AdminController {
         }
         return "redirect:/admin/banner/list";
     }
+
     @GetMapping("/banner/{id}/edit")
     public String editBannerForm(@PathVariable Integer id, Model model) {
         try {
@@ -548,6 +558,7 @@ public class AdminController {
             return "redirect:/admin/banner/list";
         }
     }
+
     @PostMapping("/banner/{id}")
     public String updateBanner(@PathVariable Integer id,
                                @Valid @ModelAttribute BannerUpdateDto dto,
@@ -568,6 +579,7 @@ public class AdminController {
         }
         return "redirect:/admin/banner/list";
     }
+
     @PostMapping("/banner/{id}/toggle")
     public String toggleBanner(@PathVariable Integer id,
                                @RequestParam Boolean enabled,
@@ -582,6 +594,7 @@ public class AdminController {
         }
         return "redirect:/admin/banner/list";
     }
+
     @PostMapping("/banner/{id}/delete")
     public String deleteBanner(@PathVariable Integer id,
                                RedirectAttributes redirectAttributes) {
@@ -593,5 +606,26 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
         return "redirect:/admin/banner/list";
+    }
+
+    // ==================== SETTINGS ====================
+    @GetMapping("/settings")
+    public String settingsPage(Model model) {
+        model.addAttribute("settingsForm",
+                new AppSettingsUpdateDto(appSettingService.getAllSettings()));
+        return "admin/settings/list";
+    }
+    @PostMapping("/settings")
+    public String saveSettings(@ModelAttribute AppSettingsUpdateDto settingsForm,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            appSettingService.updateAll(settingsForm.getSettings());
+            redirectAttributes.addFlashAttribute("success",
+                    messageSource.getMessage("admin.settings.saved", null, LocaleContextHolder.getLocale()));
+        } catch (Exception e) {
+            log.error("Error saving settings", e);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/settings";
     }
 }

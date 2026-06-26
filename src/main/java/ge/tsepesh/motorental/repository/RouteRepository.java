@@ -19,6 +19,6 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
     @Query("SELECT r FROM Route r WHERE r.difficulty IN :difficulties ORDER BY r.difficulty, r.price")
     List<Route> findByDifficultiesOrderByDifficultyAndPrice(@Param("difficulties") List<Difficulty> difficulties);
 
-    @Query("select r from Route r where r.name = ?1")
-    Optional<Route> findByName(String name);
+    @Query("SELECT r FROM Route r WHERE r.name = :name")
+    Optional<Route> findByName(@Param("name") String name);
 }

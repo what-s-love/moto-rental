@@ -1,14 +1,14 @@
 package ge.tsepesh.motorental.controller.mvc;
 
 import ge.tsepesh.motorental.client.YooKassaApiClient;
+import ge.tsepesh.motorental.dto.RideDto;
 import ge.tsepesh.motorental.dto.bike.BikeAvailabilityDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
-import ge.tsepesh.motorental.dto.RideDto;
-import ge.tsepesh.motorental.dto.route.RouteDto;
 import ge.tsepesh.motorental.dto.shift.ShiftDto;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaNotification;
 import ge.tsepesh.motorental.dto.yookassa.YooKassaPaymentResponse;
+import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.exception.ResourceNotFoundException;
 import ge.tsepesh.motorental.model.Banner;
 import ge.tsepesh.motorental.model.Booking;
@@ -19,6 +19,7 @@ import ge.tsepesh.motorental.repository.BannerRepository;
 import ge.tsepesh.motorental.repository.BookingRepository;
 import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
+import ge.tsepesh.motorental.service.AppSettingService;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
 import ge.tsepesh.motorental.service.PaymentConfirmationService;
@@ -31,7 +32,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -54,6 +60,7 @@ public class BookingController {
     private final RouteService routeService;
     private final YooKassaApiClient yooKassaApiClient;
     private final PaymentConfirmationService paymentConfirmationService;
+    private final AppSettingService appSettingService;
 
     @GetMapping("/ride")
     public String showRideBookingPage(
@@ -99,12 +106,18 @@ public class BookingController {
         model.addAttribute("shift", mapToShiftDto(shift));
         model.addAttribute("availableBikes", availableBikesList);
         model.addAttribute("maxParticipants", (int) availableBikes);
+        model.addAttribute("prepaymentAmount",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_AMOUNT, "500.00"));
+        model.addAttribute("prepaymentCurrency",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_CURRENCY, "RUB"));
+        model.addAttribute("prepaymentPeriod",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
 
         if (existingRideOpt.isPresent()) {
             // Заезд уже создан
             Ride existingRide = existingRideOpt.get();
             model.addAttribute("existingRide", mapToRideDto(existingRide));
-            log.info("Found existing ride: {} with {} participants", existingRide.getId(), 
+            log.info("Found existing ride: {} with {} participants", existingRide.getId(),
                     existingRide.getParticipants() != null ? existingRide.getParticipants().size() : 0);
         } else {
             // Заезд не создан - передаём маршрут 'standart'
@@ -132,6 +145,12 @@ public class BookingController {
             throw new ResourceNotFoundException("error.booking.not.found");
         }
         model.addAttribute("bookingId", booking.get().getId());
+        model.addAttribute("prepaymentAmount",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_AMOUNT, "500.00"));
+        model.addAttribute("prepaymentCurrency",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_CURRENCY, "RUB"));
+        model.addAttribute("prepaymentPeriod",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
         return "confirmation";
     }
 
@@ -193,10 +212,14 @@ public class BookingController {
         model.addAttribute("maxParticipants", (int) availableBikes);
         model.addAttribute("isSpecialBooking", true);  // Флаг специального бронирования
         model.addAttribute("routeLocked", true);  // Маршрут нельзя менять
+        model.addAttribute("prepaymentAmount",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_AMOUNT, "500.00"));
+        model.addAttribute("prepaymentCurrency",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_CURRENCY, "RUB"));
+        model.addAttribute("prepaymentPeriod",
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "24"));
 
-        if (existingRide.isPresent()) {
-            model.addAttribute("existingRide", mapToRideDto(existingRide.get()));
-        }
+        existingRide.ifPresent(ride -> model.addAttribute("existingRide", mapToRideDto(ride)));
 
         return "booking-special";
     }
@@ -238,6 +261,7 @@ public class BookingController {
             return ResponseEntity.ok().build();
         }
 
+        assert notification.object() != null;
         String paymentId = notification.object().id();
         // Верификация: берём актуальный статус из API, а не доверяем телу уведомления
         YooKassaPaymentResponse verified = yooKassaApiClient.getPayment(paymentId);
@@ -259,7 +283,7 @@ public class BookingController {
     private RideDto mapToRideDto(Ride ride) {
         int participantCount = ride.getParticipants() != null ? ride.getParticipants().size() : 0;
         long totalBikes = bikeAvailabilityService.getTotalEnabledBikes();
-        
+
         return RideDto.builder()
                 .id(ride.getId())
                 .date(ride.getDate())

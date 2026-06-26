@@ -7,6 +7,7 @@ import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
+import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Client;
@@ -34,13 +35,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingService {
-    //ToDo Проверить код
     //ToDo Зачем передаётся sessionId и как это связано с Redis
-    //ToDo Дописать необходимые DTO
 
     private final ClientService clientService;
     private final RideService rideService;
     private final ParticipantService participantService;
+    private final AppSettingService appSettingService;
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
     private final PolicyService policyService;
@@ -50,10 +50,10 @@ public class BookingService {
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
         log.info("Creating booking for session {} with {} participants", sessionId, request.getParticipants().size());
-        
+
         // 1. Найти или создать клиента
         Client client = clientService.findOrCreate(request.getClient());
-        
+
         // 2. Найти или создать заезд
         // Заменён, в связи с удалением воможности выбора маршрута пользователем
 //        Ride ride = rideService.findOrCreate(request.getDate(), request.getShiftId(), request.getRouteId());
@@ -61,25 +61,25 @@ public class BookingService {
 
         // 3. Валидация доступности мотоциклов с пессимистической блокировкой
         validateAndLockBikes(request.getParticipants(), ride);
-        
+
         try {
             // 4. Создать участников
             List<Participant> participants = createParticipants(request.getParticipants(), ride, client);
-            
+
             // 5. Рассчитать стоимость
             BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), request.getDate());
-            
+
             // 6. Создать бронирование
             Booking booking = createBooking(client, ride, totalPrice);
 
             // 7. Создать соглашение пользователя
             Policy activePolicy = policyService.getActivePolicy();
             consentService.createConsent(client, activePolicy, booking);
-            
+
             // 8. Освободить резервации в Redis
             //ToDo Настроить работу Redis на проде
 //            bikeReservationService.releaseAllReservations(sessionId);
-            
+
             log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
 
             // 9. Создание ссылки на оплату в YooKassa (Умный платёж, Redirect)
@@ -92,14 +92,12 @@ public class BookingService {
             //ToDo Добавить связку с ТГ-ботом
 
             return mapToBookingResponse(booking, participants, paymentUrl);
-            
+
         } catch (Exception e) {
             log.error("Error creating booking for session {}", sessionId, e);
             throw e;
         }
     }
-
-    //ToDo Дописать методы для админки
 
     // Методы для админки
     public Page<BookingAdminDto> getAllBookings(int page, int size) {
@@ -156,11 +154,13 @@ public class BookingService {
         // 5. Рассчитать стоимость
         BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), dto.getDate());
         // 6. Создать бронирование
+        long paymentPeriodHours = Long.parseLong(
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
         Booking booking = new Booking();
         booking.setClient(client);
         booking.setRide(ride);
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(24));
+        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
         booking.setTotalPrice(totalPrice);
 
         // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
@@ -245,10 +245,10 @@ public class BookingService {
     }
 
     private List<Participant> createParticipants(List<ParticipantDto> participantDtos,
-                                               Ride ride, Client client) {
+                                                 Ride ride, Client client) {
         return participantDtos.stream()
-            .map(dto -> participantService.create(dto, ride, client))
-            .toList();
+                .map(dto -> participantService.create(dto, ride, client))
+                .toList();
     }
 
     private BigDecimal calculateTotalPrice(Route route, int participantCount, LocalDate rideDate) {
@@ -259,28 +259,31 @@ public class BookingService {
     }
 
     private Booking createBooking(Client client, Ride ride, BigDecimal totalPrice) {
+        long paymentPeriodHours = Long.parseLong(
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+
         Booking booking = new Booking();
         booking.setClient(client);
         booking.setRide(ride);
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(24)); // 24 часа на оплату //ToDo Проставить нужное время, вынести занчение в таблицу настроек
+        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
         booking.setTotalPrice(totalPrice);
         booking.setBookingStatus(BookingStatus.PENDING_PAYMENT);
-        
+
         return bookingRepository.save(booking);
     }
 
     private BookingResponseDto mapToBookingResponse(Booking booking, List<Participant> participants,
                                                     String paymentUrl) {
         return BookingResponseDto.builder()
-            .bookingId(booking.getId())
-            .totalPrice(booking.getTotalPrice())
-            .currency("RUB")
-            .expiresAt(booking.getExpiresAt())
-            .status(booking.getBookingStatus())
-            .participantCount(participants.size())
-            .paymentUrl(paymentUrl)
-            .build();
+                .bookingId(booking.getId())
+                .totalPrice(booking.getTotalPrice())
+                .currency("RUB")
+                .expiresAt(booking.getExpiresAt())
+                .status(booking.getBookingStatus())
+                .participantCount(participants.size())
+                .paymentUrl(paymentUrl)
+                .build();
     }
 
     private BookingAdminDto mapToBookingAdminDto(Booking booking) {
