@@ -53,6 +53,7 @@ public class BookingService {
 
         // 1. Найти или создать клиента
         Client client = clientService.findOrCreate(request.getClient());
+        client.setEmail(request.getClient().getEmail());
 
         // 2. Найти или создать заезд
         // Заменён, в связи с удалением воможности выбора маршрута пользователем
@@ -131,6 +132,7 @@ public class BookingService {
 
         // 1. Найти или создать клиента
         Client client = clientService.findOrCreate(dto.getClient());
+        client.setEmail(dto.getClient().getEmail());
         // 2. Найти или создать заезд
         Ride ride = rideService.findOrCreate(dto.getDate(), dto.getShiftId(), dto.getRouteId());
         // 3. Валидация доступности мотоциклов
