@@ -570,22 +570,22 @@
         function filterBikes(participantIndex) {
             const participantBlock = document.getElementById('participant-' + participantIndex);
             if (!participantBlock) return;
-
             const genderSelect = participantBlock.querySelector('select[name*="gender"]');
             const experienceLevelSelect = participantBlock.querySelector('select[name*="experienceLevel"]');
             const ageInput = participantBlock.querySelector('input[name*="age"]');
             const heightInput = participantBlock.querySelector('input[name*="height"]');
-
             if (!genderSelect || !ageInput || !heightInput) return;
-
             const gender = genderSelect.value;
             const experienceLevel = experienceLevelSelect ? experienceLevelSelect.value : '';
             const age = parseInt(ageInput.value) || 0;
             const height = parseInt(heightInput.value) || 0;
-
+            const bikesContainer = participantBlock.querySelector('.bikes-selection');
             const bikeCheckboxes = participantBlock.querySelectorAll('.bike-checkbox');
+            // Get all currently selected bikes (occupied by other participants)
             const occupiedBikeIds = getOccupiedBikeIds(participantIndex);
-
+            // Два списка для последующей сортировки
+            const availableCheckboxes = [];
+            const unavailableCheckboxes = [];
             bikeCheckboxes.forEach(checkbox => {
                 const input = checkbox.querySelector('input[type="radio"]');
                 const bikeId = parseInt(input.value);
@@ -593,15 +593,14 @@
                 const heightMax = parseInt(input.dataset.limitHeightMax) || 999;
                 const ageMin = parseInt(input.dataset.limitAgeMin) || 0;
                 const onlyMen = input.dataset.limitOnlyMen === 'true';
-
                 let isAvailable = true;
                 let reasons = [];
-
+                // Check age restriction
                 if (age > 0 && age < ageMin) {
                     isAvailable = false;
                     reasons.push(fmt(i18n.minAge, ageMin));
                 }
-
+                // Check height restriction
                 if (height > 0) {
                     if (height < heightMin) {
                         isAvailable = false;
@@ -611,33 +610,42 @@
                         reasons.push(fmt(i18n.maxHeight, heightMax));
                     }
                 }
-
                 // Check gender restriction
                 if (onlyMen && gender === 'FEMALE' && experienceLevel !== 'ADVANCED') {
                     isAvailable = false;
                     reasons.push(i18n.onlyMenOrPro);
                 }
-
+                // Check if bike is already occupied by another participant
                 if (occupiedBikeIds.includes(bikeId)) {
                     isAvailable = false;
                     reasons.push(i18n.bikeOccupied);
                 }
-
+                // Update checkbox state
                 if (isAvailable) {
                     checkbox.classList.remove('text-muted', 'opacity-50');
                     input.disabled = false;
                     checkbox.title = '';
+                    availableCheckboxes.push(checkbox);
                 } else {
                     checkbox.classList.add('text-muted', 'opacity-50');
                     input.disabled = true;
                     checkbox.title = reasons.join('; ');
-
+                    // Uncheck if was selected
                     if (input.checked) {
                         input.checked = false;
                     }
+                    unavailableCheckboxes.push(checkbox);
                 }
             });
-
+            // Переставить узлы: доступные сверху, недоступные снизу.
+            // appendChild перемещает существующий узел, поэтому дубликаты не создаются,
+            // а выбранное radio-значение сохраняется.
+            if (bikesContainer) {
+                [...availableCheckboxes, ...unavailableCheckboxes].forEach(cb => {
+                    bikesContainer.appendChild(cb);
+                });
+            }
+            // Revalidate form after filtering
             validateForm();
         }
 
