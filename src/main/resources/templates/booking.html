@@ -484,10 +484,15 @@
             const age = parseInt(ageInput.value) || 0;
             const height = parseInt(heightInput.value) || 0;
 
+            const bikesContainer = participantBlock.querySelector('.bikes-selection');
             const bikeCheckboxes = participantBlock.querySelectorAll('.bike-checkbox');
 
             // Get all currently selected bikes (occupied by other participants)
             const occupiedBikeIds = getOccupiedBikeIds(participantIndex);
+
+            // Два списка для всплывания доступных
+            const availableCheckboxes = [];
+            const unavailableCheckboxes = [];
 
             bikeCheckboxes.forEach(checkbox => {
                 const input = checkbox.querySelector('input[type="radio"]');
@@ -534,17 +539,27 @@
                     checkbox.classList.remove('text-muted', 'opacity-50');
                     input.disabled = false;
                     checkbox.title = '';
+                    availableCheckboxes.push(checkbox);
                 } else {
                     checkbox.classList.add('text-muted', 'opacity-50');
                     input.disabled = true;
                     checkbox.title = reasons.join('; ');
-
                     // Uncheck if was selected
                     if (input.checked) {
                         input.checked = false;
                     }
+                    unavailableCheckboxes.push(checkbox);
                 }
             });
+
+            // Переставить узлы: доступные сверху, недоступные снизу.
+            // appendChild перемещает существующий узел, поэтому дубликаты не создаются,
+            // а выбранное radio-значение сохраняется.
+            if (bikesContainer) {
+                [...availableCheckboxes, ...unavailableCheckboxes].forEach(cb => {
+                    bikesContainer.appendChild(cb);
+                });
+            }
 
             // Revalidate form after filtering
             validateForm();
