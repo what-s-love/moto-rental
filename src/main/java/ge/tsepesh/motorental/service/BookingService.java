@@ -56,9 +56,9 @@ public class BookingService {
         client.setEmail(request.getClient().getEmail());
 
         // 2. Найти или создать заезд
-        // Заменён, в связи с удалением воможности выбора маршрута пользователем
-//        Ride ride = rideService.findOrCreate(request.getDate(), request.getShiftId(), request.getRouteId());
-        Ride ride = rideService.findOrCreateWithDefaultRoute(request.getDate(), request.getShiftId());
+        Ride ride = (request.getRouteId() != null)
+                ? rideService.findOrCreate(request.getDate(), request.getShiftId(), request.getRouteId())
+                : rideService.findOrCreateWithDefaultRoute(request.getDate(), request.getShiftId());
 
         // 3. Валидация доступности мотоциклов с пессимистической блокировкой
         validateAndLockBikes(request.getParticipants(), ride);

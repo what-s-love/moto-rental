@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 public class RouteService {
     private final RouteRepository routeRepository;
 
-    public List<RouteDto> getAllActiveRoutes() {
-        log.debug("Fetching all active routes");
+    public List<RouteDto> getAllActiveNonSpecialRoutes() {
+        log.debug("Fetching all active non special routes");
         return routeRepository.findActiveNonSpecialRoutes()
                 .stream()
                 .map(this::convertToDto)
@@ -42,10 +42,23 @@ public class RouteService {
      */
     public List<RouteDto> getAllRoutes() {
         log.debug("Fetching all routes for admin");
-        return routeRepository.findAll().stream()
+        return routeRepository.findAll()
+                .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Получить все активные маршруты (включая специальные) для бронирования из админки
+     */
+    public List<RouteDto> getAllActiveRoutes() {
+        log.debug("Fetching all active routes");
+        return routeRepository.findActiveRoutes()
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * Получить маршрут по ID

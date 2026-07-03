@@ -16,6 +16,9 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
     @Query("SELECT r FROM Route r WHERE r.enabled = true AND r.isSpecial = false")
     List<Route> findActiveNonSpecialRoutes();
 
+    @Query("SELECT r FROM Route r WHERE r.enabled = true")
+    List<Route> findActiveRoutes();
+
     @Query("SELECT r FROM Route r WHERE r.difficulty IN :difficulties ORDER BY r.difficulty, r.price")
     List<Route> findByDifficultiesOrderByDifficultyAndPrice(@Param("difficulties") List<Difficulty> difficulties);
 

@@ -20,7 +20,7 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("bikes", bikeService.getAllActiveBikes());
-        model.addAttribute("routes", routeService.getAllActiveRoutes());
+        model.addAttribute("routes", routeService.getAllActiveNonSpecialRoutes());
         // Добавить активный баннер, если есть
         bannerService.getActiveBanner().ifPresent(banner ->
                 model.addAttribute("banner", banner)
