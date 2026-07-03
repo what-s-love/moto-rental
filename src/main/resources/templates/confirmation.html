@@ -26,9 +26,13 @@
                             <i class="fas fa-envelope text-primary me-3 mt-1" style="font-size: 1.2rem;"></i>
                             <div>
                                 <h6 class="alert-heading mb-2" th:text="#{confirmation.email.title}">Проверьте вашу почту</h6>
-                                <p class="mb-0" th:text="#{confirmation.email.text(${prepaymentPeriod}, ${prepaymentAmount}, ${prepaymentCurrency})}">
-                                    Проверьте вашу почту на предмет ссылки на предоплату. Для подтверждения бронирования вам необходимо внести предоплату в течение 2-х часов.
-                                </p>                            </div>
+                                <p class="mb-0 fw-bolder" th:text="#{confirmation.email.text1(${prepaymentPeriod}, ${prepaymentAmount}, ${prepaymentCurrency})}">
+                                    Для подтверждения бронирования вам необходимо внести предоплату 500 рублей в течение 3-х часов.
+                                </p>
+                                <p class="mb-0" th:text="#{confirmation.email.text2}">
+                                    Проверьте вашу почту на предмет ссылки на предоплату.
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Spam Warning -->
