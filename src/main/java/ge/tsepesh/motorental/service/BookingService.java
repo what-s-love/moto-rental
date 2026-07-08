@@ -36,6 +36,8 @@ import java.util.List;
 @Slf4j
 public class BookingService {
     //ToDo Зачем передаётся sessionId и как это связано с Redis
+    //ToDo Заменить Redis на Caffeine?
+    //ToDo Добавить в метод createBooking отлов ошибки, когда мотоциклы заняты, и возвращать на страницу бронирования с заполненными полями (кроме мотоциклов)
 
     private final ClientService clientService;
     private final RideService rideService;

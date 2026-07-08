@@ -21,6 +21,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileUtil {
+    //ToDo Добавить санитизацию имени файла (потенциальный path traversal)
     private static final String UPLOAD_DIR = "data/";
     @SneakyThrows
     public static String saveUploadedFile(MultipartFile file, String subDir) {
