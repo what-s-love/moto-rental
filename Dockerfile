@@ -17,22 +17,19 @@ RUN mvn -q -DskipTests package
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Пользователь
-RUN useradd -ms /bin/bash spring
+# Фиксируем UID=1000 — совпадает с типичным ubuntu на хосте и с chown uploads
+RUN useradd -u 1000 -ms /bin/bash spring
+
+# jar и стартовые data сразу владельцу spring (иначе процесс не сможет писать в /app/data)
+COPY --from=builder --chown=spring:spring /workspace/target/*-SNAPSHOT.jar /app/app.jar
+COPY --from=builder --chown=spring:spring /workspace/data /app/data
+
+RUN mkdir -p /app/data && chown -R spring:spring /app/data
+
 USER spring
 
-# Копируем артефакт и данные
-COPY --from=builder /workspace/target/*-SNAPSHOT.jar /app/app.jar
-COPY --from=builder /workspace/data /app/data
-
-# Создаём директорию для H2 БД
-RUN mkdir -p /app/data
-
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75"
+
 EXPOSE 8080
 
-# Запуск с профилем H2
-#ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-h2} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
-
-# Запуск без H2
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Dserver.address=0.0.0.0 -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]

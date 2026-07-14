@@ -1,0 +1,74 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: moto-trip
+  messages:
+    encoding: UTF-8
+  datasource:
+    url: jdbc:postgresql://localhost:5432/moto_trip_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 0
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/changelog/master.yaml
+    enabled: true
+    default-schema: public
+
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:email@example.com}
+    password: ${MAIL_PASSWORD:https://myaccount.google.com/apppasswords}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: ${MAIL_SSL_ENABLE:false}
+          starttls:
+            enable: ${MAIL_STARTTLS_ENABLE:true}
+          from: ${MAIL_USERNAME:email@example.com}
+          localhost: ${MAIL_LOCALHOST:localhost}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+yookassa:
+  shop-id: ${YOOKASSA_SHOP_ID}
+  secret-key: ${YOOKASSA_SECRET_KEY}
+  api-url: https://api.yookassa.ru/v3
+  # URL, указанный в confirmation.return_url запроса к YooKassa.
+  return-url: ${YOOKASSA_RETURN_URL}
+  receipt:
+    # Количество единиц товара/услуги (строка с 2–4 знаками после запятой)
+    quantity: ${YOOKASSA_RECEIPT_QUANTITY:1.00}
+
+logging:
+  level:
+    liquibase: INFO
+    org.hibernate.SQL: WARN
+    ge.tsepesh.motorental: INFO
