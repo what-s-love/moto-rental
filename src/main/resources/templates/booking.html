@@ -885,7 +885,7 @@
             // POST запрос на /booking
             fetch('/booking', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', [getCsrfHeaderName()]: getCsrfToken() },
                 body: JSON.stringify(formData)
             })
                 .then(response => {
@@ -903,6 +903,14 @@
                 })
                 .catch(err => alert(i18n.errorCreating + ': ' + err.message));
         }
+
+        function getCsrfToken() {
+            return document.querySelector('meta[name="_csrf"]')?.content ?? '';
+        }
+        function getCsrfHeaderName() {
+            return document.querySelector('meta[name="_csrf_header"]')?.content ?? 'X-XSRF-TOKEN';
+        }
+
     </script>
 </div>
 

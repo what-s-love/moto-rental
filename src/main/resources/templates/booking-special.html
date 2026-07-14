@@ -949,7 +949,7 @@
             // POST request to /booking
             fetch('/booking', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', [getCsrfHeaderName()]: getCsrfToken() },
                 body: JSON.stringify(formData)
             })
                 .then(response => {
@@ -970,6 +970,13 @@
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-bolt me-2"></i>' + i18n.submitSpecial;
                 });
+        }
+
+        function getCsrfToken() {
+            const match = document.cookie.split(';')
+                .map(c => c.trim())
+                .find(c => c.startsWith('XSRF-TOKEN='));
+            return match ? decodeURIComponent(match.split('=')[1]) : '';
         }
     </script>
 </div>
