@@ -166,14 +166,21 @@ public class BikeService {
 
     private void deleteBikePhotoFile(String imagePath) {
         try {
-            if (imagePath == null || imagePath.isBlank() || !imagePath.startsWith("/images/bikes/")) {
+            if (imagePath == null || imagePath.isBlank()) {
                 return;
             }
-            String fileName = imagePath.replace("/images/bikes/", "");
-            Path filePath = Paths.get("data/images/bikes", fileName);
+            Path baseDir = Paths.get("data/images/bikes").toAbsolutePath().normalize();
+            // getFileName() возвращает только последний сегмент пути,
+            // отбрасывая любые "../" и абсолютные префиксы
+            String safeFileName = Paths.get(imagePath).getFileName().toString();
+            Path filePath = baseDir.resolve(safeFileName).normalize();
+            if (!filePath.startsWith(baseDir)) {
+                log.warn("Path traversal blocked in deleteBikePhotoFile: '{}'", imagePath);
+                return;
+            }
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("Bike photo deleted: {}", filePath.toAbsolutePath());
+                log.info("Bike photo deleted: {}", filePath);
             }
         } catch (IOException e) {
             log.warn("Could not delete bike photo: {}", imagePath, e);

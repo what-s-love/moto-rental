@@ -203,22 +203,23 @@ public class RouteService {
      */
     private void deleteRouteImage(String imagePath) {
         try {
-            if (imagePath == null || imagePath.isEmpty() || imagePath.equals("/images/routes/no_route.jpg")) {
+            if (imagePath == null || imagePath.isBlank()
+                    || imagePath.equals("/images/routes/no_route.jpg")) {
                 return;
             }
-
-            // imagePath вида "/images/routes/{uuid}_{filename}"
-            // Убираем /images/routes/ и получаем имя файла
-            String fileName = imagePath.replace("/images/routes/", "");
-            Path filePath = Paths.get("data/images/routes", fileName);
-
+            Path baseDir = Paths.get("data/images/routes").toAbsolutePath().normalize();
+            String safeFileName = Paths.get(imagePath).getFileName().toString();
+            Path filePath = baseDir.resolve(safeFileName).normalize();
+            if (!filePath.startsWith(baseDir)) {
+                log.warn("Path traversal blocked in deleteRouteImage: '{}'", imagePath);
+                return;
+            }
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("Route image deleted: {}", filePath.toAbsolutePath());
+                log.info("Route image deleted: {}", filePath);
             }
         } catch (IOException e) {
             log.error("Error deleting route image: {}", imagePath, e);
-            // Не бросаем exception - удаление картинки не критично
         }
     }
 

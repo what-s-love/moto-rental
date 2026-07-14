@@ -171,17 +171,19 @@ public class BannerService {
         banner.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : false);
         banner.setUpdatedAt(LocalDateTime.now());
 
+        Route oldRoute = banner.getRoute();
+        String oldImagePath = banner.getImagePath();
+
         // Обновление изображения, если предоставлено новое
         if (bannerImage != null && !bannerImage.isEmpty()) {
-            // Удаляем старое изображение (если оно не от маршрута)
-            if (banner.getImagePath() != null
-                    && !banner.getImagePath().equals(route.getMapPath())
-                    && !banner.getImagePath().equals("/images/banners/default.jpg")) {
-                deleteBannerImage(banner.getImagePath());
-            }
+            boolean oldImageIsOwnedByOldRoute = oldImagePath != null
+                    && oldImagePath.equals(oldRoute.getMapPath());
+            boolean oldImageIsDefault = "/images/banners/default.jpg".equals(oldImagePath);
 
-            String imagePath = saveBannerImage(bannerImage);
-            banner.setImagePath(imagePath);
+            if (!oldImageIsOwnedByOldRoute && !oldImageIsDefault) {
+                deleteBannerImage(oldImagePath);
+            }
+            banner.setImagePath(saveBannerImage(bannerImage));
         }
 
         Banner updated = bannerRepository.save(banner);
@@ -312,21 +314,23 @@ public class BannerService {
      */
     private void deleteBannerImage(String imagePath) {
         try {
-            if (imagePath == null || imagePath.isEmpty()
+            if (imagePath == null || imagePath.isBlank()
                     || imagePath.equals("/images/banners/default.jpg")) {
                 return;
             }
-
-            String fileName = imagePath.replace("/images/banners/", "");
-            Path filePath = Paths.get("data/images/banners", fileName);
-
+            Path baseDir = Paths.get("data/images/banners").toAbsolutePath().normalize();
+            String safeFileName = Paths.get(imagePath).getFileName().toString();
+            Path filePath = baseDir.resolve(safeFileName).normalize();
+            if (!filePath.startsWith(baseDir)) {
+                log.warn("Path traversal blocked in deleteBannerImage: '{}'", imagePath);
+                return;
+            }
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("Banner image deleted: {}", filePath.toAbsolutePath());
+                log.info("Banner image deleted: {}", filePath);
             }
         } catch (IOException e) {
             log.error("Error deleting banner image: {}", imagePath, e);
-            // Не бросаем exception - удаление картинки не критично
         }
     }
 
