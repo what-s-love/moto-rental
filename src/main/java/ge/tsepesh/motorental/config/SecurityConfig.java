@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +28,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer:: disable)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/webhook/**", "/api/payment/**")
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
             .httpBasic(Customizer.withDefaults())
             .formLogin(form -> form
@@ -42,9 +46,9 @@ public class SecurityConfig {
                 .permitAll()
             )
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/admin/**").authenticated()
-                    .requestMatchers(WHITE_LIST_URL).permitAll()
-                    .anyRequest().permitAll()
+                .requestMatchers("/admin/**").authenticated()
+                .requestMatchers(WHITE_LIST_URL).permitAll()
+                .anyRequest().permitAll()
             );
         return http.build();
     }
