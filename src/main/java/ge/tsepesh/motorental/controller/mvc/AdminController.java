@@ -289,6 +289,20 @@ public class AdminController {
         return "redirect:/admin/bookings";
     }
 
+    @PostMapping("/bookings/{id}/regenerate-payment")
+    public String regeneratePaymentLink(@PathVariable Integer id,
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            bookingService.regeneratePaymentLink(id);
+            redirectAttributes.addFlashAttribute("success",
+                    "Ссылка на оплату для бронирования #" + id + " перевыпущена");
+        } catch (Exception e) {
+            log.error("Error regenerating payment link for booking {}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+        }
+        return "redirect:/admin/bookings";
+    }
+
     // ==================== POLICIES ====================
 
     @GetMapping("/policies")

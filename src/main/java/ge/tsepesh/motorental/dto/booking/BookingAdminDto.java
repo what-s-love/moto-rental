@@ -25,6 +25,7 @@ public class BookingAdminDto {
     private String clientPhone;
     private BigDecimal totalPrice;
     private BookingStatus bookingStatus;
+    private String paymentLink;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private List<ParticipantAdminDto> participants;

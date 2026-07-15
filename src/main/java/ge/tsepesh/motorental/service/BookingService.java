@@ -93,53 +93,17 @@ public class BookingService {
     /**
      * Создать бронирование администратором (с возможностью сразу установить статус PAID)
      */
-    @Transactional
     public BookingAdminDto createBookingByAdmin(BookingCreateAdminDto dto) {
         log.info("Admin creating booking for date {} shift {} route {}",
                 dto.getDate(), dto.getShiftId(), dto.getRouteId());
 
-        // 1. Найти или создать клиента
-        Client client = clientService.findOrCreate(dto.getClient());
-        client.setEmail(dto.getClient().getEmail());
-        // 2. Найти или создать заезд
-        Ride ride = rideService.findOrCreate(dto.getDate(), dto.getShiftId(), dto.getRouteId());
-        // 3. Валидация доступности мотоциклов
-        List<Integer> requestedBikeIds = dto.getParticipants()
-                .stream()
-                .map(ParticipantDto::getBikeId)
-                .toList();
+        Booking booking = bookingCreationService.createBookingInDbByAdmin(dto);
 
-        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(
-                ride.getDate(), ride.getShift().getId()
-        );
-
-        for (Integer bikeId : requestedBikeIds) {
-            if (occupiedBikeIds.contains(bikeId)) {
-                throw new IllegalStateException("Bike " + bikeId + " is already occupied");
-            }
+        // Если BookingStatus.PENDING_PAYMENT — создаём платёж
+        if (booking.getBookingStatus().equals(BookingStatus.PENDING_PAYMENT)) {
+            String paymentUrl = yooKassaPaymentService.createPrepaymentLink(booking);
+            emailService.sendPaymentLinkAsync(booking, paymentUrl);
         }
-
-        // 4. Создать участников
-        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
-        // 5. Рассчитать стоимость
-        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), dto.getDate());
-        // 6. Создать бронирование
-        long paymentPeriodHours = Long.parseLong(
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
-        Booking booking = new Booking();
-        booking.setClient(client);
-        booking.setRide(ride);
-        booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
-        booking.setTotalPrice(totalPrice);
-
-        // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
-        //ToDo Если PENDING_PAYMENT, то сгенерировать и отобразить ссылку на оплату
-        booking.setBookingStatus(Boolean.TRUE.equals(dto.getIsPrepaid())
-                ? BookingStatus.PAID
-                : BookingStatus.PENDING_PAYMENT);
-
-        booking = bookingRepository.save(booking);
 
         log.info("Admin created booking {} with status {}", booking.getId(), booking.getBookingStatus());
 
@@ -156,6 +120,17 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         return mapToBookingAdminDto(booking);
+    }
+
+    public void regeneratePaymentLink(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + bookingId));
+        if (booking.getBookingStatus() != BookingStatus.PENDING_PAYMENT) {
+            throw new IllegalStateException(
+                    "Ссылка может быть перевыпущена только для бронирований в статусе PENDING_PAYMENT");
+        }
+        yooKassaPaymentService.createPrepaymentLink(booking);
+        log.info("Payment link regenerated for booking {}", bookingId);
     }
 
     public DashboardStatsDto getDashboardStats() {
@@ -243,6 +218,7 @@ public class BookingService {
                 .clientPhone(booking.getClient().getPhone())
                 .totalPrice(booking.getTotalPrice())
                 .bookingStatus(booking.getBookingStatus())
+                .paymentLink(booking.getPayment() != null ? booking.getPayment().getPaymentLink() : null)
                 .createdAt(booking.getCreatedAt())
                 .expiresAt(booking.getExpiresAt())
                 .participants(participantDtos)

@@ -1,6 +1,7 @@
 package ge.tsepesh.motorental.service;
 
 import ge.tsepesh.motorental.dto.ParticipantDto;
+import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.enums.BookingStatus;
@@ -68,6 +69,51 @@ public class BookingCreationService {
 
         log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
         return new BookingResult(booking, participants);
+    }
+
+    @Transactional
+    public Booking createBookingInDbByAdmin(BookingCreateAdminDto dto) {
+        // 1. Найти или создать клиента
+        Client client = clientService.findOrCreate(dto.getClient());
+        client.setEmail(dto.getClient().getEmail());
+        // 2. Найти или создать заезд
+        Ride ride = rideService.findOrCreate(dto.getDate(), dto.getShiftId(), dto.getRouteId());
+        // 3. Валидация доступности мотоциклов
+        List<Integer> requestedBikeIds = dto.getParticipants()
+                .stream()
+                .map(ParticipantDto::getBikeId)
+                .toList();
+
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(
+                ride.getDate(), ride.getShift().getId()
+        );
+
+        for (Integer bikeId : requestedBikeIds) {
+            if (occupiedBikeIds.contains(bikeId)) {
+                throw new IllegalStateException("Bike " + bikeId + " is already occupied");
+            }
+        }
+
+        // 4. Создать участников
+        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
+        // 5. Рассчитать стоимость
+        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), dto.getDate());
+        // 6. Создать бронирование
+        long paymentPeriodHours = Long.parseLong(
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+        Booking booking = new Booking();
+        booking.setClient(client);
+        booking.setRide(ride);
+        booking.setCreatedAt(LocalDateTime.now());
+        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
+        booking.setTotalPrice(totalPrice);
+
+        // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
+        booking.setBookingStatus(Boolean.TRUE.equals(dto.getIsPrepaid())
+                ? BookingStatus.PAID
+                : BookingStatus.PENDING_PAYMENT);
+
+        return bookingRepository.save(booking);
     }
 
     private void validateAndLockBikes(List<ParticipantDto> participantDtos, Ride ride) {
