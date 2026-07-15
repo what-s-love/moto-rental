@@ -3,12 +3,14 @@ services:
     image: ghcr.io/what-s-love/moto-rental:${APP_VERSION:-latest}
     container_name: moto-trip
     restart: unless-stopped
+    network_mode: host
 
     mem_limit: 500m
     mem_reservation: 256m
 
-    ports:
-      - "127.0.0.1:8080:8080"
+#    Игнорируются при использовании network_mode
+#    ports:
+#      - "127.0.0.1:8080:8080"
     volumes:
       - /srv/moto-trip/uploads:/app/data
     env_file:
