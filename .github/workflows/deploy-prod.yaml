@@ -57,7 +57,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yaml"
           target: "/srv/moto-trip"
 
       - name: Deploy on VPS via SSH
@@ -65,10 +65,10 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}       # IP сервера
           username: ${{ secrets.VPS_USER }}    # имя пользователя (не root)
-          key: ${{ secrets.VPS_SSH_KEY }}      # приватный SSH-ключ (см. ниже)
+          key: ${{ secrets.VPS_SSH_KEY }}      # приватный SSH-ключ
           script: |
             cd /srv/moto-trip
-            APP_VERSION=${{ steps.meta.outputs.tag }} \
+            APP_VERSION=${{ needs.build-and-push.outputs.tag }} \
               docker compose pull
-            APP_VERSION=${{ steps.meta.outputs.tag }} \
+            APP_VERSION=${{ needs.build-and-push.outputs.tag }} \
               docker compose up -d --remove-orphans
