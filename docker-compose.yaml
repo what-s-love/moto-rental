@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/what-s-love/moto-trip:${APP_VERSION:-latest}
+    image: ghcr.io/what-s-love/moto-rental:${APP_VERSION:-latest}
     container_name: moto-trip
     restart: unless-stopped
 
