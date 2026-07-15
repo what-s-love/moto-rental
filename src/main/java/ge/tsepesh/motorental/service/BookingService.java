@@ -12,10 +12,10 @@ import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Client;
 import ge.tsepesh.motorental.model.Participant;
-import ge.tsepesh.motorental.model.Policy;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.repository.BookingRepository;
+import ge.tsepesh.motorental.repository.PaymentRepository;
 import ge.tsepesh.motorental.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,61 +45,27 @@ public class BookingService {
     private final AppSettingService appSettingService;
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
-    private final PolicyService policyService;
-    private final ConsentService consentService;
     private final YooKassaPaymentService yooKassaPaymentService;
+    private final BookingCreationService bookingCreationService;
 
-    @Transactional
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
         log.info("Creating booking for session {} with {} participants", sessionId, request.getParticipants().size());
 
-        // 1. Найти или создать клиента
-        Client client = clientService.findOrCreate(request.getClient());
-        client.setEmail(request.getClient().getEmail());
+        // 1-8. Создание записей в БД приложения (вызов через отдельный бин — транзакция работает корректно)
+        BookingCreationService.BookingResult result = bookingCreationService.createBookingInDB(request);
+        Booking booking = result.booking();
+        List<Participant> participants = result.participants();
 
-        // 2. Найти или создать заезд
-        Ride ride = (request.getRouteId() != null)
-                ? rideService.findOrCreate(request.getDate(), request.getShiftId(), request.getRouteId())
-                : rideService.findOrCreateWithDefaultRoute(request.getDate(), request.getShiftId());
+        // 9. Создание ссылки на оплату в YooKassa (Умный платёж, Redirect)
+        String paymentUrl = yooKassaPaymentService.createPrepaymentLink(booking);
 
-        // 3. Валидация доступности мотоциклов с пессимистической блокировкой
-        validateAndLockBikes(request.getParticipants(), ride);
+        // 10. Отправка пользователю письма с подтверждением и ссылкой на оплату
+        emailService.sendPaymentLinkAsync(booking, paymentUrl);
 
-        try {
-            // 4. Создать участников
-            List<Participant> participants = createParticipants(request.getParticipants(), ride, client);
+        // 11. Отправка уведомления админу в Телеграм-бот
+        //ToDo Добавить связку с ТГ-ботом
 
-            // 5. Рассчитать стоимость
-            BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), request.getDate());
-
-            // 6. Создать бронирование
-            Booking booking = createBooking(client, ride, totalPrice);
-
-            // 7. Создать соглашение пользователя
-            Policy activePolicy = policyService.getActivePolicy();
-            consentService.createConsent(client, activePolicy, booking);
-
-            // 8. Освободить резервации в Redis
-            //ToDo Настроить работу Redis на проде
-//            bikeReservationService.releaseAllReservations(sessionId);
-
-            log.info("Booking {} created successfully for client {}", booking.getId(), client.getEmail());
-
-            // 9. Создание ссылки на оплату в YooKassa (Умный платёж, Redirect)
-            String paymentUrl = yooKassaPaymentService.createPrepaymentLink(booking);
-
-            // 10. Отправка пользователю письма с подтверждением и ссылкой на оплату
-            emailService.sendPaymentLink(booking, paymentUrl);
-
-            // 11. Отправка уведомления админу в Телеграм-бот
-            //ToDo Добавить связку с ТГ-ботом
-
-            return mapToBookingResponse(booking, participants, paymentUrl);
-
-        } catch (Exception e) {
-            log.error("Error creating booking for session {}", sessionId, e);
-            throw e;
-        }
+        return mapToBookingResponse(booking, participants, paymentUrl);
     }
 
     // Методы для админки
@@ -231,23 +197,6 @@ public class BookingService {
 
     // Вспомогательные методы
 
-    private void validateAndLockBikes(List<ParticipantDto> participantDtos, Ride ride) {
-        List<Integer> requestedBikeIds = participantDtos.stream()
-                .map(ParticipantDto::getBikeId)
-                .toList();
-
-        // Получаем уже занятые байки на эту дату/смену
-        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(
-                ride.getDate(), ride.getShift().getId()
-        );
-
-        for (Integer bikeId : requestedBikeIds) {
-            if (occupiedBikeIds.contains(bikeId)) {
-                throw new IllegalStateException("Bike " + bikeId + " is not available");
-            }
-        }
-    }
-
     private List<Participant> createParticipants(List<ParticipantDto> participantDtos,
                                                  Ride ride, Client client) {
         return participantDtos.stream()
@@ -260,21 +209,6 @@ public class BookingService {
                 ? route.getWeekendPrice()
                 : route.getPrice();
         return pricePerPerson.multiply(BigDecimal.valueOf(participantCount));
-    }
-
-    private Booking createBooking(Client client, Ride ride, BigDecimal totalPrice) {
-        long paymentPeriodHours = Long.parseLong(
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
-
-        Booking booking = new Booking();
-        booking.setClient(client);
-        booking.setRide(ride);
-        booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
-        booking.setTotalPrice(totalPrice);
-        booking.setBookingStatus(BookingStatus.PENDING_PAYMENT);
-
-        return bookingRepository.save(booking);
     }
 
     private BookingResponseDto mapToBookingResponse(Booking booking, List<Participant> participants,
@@ -326,27 +260,5 @@ public class BookingService {
                 .experienceLevel(p.getExperienceLevel() != null ? p.getExperienceLevel().name() : "N/A")
                 .build();
     }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

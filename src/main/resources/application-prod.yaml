@@ -51,6 +51,9 @@ spring:
             enable: ${MAIL_STARTTLS_ENABLE:true}
           from: ${MAIL_USERNAME:email@example.com}
           localhost: ${MAIL_LOCALHOST:localhost}
+          connectiontimeout: 5000   # 5 сек на TCP-коннект
+          timeout: 10000            # 10 сек на чтение ответа
+          writetimeout: 10000       # 10 сек на запись
   servlet:
     multipart:
       enabled: true

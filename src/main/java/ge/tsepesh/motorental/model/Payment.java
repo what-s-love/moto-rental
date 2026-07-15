@@ -32,6 +32,9 @@ public class Payment {
     @Column(name = "transaction_ref", length = 255)
     private String transactionRef;
 
+    @Column(name = "payment_link", length = 2048)
+    private String paymentLink;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 

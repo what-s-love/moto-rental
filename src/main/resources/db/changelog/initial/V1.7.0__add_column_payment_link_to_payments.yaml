@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-add-payment-link-to-payments
+      author: Vlad Tsepesh
+      changes:
+        - addColumn:
+            tableName: payments
+            columns:
+              - column:
+                  name: payment_link
+                  type: varchar(2048)
+                  constraints:
+                    nullable: true

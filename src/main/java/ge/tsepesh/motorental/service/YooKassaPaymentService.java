@@ -59,7 +59,7 @@ public class YooKassaPaymentService {
 
         String confirmationUrl = extractConfirmationUrl(response, booking.getId());
 
-        savePaymentAndLinkToBooking(response, booking);
+        savePaymentAndLinkToBooking(response, booking, confirmationUrl);
 
         log.info("YooKassa payment created: paymentId={}, bookingId={}",
                 response.id(), booking.getId());
@@ -129,10 +129,11 @@ public class YooKassaPaymentService {
         return response.confirmation().confirmationUrl();
     }
 
-    private void savePaymentAndLinkToBooking(YooKassaPaymentResponse response, Booking booking) {
+    private void savePaymentAndLinkToBooking(YooKassaPaymentResponse response, Booking booking, String confirmationUrl) {
         Payment payment = new Payment();
         payment.setProvider(PROVIDER);
         payment.setTransactionRef(response.id());
+        payment.setPaymentLink(confirmationUrl);
         payment.setAmount(new BigDecimal(response.amount().value()).setScale(2, RoundingMode.UNNECESSARY));
         payment.setCurrency(response.amount().currency());
         payment.setCreatedAt(LocalDateTime.now());

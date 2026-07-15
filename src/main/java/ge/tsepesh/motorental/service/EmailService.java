@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,16 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+
+    @Async("emailTaskExecutor")
+    public void sendPaymentLinkAsync(Booking booking, String paymentUrl) {
+        try {
+            sendPaymentLink(booking, paymentUrl);
+        } catch (Exception e) {
+            log.error("Failed to send payment email for booking {}", booking.getId(), e);
+            // Не пробрасываем — HTTP-запрос уже вернул ответ клиенту
+        }
+    }
 
     public void sendPaymentLink(Booking booking, String paymentUrl) {
         log.info("Start creating email to send to {}", booking.getClient().getEmail());
