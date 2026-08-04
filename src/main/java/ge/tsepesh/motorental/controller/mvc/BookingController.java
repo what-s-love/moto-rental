@@ -172,11 +172,18 @@ public class BookingController {
             return "redirect:/calendar";
         }
 
+        // Проверить, что специальный заезд ещё не состоялся
+        if (!banner.getRideDate().isAfter(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Регистрация на специальный заезд уже закончилась.");
+            return "redirect:/calendar";
+        }
+
         // Проверить, что маршрут специальный
         Route route = banner.getRoute();
         if (!route.getIsSpecial() || !route.getEnabled()) {
             redirectAttributes.addFlashAttribute("error",
-                    "Маршрут не доступен");
+                    "Маршрут недоступен");
             return "redirect:/calendar";
         }
 

@@ -973,10 +973,10 @@
         }
 
         function getCsrfToken() {
-            const match = document.cookie.split(';')
-                .map(c => c.trim())
-                .find(c => c.startsWith('XSRF-TOKEN='));
-            return match ? decodeURIComponent(match.split('=')[1]) : '';
+            return document.querySelector('meta[name="_csrf"]')?.content ?? '';
+        }
+        function getCsrfHeaderName() {
+            return document.querySelector('meta[name="_csrf_header"]')?.content ?? 'X-XSRF-TOKEN';
         }
     </script>
 </div>
