@@ -42,6 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,11 +53,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -224,8 +228,6 @@ public class AdminController {
 
     @GetMapping("/bookings/create")
     public String createBookingForm(Model model) {
-        //ToDo Сделано: Заменить select даты заезда на календарик как на странцие создания баннера
-        //ToDo Сделать?: Добавить проброс ошибки на страницу, если выбрана дата из прошлого
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<LocalDate> dates = tomorrow.datesUntil(tomorrow.plusDays(30))
                 .collect(Collectors.toList());
@@ -233,7 +235,7 @@ public class AdminController {
         List<Shift> shifts = shiftService.getAllShifts();
         List<RouteDto> routes = routeService.getAllActiveRoutes();
 
-        // Для упрощения — все активные байки (фильтрация на фронте опциональна)
+        // Для упрощения — все активные байки (фильтрация на фронте при изменении даты/смены)
         List<BikeAvailabilityDto> availableBikes = bikeService.getAllActiveBikes()
                 .stream()
                 .map(bike -> BikeAvailabilityDto.builder()
@@ -502,6 +504,22 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
         return "redirect:/admin/bikes";
+    }
+
+    @GetMapping("/api/bikes/availability")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getBikeAvailability(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam Integer shiftId) {
+        List<BikeAvailabilityDto> bikes =
+                bikeAvailabilityService.getAllBikesWithOccupiedStatus(date, shiftId);
+        long availableCount = bikes.stream()
+                .filter(b -> !Boolean.TRUE.equals(b.getOccupied()))
+                .count();
+        return ResponseEntity.ok(Map.of(
+                "bikes", bikes,
+                "maxParticipants", availableCount
+        ));
     }
 
     // ==================== BANNERS ====================

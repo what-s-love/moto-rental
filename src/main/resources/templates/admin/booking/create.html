@@ -148,8 +148,8 @@
     </div>
 
     <script th:inline="javascript" defer>
-        const availableBikes = /*[[${availableBikes}]]*/ [];
-        const maxParticipants = /*[[${maxParticipants}]]*/ 8;
+        let availableBikes = /*[[${availableBikes}]]*/ [];
+        let maxParticipants = /*[[${maxParticipants}]]*/ 8;
 
         const i18n = {
             selectBike: /*[[#{admin.select.bike}]]*/ 'Выберите мотоцикл',
@@ -184,6 +184,33 @@
                 .filter(v => v !== '');
         }
 
+        async function loadAvailableBikes() {
+            const date = document.getElementById('date').value;
+            const shiftId = document.querySelector('select[name="shiftId"]').value;
+            if (!date || !shiftId) {
+                availableBikes = [];
+                maxParticipants = 0;
+                updateBikeSelects();
+                return;
+            }
+            const response = await fetch(
+                `/admin/api/bikes/availability?date=${date}&shiftId=${shiftId}`
+            );
+            const data = await response.json();
+            availableBikes = data.bikes;
+            maxParticipants = data.maxParticipants;
+
+            // Сбросить невалидные выборы (байк стал occupied)
+            document.querySelectorAll('select[name$=".bikeId"]').forEach(select => {
+                const bike = availableBikes.find(b => b.id === Number(select.value));
+                if (bike?.occupied) select.value = '';
+            });
+            updateBikeSelects();
+        }
+
+        document.getElementById('date').addEventListener('change', loadAvailableBikes);
+        document.querySelector('select[name="shiftId"]').addEventListener('change', loadAvailableBikes);
+
         function updateBikeSelects() {
             const selectedBikes = getSelectedBikes();
             const selects = document.querySelectorAll('#participantsContainer select[name$=".bikeId"]');
@@ -197,12 +224,13 @@
                     const option = document.createElement('option');
                     option.value = bike.id;
                     option.textContent = label;
-
-                    if (selectedBikes.includes(String(bike.id)) && String(bike.id) !== currentValue) {
+                    const occupiedByRide = bike.occupied === true;
+                    const occupiedInForm = selectedBikes.includes(String(bike.id))
+                        && String(bike.id) !== currentValue;
+                    if (occupiedByRide || occupiedInForm) {
                         option.disabled = true;
                         option.textContent = label + ' (' + i18n.bikeOccupied + ')';
                     }
-
                     select.appendChild(option);
                 });
 
