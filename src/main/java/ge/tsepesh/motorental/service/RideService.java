@@ -1,5 +1,6 @@
 package ge.tsepesh.motorental.service;
 
+import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.model.Shift;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +56,21 @@ public class RideService {
                             saved.getId(), date, shiftId);
                     return saved;
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public List<Ride> findRidesByDateRange(LocalDate startDate, LocalDate endDate) {
+        return rideRepository.findRidesByDateRange(startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Ride> findByDateAndShift(LocalDate date, Integer shiftId) {
+        return rideRepository.findByDateAndShift(date, shiftId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Ride> findRidesWithActiveBookingsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return rideRepository.findRidesWithActiveBookingsByDateRange(
+                startDate, endDate, BookingStatus.ACTIVE_STATUSES);
     }
 }

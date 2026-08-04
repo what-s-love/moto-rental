@@ -43,6 +43,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "WHERE b.bookingStatus = :status AND p.transactionRef IS NOT NULL")
     List<Booking> findByStatusWithPayment(@Param("status") BookingStatus status);
 
-    @Query("SELECT b FROM Booking b ORDER BY b.createdAt DESC")
-    Page<Booking> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    @Query("SELECT b FROM Booking b ORDER BY b.ride.date DESC")
+    Page<Booking> findByOrderByRide_DateDesc(Pageable pageable);
+
 }

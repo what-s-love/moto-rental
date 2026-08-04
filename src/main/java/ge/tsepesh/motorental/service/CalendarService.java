@@ -5,7 +5,6 @@ import ge.tsepesh.motorental.dto.RideCalendarDto;
 import ge.tsepesh.motorental.dto.shift.ShiftAvailabilityDto;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Shift;
-import ge.tsepesh.motorental.repository.RideRepository;
 import ge.tsepesh.motorental.repository.ShiftRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +23,9 @@ import java.util.stream.Collectors;
 public class CalendarService {
 
     private final ShiftRepository shiftRepository;
-    private final RideRepository rideRepository;
+    private final RideService rideService;
     private final BikeAvailabilityService bikeAvailabilityService;
+    private final ParticipantService participantService;
 
     @Transactional(readOnly = true)
     public List<CalendarDayDto> getCalendarForMonth(YearMonth yearMonth) {
@@ -33,7 +33,7 @@ public class CalendarService {
         LocalDate endDate = yearMonth.atEndOfMonth();
 
         List<Shift> allShifts = shiftRepository.findEnabledShifts();
-        List<Ride> ridesInMonth = rideRepository.findRidesByDateRange(startDate, endDate);
+        List<Ride> ridesInMonth = rideService.findRidesByDateRange(startDate, endDate);
 
         // Группируем заезды по датам
         Map<LocalDate, List<Ride>> ridesByDate = ridesInMonth.stream()
@@ -46,7 +46,7 @@ public class CalendarService {
 
     @Transactional(readOnly = true)
     public List<RideCalendarDto> getRidesForDate(LocalDate date) {
-        List<Ride> rides = rideRepository.findRidesByDateRange(date, date);
+        List<Ride> rides = rideService.findRidesByDateRange(date, date);
 
         return rides.stream()
                 .map(this::mapToRideCalendarDto)
@@ -54,8 +54,8 @@ public class CalendarService {
     }
 
     @Transactional(readOnly = true)
-    public List<RideCalendarDto> getRidesForDateRange(LocalDate startDate, LocalDate endDate) {
-        List<Ride> rides = rideRepository.findRidesByDateRange(startDate, endDate);
+    public List<RideCalendarDto> getActiveRidesForDateRange(LocalDate startDate, LocalDate endDate) {
+        List<Ride> rides = rideService.findRidesWithActiveBookingsByDateRange(startDate, endDate);
 
         return rides.stream()
                 .map(this::mapToRideCalendarDto)
@@ -95,7 +95,7 @@ public class CalendarService {
     }
 
     private RideCalendarDto mapToRideCalendarDto(Ride ride) {
-        long participantCount = ride.getParticipants() != null ? ride.getParticipants().size() : 0;
+        long participantCount = participantService.countByDateAndShift(ride.getDate(), ride.getShift().getId());
         long availableBikes = bikeAvailabilityService.getTotalAvailableBikesForDateAndShift(
                 ride.getDate(), ride.getShift().getId());
         long totalEnabledBikes = bikeAvailabilityService.getTotalEnabledBikes();

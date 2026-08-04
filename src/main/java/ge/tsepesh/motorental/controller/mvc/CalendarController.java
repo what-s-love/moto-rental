@@ -33,8 +33,8 @@ public class CalendarController {
         LocalDate startDate = currentMonth.atDay(1);
         LocalDate endDate = currentMonth.atEndOfMonth();
 
-        // Получаем все заезды за текущий месяц
-        List<RideCalendarDto> rides = calendarService.getRidesForDateRange(startDate, endDate);
+        // Получаем все активные заезды за текущий месяц
+        List<RideCalendarDto> rides = calendarService.getActiveRidesForDateRange(startDate, endDate);
         // Получаем доступные смены
         List<ShiftDto> shifts = shiftService.getEnabledShifts();
 

@@ -6,7 +6,6 @@ import ge.tsepesh.motorental.enums.TransmissionType;
 import ge.tsepesh.motorental.model.Bike;
 import ge.tsepesh.motorental.model.Limit;
 import ge.tsepesh.motorental.repository.BikeRepository;
-import ge.tsepesh.motorental.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class BikeAvailabilityService {
     //ToDo Проверить код
 
     private final BikeRepository bikeRepository;
-    private final ParticipantRepository participantRepository;
+    private final ParticipantService participantService;
 
     /**
      * Получить все мотоциклы с флагом занятости для конкретной даты и смены
@@ -33,7 +32,7 @@ public class BikeAvailabilityService {
     @Transactional(readOnly = true)
     public List<BikeAvailabilityDto> getAllBikesWithOccupiedStatus(LocalDate date, Integer shiftId) {
         List<Bike> allBikes = bikeRepository.findAll();
-        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(date, shiftId);
 
         return allBikes.stream()
                 .filter(Bike::getEnabled) // Только активные байки
@@ -49,7 +48,7 @@ public class BikeAvailabilityService {
     @Transactional(readOnly = true)
     public List<BikeAvailabilityDto> getAvailableBikesForDateAndShift(LocalDate date, Integer shiftId) {
         List<Bike> allBikes = bikeRepository.findAll();
-        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(date, shiftId);
         return allBikes.stream()
                 .filter(Bike::getEnabled)
                 .filter(bike -> !occupiedBikeIds.contains(bike.getId()))
@@ -77,7 +76,7 @@ public class BikeAvailabilityService {
 
     @Transactional(readOnly = true)
     public long getTotalAvailableBikesForDateAndShift(LocalDate date, Integer shiftId) {
-        List<Integer> occupiedBikeIds = participantRepository.findOccupiedBikeIds(date, shiftId);
+        List<Integer> occupiedBikeIds = participantService.findOccupiedBikeIds(date, shiftId);
         return bikeRepository.findAll().stream()
                 .filter(Bike::getEnabled)
                 .filter(bike -> !occupiedBikeIds.contains(bike.getId()))

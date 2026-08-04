@@ -7,6 +7,7 @@ import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class YooKassaPollingService {
      * <p>Метод намеренно не помечен {@code @Scheduled}, чтобы не запускаться
      * пока webhook является основным каналом подтверждения.</p>
      */
-    // @Scheduled(fixedDelayString = "${yookassa.polling.fixed-delay-ms:60000}")
+    @Scheduled(fixedDelayString = "${yookassa.polling.fixed-delay-ms:60000}")
     public void pollPendingPayments() {
         List<Booking> pending = bookingRepository.findByStatusWithPayment(BookingStatus.PENDING_PAYMENT);
 

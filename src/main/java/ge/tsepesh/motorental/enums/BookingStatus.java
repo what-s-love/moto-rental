@@ -3,6 +3,8 @@ package ge.tsepesh.motorental.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @RequiredArgsConstructor
 public enum BookingStatus {
@@ -14,4 +16,11 @@ public enum BookingStatus {
     COMPLETED("Завершено");
 
     private final String displayName;
+
+    public static final List<BookingStatus> ACTIVE_STATUSES =
+            List.of(PENDING_PAYMENT, PAID, COMPLETED);
+
+    public boolean isActive() {
+        return ACTIVE_STATUSES.contains(this);
+    }
 }

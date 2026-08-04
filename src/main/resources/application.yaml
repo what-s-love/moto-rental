@@ -70,5 +70,5 @@ yookassa:
 logging:
   level:
     liquibase: INFO
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: WARN
     ge.tsepesh.motorental: DEBUG

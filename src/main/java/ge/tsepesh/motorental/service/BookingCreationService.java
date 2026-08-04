@@ -54,14 +54,14 @@ public class BookingCreationService {
         // 3. Валидация доступности мотоциклов с пессимистической блокировкой
         validateAndLockBikes(request.getParticipants(), ride);
 
-        // 4. Создать участников
-        List<Participant> participants = createParticipants(request.getParticipants(), ride, client);
+        // 4. Рассчитать стоимость
+        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), request.getParticipants().size(), request.getDate());
 
-        // 5. Рассчитать стоимость
-        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), request.getDate());
-
-        // 6. Создать бронирование
+        // 5. Создать бронирование
         Booking booking = persistBooking(client, ride, totalPrice);
+
+        // 6. Создать участников
+        List<Participant> participants = createParticipants(request.getParticipants(), ride, client, booking);
 
         // 7. Создать соглашение пользователя
         Policy activePolicy = policyService.getActivePolicy();
@@ -76,8 +76,10 @@ public class BookingCreationService {
         // 1. Найти или создать клиента
         Client client = clientService.findOrCreate(dto.getClient());
         client.setEmail(dto.getClient().getEmail());
+
         // 2. Найти или создать заезд
         Ride ride = rideService.findOrCreate(dto.getDate(), dto.getShiftId(), dto.getRouteId());
+
         // 3. Валидация доступности мотоциклов
         List<Integer> requestedBikeIds = dto.getParticipants()
                 .stream()
@@ -94,11 +96,10 @@ public class BookingCreationService {
             }
         }
 
-        // 4. Создать участников
-        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client);
-        // 5. Рассчитать стоимость
-        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), participants.size(), dto.getDate());
-        // 6. Создать бронирование
+        // 4. Рассчитать стоимость
+        BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), dto.getParticipants().size(), dto.getDate());
+
+        // 5. Создать бронирование
         long paymentPeriodHours = Long.parseLong(
                 appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
         Booking booking = new Booking();
@@ -107,6 +108,9 @@ public class BookingCreationService {
         booking.setCreatedAt(LocalDateTime.now());
         booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
         booking.setTotalPrice(totalPrice);
+
+        // 6. Создать участников
+        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client, booking);
 
         // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
         booking.setBookingStatus(Boolean.TRUE.equals(dto.getIsPrepaid())
@@ -133,9 +137,9 @@ public class BookingCreationService {
     }
 
     private List<Participant> createParticipants(List<ParticipantDto> participantDtos,
-                                                  Ride ride, Client client) {
+                                                  Ride ride, Client client, Booking booking) {
         return participantDtos.stream()
-                .map(dto -> participantService.create(dto, ride, client))
+                .map(dto -> participantService.create(dto, ride, client, booking))
                 .toList();
     }
 

@@ -70,6 +70,7 @@ public class PaymentConfirmationService {
             return;
         }
 
+        //ToDo Если реальный платёж будет доступен для оплаты дольше, чем 2 часа, то убрать case canceled и обрабатывать handleCanceled как default для всех просроченных платежей, кроме статуса succeeded (чтобы висели по времени изи настроек, а не до конца собственной жизни платежа)
         switch (payment.status()) {
             case "succeeded" -> handleSucceeded(payment, booking);
             case "canceled"  -> handleCanceled(payment, booking);

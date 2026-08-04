@@ -7,7 +7,6 @@ import ge.tsepesh.motorental.dto.booking.BookingAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingCreateAdminDto;
 import ge.tsepesh.motorental.dto.booking.BookingRequestDto;
 import ge.tsepesh.motorental.dto.booking.BookingResponseDto;
-import ge.tsepesh.motorental.enums.AppSettingKey;
 import ge.tsepesh.motorental.enums.BookingStatus;
 import ge.tsepesh.motorental.model.Booking;
 import ge.tsepesh.motorental.model.Client;
@@ -15,7 +14,6 @@ import ge.tsepesh.motorental.model.Participant;
 import ge.tsepesh.motorental.model.Ride;
 import ge.tsepesh.motorental.model.Route;
 import ge.tsepesh.motorental.repository.BookingRepository;
-import ge.tsepesh.motorental.repository.PaymentRepository;
 import ge.tsepesh.motorental.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -71,7 +68,7 @@ public class BookingService {
     // Методы для админки
     public Page<BookingAdminDto> getAllBookings(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return bookingRepository.findAllByOrderByCreatedAtDesc(pageable)
+        return bookingRepository.findByOrderByRide_DateDesc(pageable)
                 .map(this::mapToBookingAdminDto);
     }
 
@@ -173,9 +170,9 @@ public class BookingService {
     // Вспомогательные методы
 
     private List<Participant> createParticipants(List<ParticipantDto> participantDtos,
-                                                 Ride ride, Client client) {
+                                                 Ride ride, Client client, Booking booking) {
         return participantDtos.stream()
-                .map(dto -> participantService.create(dto, ride, client))
+                .map(dto -> participantService.create(dto, ride, client, booking))
                 .toList();
     }
 
@@ -201,7 +198,7 @@ public class BookingService {
 
     private BookingAdminDto mapToBookingAdminDto(Booking booking) {
         List<ParticipantAdminDto> participantDtos = participantService
-                .findByRideIdOrderByClientName(booking.getRide().getId())
+                .findByBookingIdOrderByClientName(booking.getId())
                 .stream()
                 .map(this::mapToParticipantAdminDto)
                 .toList();

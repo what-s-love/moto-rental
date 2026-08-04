@@ -23,6 +23,7 @@ import ge.tsepesh.motorental.service.AppSettingService;
 import ge.tsepesh.motorental.service.BikeAvailabilityService;
 import ge.tsepesh.motorental.service.BookingService;
 import ge.tsepesh.motorental.service.PaymentConfirmationService;
+import ge.tsepesh.motorental.service.RideService;
 import ge.tsepesh.motorental.service.RouteService;
 import ge.tsepesh.motorental.util.DateUtil;
 import jakarta.validation.Valid;
@@ -52,7 +53,7 @@ import java.util.UUID;
 public class BookingController {
     private final BookingRepository bookingRepository;
 
-    private final RideRepository rideRepository;
+    private final RideService rideService;
     private final ShiftRepository shiftRepository;
     private final BannerRepository bannerRepository;
     private final BikeAvailabilityService bikeAvailabilityService;
@@ -94,7 +95,7 @@ public class BookingController {
         }
 
         // Поиск существующего заезда
-        Optional<Ride> existingRideOpt = rideRepository.findByDateAndShift(date, shiftId);
+        Optional<Ride> existingRideOpt = rideService.findByDateAndShift(date, shiftId);
 
         // Получение всех мотоциклов с информацией о занятости
         List<BikeAvailabilityDto> availableBikesList = bikeAvailabilityService.getAvailableBikesForDateAndShift(date, shiftId);
@@ -193,7 +194,7 @@ public class BookingController {
         }
 
         // Получить существующий заезд или null
-        Optional<Ride> existingRide = rideRepository
+        Optional<Ride> existingRide = rideService
                 .findByDateAndShift(banner.getRideDate(), banner.getShift().getId());
 
         // Получить доступные мотоциклы
