@@ -9,6 +9,93 @@
         <p class="text-muted mb-0">ID: <span th:text="${booking.id}">1</span></p>
     </div>
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <i class="fas fa-user me-2"></i><span th:text="#{admin.label.client}">Клиент</span>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" th:text="#{admin.label.full.name}">ФИО</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control copy-field" readonly
+                               th:value="${booking.clientName}" th:attr="data-copy=${booking.clientName}">
+                        <button type="button" class="btn btn-outline-secondary copy-btn" title="Скопировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" th:text="#{admin.label.phone}">Телефон</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control copy-field" readonly
+                               th:value="${booking.clientPhone != null ? booking.clientPhone : '—'}"
+                               th:attr="data-copy=${booking.clientPhone}">
+                        <button type="button" class="btn btn-outline-secondary copy-btn" title="Скопировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" th:text="#{admin.label.email}">Email</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control copy-field" readonly
+                               th:value="${booking.clientEmail}"
+                               th:attr="data-copy=${booking.clientEmail}">
+                        <button type="button" class="btn btn-outline-secondary copy-btn" title="Скопировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" th:text="#{admin.label.telegram}">Telegram</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control copy-field" readonly
+                               th:value="${booking.clientTelegram != null ? booking.clientTelegram : '—'}"
+                               th:attr="data-copy=${booking.clientTelegram}">
+                        <button type="button" class="btn btn-outline-secondary copy-btn" title="Скопировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4" th:if="${!#lists.isEmpty(booking.participants)}">
+        <div class="card-header">
+            <i class="fas fa-users me-2"></i><span th:text="#{admin.participants.title}">Участники</span>
+        </div>
+        <div class="card-body vstack gap-4">
+            <div th:each="participant, stat : ${booking.participants}"
+                 class="border rounded p-3 bg-light">
+                <h3 class="h6 mb-3" th:text="#{admin.participant.number(${stat.count})}">Участник #1</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label" th:text="#{admin.label.gender}">Пол</label>
+                        <input type="text" class="form-control" readonly th:value="${participant.gender}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" th:text="#{admin.label.age}">Возраст</label>
+                        <input type="text" class="form-control" readonly th:value="${participant.age}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" th:text="#{admin.label.height}">Рост (см)</label>
+                        <input type="text" class="form-control" readonly th:value="${participant.height}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" th:text="#{admin.label.experience}">Опыт</label>
+                        <input type="text" class="form-control" readonly th:value="${participant.experienceLevel}">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label" th:text="#{admin.label.bike}">Мотоцикл</label>
+                        <input type="text" class="form-control" readonly th:value="${participant.bikeName}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body p-4">
             <form th:action="@{/admin/bookings/{id}(id=${booking.id})}" method="post" class="vstack gap-3">
@@ -40,6 +127,8 @@
                     </div>
                 </div>
 
+
+
                 <div class="d-grid mt-2">
                     <button type="submit" class="btn btn-primary btn-lg">
                         <i class="fas fa-save me-2"></i><span th:text="#{admin.button.save}">Сохранить</span>
@@ -52,5 +141,36 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function copyValue(value, btn) {
+            if (!value) return;
+            navigator.clipboard.writeText(value).then(() => {
+                const icon = btn.querySelector('i');
+                icon.classList.replace('fa-copy', 'fa-check');
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-outline-secondary');
+                setTimeout(() => {
+                    icon.classList.replace('fa-check', 'fa-copy');
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 1500);
+            });
+        }
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.closest('.input-group').querySelector('.copy-field');
+                copyValue(input.dataset.copy || input.value, btn);
+            });
+        });
+        document.querySelectorAll('.copy-field').forEach(input => {
+            input.addEventListener('click', () => {
+                const btn = input.closest('.input-group').querySelector('.copy-btn');
+                copyValue(input.dataset.copy || input.value, btn);
+            });
+            input.style.cursor = 'pointer';
+        });
+    </script>
+
 </div>
 </html>

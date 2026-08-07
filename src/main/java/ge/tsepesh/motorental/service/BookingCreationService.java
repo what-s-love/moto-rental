@@ -109,15 +109,17 @@ public class BookingCreationService {
         booking.setExpiresAt(LocalDateTime.now().plusMinutes(paymentPeriodMinutes));
         booking.setTotalPrice(totalPrice);
 
-        // 6. Создать участников
-        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client, booking);
-
         // Если isPrepaid=true — сразу PAID, иначе PENDING_PAYMENT
         booking.setBookingStatus(Boolean.TRUE.equals(dto.getIsPrepaid())
                 ? BookingStatus.PAID
                 : BookingStatus.PENDING_PAYMENT);
 
-        return bookingRepository.save(booking);
+        booking = bookingRepository.save(booking);
+
+        // 6. Создать участников
+        List<Participant> participants = createParticipants(dto.getParticipants(), ride, client, booking);
+
+        return booking;
     }
 
     private void validateAndLockBikes(List<ParticipantDto> participantDtos, Ride ride) {

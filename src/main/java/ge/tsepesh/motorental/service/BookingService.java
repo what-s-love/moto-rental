@@ -213,6 +213,7 @@ public class BookingService {
                 .clientName(booking.getClient().getName())
                 .clientEmail(booking.getClient().getEmail())
                 .clientPhone(booking.getClient().getPhone())
+                .clientTelegram(booking.getClient().getTelegramId())
                 .totalPrice(booking.getTotalPrice())
                 .bookingStatus(booking.getBookingStatus())
                 .paymentLink(booking.getPayment() != null ? booking.getPayment().getPaymentLink() : null)

@@ -23,6 +23,7 @@ public class BookingAdminDto {
     private String clientName;
     private String clientEmail;
     private String clientPhone;
+    private String clientTelegram;
     private BigDecimal totalPrice;
     private BookingStatus bookingStatus;
     private String paymentLink;
