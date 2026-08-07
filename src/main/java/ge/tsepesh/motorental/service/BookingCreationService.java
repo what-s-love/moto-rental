@@ -100,13 +100,13 @@ public class BookingCreationService {
         BigDecimal totalPrice = calculateTotalPrice(ride.getRoute(), dto.getParticipants().size(), dto.getDate());
 
         // 5. Создать бронирование
-        long paymentPeriodHours = Long.parseLong(
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+        long paymentPeriodMinutes = Long.parseLong(
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "30"));
         Booking booking = new Booking();
         booking.setClient(client);
         booking.setRide(ride);
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
+        booking.setExpiresAt(LocalDateTime.now().plusMinutes(paymentPeriodMinutes));
         booking.setTotalPrice(totalPrice);
 
         // 6. Создать участников
@@ -151,14 +151,14 @@ public class BookingCreationService {
     }
 
     private Booking persistBooking(Client client, Ride ride, BigDecimal totalPrice) {
-        long paymentPeriodHours = Long.parseLong(
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+        long paymentPeriodMinutes = Long.parseLong(
+                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "30"));
 
         Booking booking = new Booking();
         booking.setClient(client);
         booking.setRide(ride);
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setExpiresAt(LocalDateTime.now().plusHours(paymentPeriodHours));
+        booking.setExpiresAt(LocalDateTime.now().plusMinutes(paymentPeriodMinutes));
         booking.setTotalPrice(totalPrice);
         booking.setBookingStatus(BookingStatus.PENDING_PAYMENT);
 

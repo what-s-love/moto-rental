@@ -26,9 +26,11 @@ import ge.tsepesh.motorental.service.PaymentConfirmationService;
 import ge.tsepesh.motorental.service.RideService;
 import ge.tsepesh.motorental.service.RouteService;
 import ge.tsepesh.motorental.util.DateUtil;
+import ge.tsepesh.motorental.util.DurationFormatUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -112,7 +114,9 @@ public class BookingController {
         model.addAttribute("prepaymentCurrency",
                 appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_CURRENCY, "RUB"));
         model.addAttribute("prepaymentPeriod",
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+                DurationFormatUtil.formatMinutes(Integer.parseInt(
+                        appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "30")),
+                        LocaleContextHolder.getLocale()));
 
         if (existingRideOpt.isPresent()) {
             // Заезд уже создан
@@ -151,7 +155,9 @@ public class BookingController {
         model.addAttribute("prepaymentCurrency",
                 appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_CURRENCY, "RUB"));
         model.addAttribute("prepaymentPeriod",
-                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "2"));
+                DurationFormatUtil.formatMinutes(Integer.parseInt(
+                                appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_PERIOD, "30")),
+                        LocaleContextHolder.getLocale()));
         return "confirmation";
     }
 
