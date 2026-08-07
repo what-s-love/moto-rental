@@ -63,33 +63,45 @@
     </div>
 
     <div class="card shadow-sm mb-4" th:if="${!#lists.isEmpty(booking.participants)}">
-        <div class="card-header">
-            <i class="fas fa-users me-2"></i><span th:text="#{admin.participants.title}">Участники</span>
+        <div class="card-header d-flex justify-content-between align-items-center participants-toggle"
+             role="button"
+             data-bs-toggle="collapse"
+             data-bs-target="#participantsCollapse"
+             aria-expanded="false"
+             aria-controls="participantsCollapse">
+        <span>
+            <i class="fas fa-users me-2"></i>
+            <span th:text="#{admin.participants.title}">Участники</span>
+            (<span th:text="${booking.participants.size()}">0</span>)
+        </span>
+            <i class="fas fa-chevron-down participants-arrow"></i>
         </div>
-        <div class="card-body vstack gap-4">
-            <div th:each="participant, stat : ${booking.participants}"
-                 class="border rounded p-3 bg-light">
-                <h3 class="h6 mb-3" th:text="#{admin.participant.number(${stat.count})}">Участник #1</h3>
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label" th:text="#{admin.label.gender}">Пол</label>
-                        <input type="text" class="form-control" readonly th:value="${participant.gender}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" th:text="#{admin.label.age}">Возраст</label>
-                        <input type="text" class="form-control" readonly th:value="${participant.age}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" th:text="#{admin.label.height}">Рост (см)</label>
-                        <input type="text" class="form-control" readonly th:value="${participant.height}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" th:text="#{admin.label.experience}">Опыт</label>
-                        <input type="text" class="form-control" readonly th:value="${participant.experienceLevel}">
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label" th:text="#{admin.label.bike}">Мотоцикл</label>
-                        <input type="text" class="form-control" readonly th:value="${participant.bikeName}">
+        <div id="participantsCollapse" class="collapse">
+            <div class="card-body vstack gap-4">
+                <div th:each="participant, stat : ${booking.participants}"
+                     class="border rounded p-3 bg-light">
+                    <h3 class="h6 mb-3" th:text="#{admin.participant.number(${stat.count})}">Участник #1</h3>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label" th:text="#{admin.label.gender}">Пол</label>
+                            <input type="text" class="form-control" readonly th:value="${participant.gender}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" th:text="#{admin.label.age}">Возраст</label>
+                            <input type="text" class="form-control" readonly th:value="${participant.age}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" th:text="#{admin.label.height}">Рост (см)</label>
+                            <input type="text" class="form-control" readonly th:value="${participant.height}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" th:text="#{admin.label.experience}">Опыт</label>
+                            <input type="text" class="form-control" readonly th:value="${participant.experienceLevel}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" th:text="#{admin.label.bike}">Мотоцикл</label>
+                            <input type="text" class="form-control" readonly th:value="${participant.bikeName}">
+                        </div>
                     </div>
                 </div>
             </div>

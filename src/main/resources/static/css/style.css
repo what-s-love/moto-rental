@@ -710,6 +710,22 @@ body {
     object-fit: cover;
 }
 
+/* Admin booking edit Participant cards Styles */
+.participants-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+.participants-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+.participants-arrow {
+    transition: transform 0.2s ease;
+    color: #6c757d;
+}
+.participants-toggle[aria-expanded="true"] .participants-arrow {
+    transform: rotate(180deg);
+}
+
 .route-info {
     backdrop-filter: blur(10px);
 }
