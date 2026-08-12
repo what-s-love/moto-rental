@@ -494,9 +494,9 @@
             bikeCc: /*[[#{bike.cc}]]*/ 'куб.см',
             transmissionAutomatic: /*[[#{booking.bike.transmission.automatic}]]*/ 'автомат',
             transmissionManual: /*[[#{booking.bike.transmission.manual}]]*/ 'механика',
-            bikeYearsFrom: /*[[#{booking.bike.years.from('__')}]]*/ 'от __ лет',
-            bikeHeightRange: /*[[#{booking.bike.height.range('__A__', '__B__')}]]*/ '__A__–__B__ см',
-            bikeHeightFrom: /*[[#{booking.bike.height.from('__')}]]*/ 'от __ см',
+            bikeYearsFrom: /*[[#{booking.bike.years.from}]]*/ 'от {0} лет',
+            bikeHeightRange: /*[[#{booking.bike.height.range}]]*/ '{0}–{1} см',
+            bikeHeightFrom: /*[[#{booking.bike.height.from}]]*/ 'от {0} см',
             required: /*[[#{form.required}]]*/ '*',
             maxParticipants: /*[[#{booking.error.max.participants('__')}]]*/ 'Достигнуто максимальное количество участников: __',
             fillRequired: /*[[#{booking.error.fill.required}]]*/ 'Пожалуйста, заполните все обязательные поля',
@@ -509,7 +509,7 @@
         };
 
         function fmt(template, ...values) {
-            return values.reduce((s, v) => s.replace('__', v), template);
+            return values.reduce((s, v, i) => s.replace(`{${i}}`, v), template);
         }
 
         // Initialize on page load
@@ -815,8 +815,8 @@
                             <small class="text-muted">
                                 ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)},
                                 ${bike.limit.heightMax && bike.limit.heightMax > 0
-                                ? i18n.bikeHeightRange.replace('__A__', bike.limit.heightMin).replace('__B__', bike.limit.heightMax)
-                                : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
+                                    ? fmt(i18n.bikeHeightRange, bike.limit.heightMin, bike.limit.heightMax)
+                                    : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
                             </small>
                         </div>
                     </div>
