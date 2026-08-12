@@ -341,30 +341,30 @@
                                                                  class="me-2 rounded"
                                                                  style="width: 50px; height: 40px; object-fit: cover;"
                                                                  alt="Bike photo" th:alt="#{alt.bike.photo}">
-                                                            <div class="flex-grow-1">
-                                                                <div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>
+                                                            <div class="flex-grow-1 d-flex flex-column">
+<!--                                                                <div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>-->
                                                                 <small class="text-muted">
                                                                     <span th:text="${bike.engineCc}">125</span>
                                                                     <span th:text="#{bike.cc}">куб.см</span>,
                                                                     <span th:text="#{${bike.transmissionType}}">механика</span>
                                                                 </small>
+                                                                <small class="text-muted">
+                                                                    <span th:text="#{booking.bike.years.from(${bike.limit.ageMin})}">от 12 лет</span>,
+                                                                    <span th:if="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
+                                                                          th:text="#{booking.bike.height.range(${bike.limit.heightMin}, ${bike.limit.heightMax})}">
+                                                                        140–170 см
+                                                                    </span>
+                                                                    <span th:unless="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
+                                                                          th:text="#{booking.bike.height.from(${bike.limit.heightMin})}">
+                                                                        от 165 см
+                                                                    </span>
+                                                                    <!--
+                                                                        <span th:if="${bike.limit.onlyMen}" class="text-warning">
+                                                                            <i class="fas fa-exclamation-circle"></i> только мужчины
+                                                                        </span>
+                                                                    -->
+                                                                </small>
                                                             </div>
-                                                        </div>
-                                                        <div class="text-muted small mt-1">
-                                                            <span th:text="#{booking.bike.years.from(${bike.limit.ageMin})}">от 12 лет</span>,
-                                                            <span th:if="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                  th:text="#{booking.bike.height.range(${bike.limit.heightMin}, ${bike.limit.heightMax})}">
-                                                                140–170 см
-                                                            </span>
-                                                            <span th:unless="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                  th:text="#{booking.bike.height.from(${bike.limit.heightMin})}">
-                                                                от 165 см
-                                                            </span>
-<!--
-                                                            <span th:if="${bike.limit.onlyMen}" class="text-warning">
-                                                                <i class="fas fa-exclamation-circle"></i> только мужчины
-                                                            </span>
--->
                                                         </div>
                                                     </label>
                                                 </div>
@@ -809,18 +809,16 @@
                         <img src="${bike.photoPath}"
                              class="me-2 rounded"
                              style="width: 50px; height: 40px; object-fit: cover;"
-                             alt="${i18n.altBikePhoto}">
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">${bike.brand} ${bike.model}</div>
+                             alt="Bike photo">
+                        <div class="flex-grow-1 d-flex flex-column">
                             <small class="text-muted">${bike.engineCc} ${i18n.bikeCc}, ${bike.transmissionType === 'AUTOMATIC' ? i18n.transmissionAutomatic : i18n.transmissionManual}</small>
+                            <small class="text-muted">
+                                ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)},
+                                ${bike.limit.heightMax && bike.limit.heightMax > 0
+                                ? i18n.bikeHeightRange.replace('__A__', bike.limit.heightMin).replace('__B__', bike.limit.heightMax)
+                                : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
+                            </small>
                         </div>
-                    </div>
-                    <div class="text-muted small mt-1">
-                        ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)},
-                        ${bike.limit.heightMax && bike.limit.heightMax > 0
-                ? i18n.bikeHeightRange.replace('__A__', bike.limit.heightMin).replace('__B__', bike.limit.heightMax)
-                : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
-<!--                        ${bike.limit.onlyMen ? '<span class="text-warning"><i class="fas fa-exclamation-circle"></i> только мужчины</span>' : ''}-->
                     </div>
                 </label>
             </div>
