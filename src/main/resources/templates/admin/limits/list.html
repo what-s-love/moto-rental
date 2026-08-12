@@ -33,29 +33,27 @@
                             <div class="col-md-3">
                                 <label class="form-label">
                                     <i class="fas fa-arrow-down me-1"></i><span th:text="#{admin.label.min.height}">Мин. рост (см)</span>
-                                    <span class="text-danger" th:text="#{form.required}">*</span>
+                                    <!--<span class="text-danger" th:text="#{form.required}">*</span>-->
                                 </label>
                                 <input class="form-control"
                                        type="number"
                                        min="100"
                                        max="300"
                                        th:name="'limits[' + ${it.index} + '].heightMin'"
-                                       th:value="${limit.heightMin}"
-                                       required>
+                                       th:value="${limit.heightMin}">
                             </div>
 
                             <div class="col-md-3">
                                 <label class="form-label">
                                     <i class="fas fa-arrow-up me-1"></i><span th:text="#{admin.label.max.height}">Макс. рост (см)</span>
-                                    <span class="text-danger" th:text="#{form.required}">*</span>
+                                    <!--<span class="text-danger" th:text="#{form.required}">*</span>-->
                                 </label>
                                 <input class="form-control"
                                        type="number"
                                        min="100"
                                        max="300"
                                        th:name="'limits[' + ${it.index} + '].heightMax'"
-                                       th:value="${limit.heightMax}"
-                                       required>
+                                       th:value="${limit.heightMax}">
                             </div>
 
                             <div class="col-md-3">

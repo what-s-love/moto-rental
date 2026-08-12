@@ -50,7 +50,15 @@
                         </p>
                         <p class="small mb-2" th:if="${bike.limits != null}">
                             <i class="fas fa-ruler-vertical me-1 text-primary"></i>
-                            <span th:text="${bike.limits.heightMin}">160</span>–<span th:text="${bike.limits.heightMax}">190</span> см,
+                            <th:block th:if="${bike.limits.heightMin != null && bike.limits.heightMax != null}">
+                                <span th:text="${bike.limits.heightMin}">160</span>–<span th:text="${bike.limits.heightMax}">190</span> см,
+                            </th:block>
+                            <th:block th:if="${bike.limits.heightMin != null && bike.limits.heightMax == null}">
+                                <span th:text="#{booking.bike.height.from(${bike.limits.heightMin})}">от 160 см</span>,
+                            </th:block>
+                            <th:block th:if="${bike.limits.heightMin == null && bike.limits.heightMax != null}">
+                                <span th:text="#{booking.bike.height.upto(${bike.limits.heightMax})}">до 190 см</span>,
+                            </th:block>
                             <span th:text="#{booking.bike.years.from(${bike.limits.ageMin})}">от 18 лет</span>
                             <span th:if="${bike.limits.onlyMen}" class="badge bg-primary ms-1">
                                 <i class="fas fa-mars"></i>

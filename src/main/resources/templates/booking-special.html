@@ -325,8 +325,8 @@
                                                            name="participants[0].bikeId"
                                                            th:id="'bike-0-' + ${bike.id}"
                                                            th:value="${bike.id}"
-                                                           th:data-limit-height-min="${bike.limit.heightMin}"
-                                                           th:data-limit-height-max="${bike.limit.heightMax}"
+                                                           th:data-limit-height-min="${bike.limit.heightMin != null ? bike.limit.heightMin : ''}"
+                                                           th:data-limit-height-max="${bike.limit.heightMax != null ? bike.limit.heightMax : ''}"
                                                            th:data-limit-age-min="${bike.limit.ageMin}"
                                                            th:data-limit-only-men="${bike.limit.onlyMen}"
                                                            required>
@@ -342,27 +342,28 @@
                                                                  style="width: 50px; height: 40px; object-fit: cover;"
                                                                  alt="Bike photo" th:alt="#{alt.bike.photo}">
                                                             <div class="flex-grow-1 d-flex flex-column">
-<!--                                                                <div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>-->
+                                                                <!--<div class="fw-bold" th:text="${bike.brand + ' ' + bike.model}">Model</div>-->
                                                                 <small class="text-muted">
                                                                     <span th:text="${bike.engineCc}">125</span>
                                                                     <span th:text="#{bike.cc}">куб.см</span>,
                                                                     <span th:text="#{${bike.transmissionType}}">механика</span>
                                                                 </small>
                                                                 <small class="text-muted">
-                                                                    <span th:text="#{booking.bike.years.from(${bike.limit.ageMin})}">от 12 лет</span>,
-                                                                    <span th:if="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                          th:text="#{booking.bike.height.range(${bike.limit.heightMin}, ${bike.limit.heightMax})}">
-                                                                        140–170 см
+                                                                    <span th:text="#{booking.bike.years.from(${bike.limit.ageMin})}">от 12 лет</span>
+                                                                    <span th:if="${bike.limit.heightMin != null && bike.limit.heightMax != null}">,
+                                                                        <span th:text="#{booking.bike.height.range(${bike.limit.heightMin}, ${bike.limit.heightMax})}">140–170 см</span>
                                                                     </span>
-                                                                    <span th:unless="${bike.limit.heightMax != null && bike.limit.heightMax > 0}"
-                                                                          th:text="#{booking.bike.height.from(${bike.limit.heightMin})}">
-                                                                        от 165 см
+                                                                    <span th:if="${bike.limit.heightMin != null && bike.limit.heightMax == null}">,
+                                                                        <span th:text="#{booking.bike.height.from(${bike.limit.heightMin})}">от 165 см</span>
                                                                     </span>
-                                                                    <!--
-                                                                        <span th:if="${bike.limit.onlyMen}" class="text-warning">
-                                                                            <i class="fas fa-exclamation-circle"></i> только мужчины
-                                                                        </span>
-                                                                    -->
+                                                                    <span th:if="${bike.limit.heightMin == null && bike.limit.heightMax != null}">,
+                                                                        <span th:text="#{booking.bike.height.upto(${bike.limit.heightMax})}">до 170 см</span>
+                                                                    </span>
+                                                                <!--
+                                                                    <span th:if="${bike.limit.onlyMen}" class="text-warning">
+                                                                        <i class="fas fa-exclamation-circle"></i> только мужчины
+                                                                    </span>
+                                                                -->
                                                                 </small>
                                                             </div>
                                                         </div>
@@ -497,6 +498,7 @@
             bikeYearsFrom: /*[[#{booking.bike.years.from}]]*/ 'от {0} лет',
             bikeHeightRange: /*[[#{booking.bike.height.range}]]*/ '{0}–{1} см',
             bikeHeightFrom: /*[[#{booking.bike.height.from}]]*/ 'от {0} см',
+            bikeHeightUpto: /*[[#{booking.bike.height.upto}]]*/ 'до {0} см',
             required: /*[[#{form.required}]]*/ '*',
             maxParticipants: /*[[#{booking.error.max.participants('__')}]]*/ 'Достигнуто максимальное количество участников: __',
             fillRequired: /*[[#{booking.error.fill.required}]]*/ 'Пожалуйста, заполните все обязательные поля',
@@ -588,8 +590,10 @@
             bikeCheckboxes.forEach(checkbox => {
                 const input = checkbox.querySelector('input[type="radio"]');
                 const bikeId = parseInt(input.value);
-                const heightMin = parseInt(input.dataset.limitHeightMin) || 0;
-                const heightMax = parseInt(input.dataset.limitHeightMax) || 999;
+                const minRaw = input.dataset.limitHeightMin;
+                const maxRaw = input.dataset.limitHeightMax;
+                const heightMin = minRaw !== '' && minRaw != null ? parseInt(minRaw, 10) : null;
+                const heightMax = maxRaw !== '' && maxRaw != null ? parseInt(maxRaw, 10) : null;
                 const ageMin = parseInt(input.dataset.limitAgeMin) || 0;
                 const onlyMen = input.dataset.limitOnlyMen === 'true';
                 let isAvailable = true;
@@ -601,10 +605,11 @@
                 }
                 // Check height restriction
                 if (height > 0) {
-                    if (height < heightMin) {
+                    if (heightMin != null && height < heightMin) {
                         isAvailable = false;
                         reasons.push(fmt(i18n.minHeight, heightMin));
-                    } else if (heightMax < 999 && height > heightMax) {
+                    }
+                    if (heightMax != null && height > heightMax) {
                         isAvailable = false;
                         reasons.push(fmt(i18n.maxHeight, heightMax));
                     }
@@ -793,8 +798,8 @@
                        name="participants[${index}].bikeId"
                        id="bike-${index}-${bike.id}"
                        value="${bike.id}"
-                       data-limit-height-min="${bike.limit.heightMin}"
-                       data-limit-height-max="${bike.limit.heightMax || 999}"
+                       data-limit-height-min="${bike.limit.heightMin ?? ''}"
+                       data-limit-height-max="${bike.limit.heightMax ?? ''}"
                        data-limit-age-min="${bike.limit.ageMin}"
                        data-limit-only-men="${bike.limit.onlyMen}"
                        onchange="updateAvailableBikes(${index})"
@@ -813,10 +818,14 @@
                         <div class="flex-grow-1 d-flex flex-column">
                             <small class="text-muted">${bike.engineCc} ${i18n.bikeCc}, ${bike.transmissionType === 'AUTOMATIC' ? i18n.transmissionAutomatic : i18n.transmissionManual}</small>
                             <small class="text-muted">
-                                ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)},
-                                ${bike.limit.heightMax && bike.limit.heightMax > 0
-                                    ? fmt(i18n.bikeHeightRange, bike.limit.heightMin, bike.limit.heightMax)
-                                    : fmt(i18n.bikeHeightFrom, bike.limit.heightMin)}
+                                ${fmt(i18n.bikeYearsFrom, bike.limit.ageMin)}${(() => {
+                                    const min = bike.limit.heightMin;
+                                    const max = bike.limit.heightMax;
+                                    if (min != null && max != null) return ', ' + fmt(i18n.bikeHeightRange, min, max);
+                                    if (min != null) return ', ' + fmt(i18n.bikeHeightFrom, min);
+                                    if (max != null) return ', ' + fmt(i18n.bikeHeightUpto, max);
+                                    return '';
+                                })()}
                             </small>
                         </div>
                     </div>

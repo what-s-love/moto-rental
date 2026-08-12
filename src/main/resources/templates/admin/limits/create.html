@@ -27,7 +27,6 @@
                                type="number"
                                min="100"
                                max="250"
-                               required
                                th:placeholder="#{admin.hint.limit.height.min}"
                                placeholder="140">
                         <small class="text-muted" th:text="#{admin.hint.height.range}">От 100 до 250 см</small>
@@ -36,7 +35,7 @@
                     <div class="col-md-4">
                         <label class="form-label" for="heightMax">
                             <i class="fas fa-arrow-up me-1"></i><span th:text="#{admin.label.max.height.full}">Максимальный рост (см)</span>
-                            <span class="text-danger" th:text="#{form.required}">*</span>
+<!--                            <span class="text-danger" th:text="#{form.required}">*</span>-->
                         </label>
                         <input class="form-control"
                                id="heightMax"
@@ -44,7 +43,6 @@
                                type="number"
                                min="100"
                                max="250"
-                               required
                                th:placeholder="#{admin.hint.limit.height.max}"
                                placeholder="180">
                         <small class="text-muted" th:text="#{admin.hint.height.range}">От 100 до 250 см</small>

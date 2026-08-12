@@ -28,10 +28,10 @@ public class Limit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "height_min", nullable = false)
+    @Column(name = "height_min")
     private Integer heightMin;
 
-    @Column(name = "height_max", nullable = false)
+    @Column(name = "height_max")
     private Integer heightMax;
 
     @Column(name = "age_min", nullable = false)

@@ -192,8 +192,14 @@ public class AdminController {
             return "redirect:/admin/limits/create";
         }
 
+        if (dto.getHeightMin() == null && dto.getHeightMax() == null) {
+            redirectAttributes.addFlashAttribute("error", "Нужен хотя бы один предел по росту");
+            return "redirect:/admin/limits/create";
+        }
+
         // Валидация: heightMax должен быть больше heightMin
-        if (dto.getHeightMax() <= dto.getHeightMin()) {
+        if (dto.getHeightMin() != null && dto.getHeightMax() != null
+                && dto.getHeightMax() <= dto.getHeightMin()) {
             redirectAttributes.addFlashAttribute("error", "Максимальный рост должен быть больше минимального");
             return "redirect:/admin/limits/create";
         }

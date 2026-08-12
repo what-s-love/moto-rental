@@ -39,8 +39,21 @@
                         <label class="form-label" for="limitId"><span th:text="#{admin.label.limit.height.age}">Ограничение (рост / возраст)</span> <span class="text-danger" th:text="#{form.required}">*</span></label>
                         <select class="form-select" id="limitId" name="limitId" required>
                             <option value="" selected disabled th:text="#{admin.select.choose}">Выберите</option>
-                            <option th:each="lim : ${limits}" th:value="${lim.id}"
-                                    th:text="|№${lim.id}: ${lim.heightMin}–${lim.heightMax} см, ${#messages.msg('booking.bike.years.from', lim.ageMin)}${lim.onlyMen ? ' (' + #messages.msg('admin.limit.only.men.short') + ')' : ''}|">
+                            <option th:each="lim : ${limits}" th:value="${lim.id}">
+                                №<span th:text="${lim.id}">1</span>:
+                                <th:block th:if="${lim.heightMin != null && lim.heightMax != null}">
+                                    <span th:text="${lim.heightMin}">140</span>–<span th:text="${lim.heightMax}">180</span> см,
+                                </th:block>
+                                <th:block th:if="${lim.heightMin != null && lim.heightMax == null}">
+                                    <span th:text="#{booking.bike.height.from(${lim.heightMin})}">от 165 см</span>,
+                                </th:block>
+                                <th:block th:if="${lim.heightMin == null && lim.heightMax != null}">
+                                    <span th:text="#{booking.bike.height.upto(${lim.heightMax})}">до 170 см</span>,
+                                </th:block>
+                                <span th:text="#{booking.bike.years.from(${lim.ageMin})}">от 12 лет</span>
+                                <th:block th:if="${lim.onlyMen}">
+                                    (<span th:text="#{admin.limit.only.men.short}">только мужчины</span>)
+                                </th:block>
                             </option>
                         </select>
                     </div>
