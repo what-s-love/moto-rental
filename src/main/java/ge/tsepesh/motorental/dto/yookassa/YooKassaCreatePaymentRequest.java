@@ -45,6 +45,8 @@ public record YooKassaCreatePaymentRequest(
             String description,
             String quantity,
             Amount amount,
-            @JsonProperty("vat_code") int vatCode
+            @JsonProperty("vat_code") int vatCode,
+            @JsonProperty("payment_subject") String paymentSubject,
+            @JsonProperty("payment_mode") String paymentMode
     ) {}
 }

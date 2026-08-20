@@ -77,6 +77,8 @@ public class YooKassaPaymentService {
         String currency    = appSettingService.getValue(AppSettingKey.PREPAYMENT_CURRENCY);
         String itemDescription    = appSettingService.getValue(AppSettingKey.ITEM_DESCRIPTION);
         int vatCode        = Integer.parseInt(appSettingService.getValue(AppSettingKey.YOOKASSA_RECEIPT_VAT_CODE));
+        String paymentSubject = "service";
+        String paymentMode = "full_payment";
 
         YooKassaCreatePaymentRequest.Amount amount =
                 new YooKassaCreatePaymentRequest.Amount(amountValue, currency);
@@ -86,7 +88,9 @@ public class YooKassaPaymentService {
                         String.format(itemDescription, booking.getId()),
                         receiptConfig.quantity(),
                         amount,
-                        vatCode
+                        vatCode,
+                        paymentSubject,
+                        paymentMode
                 );
 
         YooKassaCreatePaymentRequest.Customer customer =
