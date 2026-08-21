@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -70,11 +71,11 @@ public class PaymentConfirmationService {
             return;
         }
 
-        //ToDo Если реальный платёж будет доступен для оплаты дольше, чем 2 часа, то убрать case canceled и обрабатывать handleCanceled как default для всех просроченных платежей, кроме статуса succeeded (чтобы висели по времени изи настроек, а не до конца собственной жизни платежа)
         switch (payment.status()) {
             case "succeeded" -> handleSucceeded(payment, booking);
             case "canceled"  -> handleCanceled(payment, booking);
-            default -> log.debug("Payment {} has intermediate status '{}', no action taken",
+            case "pending"   -> handlePending(booking);
+            default -> log.warn("Payment {} has unexpected status '{}', no action taken",
                     payment.id(), payment.status());
         }
     }
@@ -104,6 +105,23 @@ public class PaymentConfirmationService {
         booking.setBookingStatus(BookingStatus.PAYMENT_FAILED);
         bookingRepository.save(booking);
         log.info("Booking {} marked as PAYMENT_FAILED (paymentId={})", booking.getId(), payment.id());
+    }
+
+    private void handlePending(Booking booking) {
+        if (booking.getExpiresAt().isBefore(LocalDateTime.now())) {
+            expireBooking(booking);
+        } else {
+            log.debug("Booking {} payment still pending, not yet expired", booking.getId());
+        }
+    }
+
+    public void expireBooking(Booking booking) {
+        if (booking.getBookingStatus() != BookingStatus.PENDING_PAYMENT) {
+            return;
+        }
+        booking.setBookingStatus(BookingStatus.EXPIRED);
+        bookingRepository.save(booking);
+        log.info("Booking {} marked as EXPIRED (prepayment period elapsed)", booking.getId());
     }
 
     private Integer extractBookingId(YooKassaPaymentResponse payment) {

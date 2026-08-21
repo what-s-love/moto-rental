@@ -10,27 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Заготовка polling-стратегии подтверждения платежей.
- *
- * <p>Polling — альтернатива webhook. Сервис периодически опрашивает YooKassa API
- * для всех бронирований в статусе {@link BookingStatus#PENDING_PAYMENT}, у которых
- * уже есть привязанный Payment с transactionRef.</p>
- *
- * <h3>Как активировать</h3>
- * <ol>
- *   <li>Раскомментируйте аннотацию {@code @Scheduled} на методе {@link #pollPendingPayments()}.</li>
- *   <li>Добавьте {@code @EnableScheduling} в конфигурационный класс или основной класс приложения.</li>
- * </ol>
- *
- * <h3>Когда использовать вместо webhook</h3>
- * <ul>
- *   <li>Нет публичного HTTPS-эндпоинта для приёма уведомлений (локальная разработка).</li>
- *   <li>Необходима дополнительная надёжность: polling как fallback к webhook.</li>
- * </ul>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,24 +24,18 @@ public class YooKassaPollingService {
 
     /**
      * Опрашивает статусы всех незавершённых платежей.
-     *
-     * <p>Активировать через {@code @Scheduled(fixedDelay = 60_000)}
-     * или {@code @Scheduled(cron = "0 * * * * *")} — по минуте.</p>
-     *
-     * <p>Метод намеренно не помечен {@code @Scheduled}, чтобы не запускаться
-     * пока webhook является основным каналом подтверждения.</p>
      */
     @Scheduled(fixedDelayString = "${yookassa.polling.fixed-delay-ms:60000}")
     public void pollPendingPayments() {
-        List<Booking> pending = bookingRepository.findByStatusWithPayment(BookingStatus.PENDING_PAYMENT);
+        List<Booking> overdue = bookingRepository.findExpiredBookingsByStatus(BookingStatus.PENDING_PAYMENT, LocalDateTime.now());
 
-        if (pending.isEmpty()) {
-            log.debug("No PENDING_PAYMENT bookings to poll");
+        if (overdue.isEmpty()) {
+            log.debug("No overdue PENDING_PAYMENT bookings to check");
             return;
         }
 
-        log.info("Polling {} PENDING_PAYMENT bookings...", pending.size());
-        for (Booking booking : pending) {
+        log.info("Checking {} overdue PENDING_PAYMENT bookings...", overdue.size());
+        for (Booking booking : overdue) {
             pollSingleBooking(booking);
         }
     }
@@ -71,7 +47,8 @@ public class YooKassaPollingService {
     public void pollSingleBooking(Booking booking) {
         if (booking.getPayment() == null
                 || booking.getPayment().getTransactionRef() == null) {
-            log.debug("Booking {} has no payment ref, skipping poll", booking.getId());
+            log.info("Booking {} overdue with no payment ever created — expiring", booking.getId());
+            paymentConfirmationService.expireBooking(booking);
             return;
         }
 

@@ -16,9 +16,8 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    @Query("SELECT b FROM Booking b WHERE b.bookingStatus = :status AND b.expiresAt < :currentTime")
-    List<Booking> findExpiredBookingsByStatus(@Param("status") BookingStatus status, 
-                                             @Param("currentTime") LocalDateTime currentTime);
+    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.payment WHERE b.bookingStatus = :status AND b.expiresAt < :currentTime")
+    List<Booking> findExpiredBookingsByStatus(@Param("status") BookingStatus status, @Param("currentTime") LocalDateTime currentTime);
 
     @Query("SELECT b FROM Booking b WHERE b.client.id = :clientId ORDER BY b.createdAt DESC")
     List<Booking> findByClientIdOrderByCreatedAtDesc(@Param("clientId") Integer clientId);
@@ -35,15 +34,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "ORDER BY r.date, r.shift.startTime")
     List<Booking> findBookingsByYearAndMonth(@Param("year") int year, @Param("month") int month);
 
-    /**
-     * Все бронирования в указанном статусе, у которых уже привязан платёж
-     * (используется polling-сервисом для опроса незавершённых платежей).
-     */
-    @Query("SELECT b FROM Booking b JOIN FETCH b.payment p " +
-            "WHERE b.bookingStatus = :status AND p.transactionRef IS NOT NULL")
-    List<Booking> findByStatusWithPayment(@Param("status") BookingStatus status);
-
     @Query("SELECT b FROM Booking b ORDER BY b.ride.date DESC")
     Page<Booking> findByOrderByRide_DateDesc(Pageable pageable);
-
 }
