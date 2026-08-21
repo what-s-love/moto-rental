@@ -34,6 +34,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "ORDER BY r.date, r.shift.startTime")
     List<Booking> findBookingsByYearAndMonth(@Param("year") int year, @Param("month") int month);
 
-    @Query("SELECT b FROM Booking b ORDER BY b.ride.date DESC")
+    @Query("SELECT b FROM Booking b ORDER BY b.ride.date DESC, b.id DESC")
     Page<Booking> findByOrderByRide_DateDesc(Pageable pageable);
 }
