@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+# Админка не связана ссылками с публичной частью — просто запрещаем обход.
+Disallow: /admin/
+# /ride, /booking/ и /calendar/api/ НЕ закрыты здесь намеренно: они отдают X-Robots-Tag/meta noindex,
+# а поисковик должен иметь возможность их просканировать, чтобы увидеть этот запрет.
+# /calendar/api/ к тому же нужен Googlebot для рендеринга календаря.
+
+# Яндекс: не считать разными страницами URL с метками рекламы/аналитики.
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid&_openstat
+
+Sitemap: https://mototrip27.ru/sitemap.xml

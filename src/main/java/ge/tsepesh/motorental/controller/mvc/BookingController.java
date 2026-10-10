@@ -103,6 +103,7 @@ public class BookingController {
         List<BikeAvailabilityDto> availableBikesList = bikeAvailabilityService.getAvailableBikesForDateAndShift(date, shiftId);
 
         // Добавление данных в модель
+        model.addAttribute("noIndex", true);
         model.addAttribute("date", date);
         model.addAttribute("isWeekend", DateUtil.isWeekend(date));
         model.addAttribute("shiftId", shiftId);
@@ -149,6 +150,7 @@ public class BookingController {
         if (booking.isEmpty()) {
             throw new ResourceNotFoundException("error.booking.not.found");
         }
+        model.addAttribute("noIndex", true);
         model.addAttribute("bookingId", booking.get().getId());
         model.addAttribute("prepaymentAmount",
                 appSettingService.getValueOrDefault(AppSettingKey.PREPAYMENT_AMOUNT, "500.00"));
@@ -218,6 +220,7 @@ public class BookingController {
                 );
 
         // Добавить данные в модель
+        model.addAttribute("noIndex", true);
         model.addAttribute("date", banner.getRideDate());
         model.addAttribute("shiftId", banner.getShift().getId());
         model.addAttribute("shift", mapToShiftDto(banner.getShift()));

@@ -86,6 +86,7 @@ public class AdminController {
         if (error != null) {
             model.addAttribute("error", true);
         }
+        model.addAttribute("noIndex", true);
         return "admin/login";
     }
 

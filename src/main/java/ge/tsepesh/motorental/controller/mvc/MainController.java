@@ -25,12 +25,18 @@ public class MainController {
         bannerService.getActiveBanner().ifPresent(banner ->
                 model.addAttribute("banner", banner)
         );
+        model.addAttribute("pageTitleKey", "meta.title.home");
+        model.addAttribute("pageDescriptionKey", "meta.description.home");
+        model.addAttribute("pagePath", "/");
         return "index";
     }
 
     @GetMapping("/privacy")
     public String privacy(Model model) {
         model.addAttribute("policy", policyService.getActivePolicy());
+        model.addAttribute("pageTitleKey", "meta.title.privacy");
+        model.addAttribute("pageDescriptionKey", "meta.description.privacy");
+        model.addAttribute("pagePath", "/privacy");
         return "privacy";
     }
 }

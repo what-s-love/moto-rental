@@ -3,6 +3,24 @@
       xmlns="http://www.w3.org/1999/html">
 
 <div layout:fragment="content">
+    <script type="application/ld+json" th:inline="javascript">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": /*[[#{app.name}]]*/ "Moto Trip",
+      "description": /*[[#{meta.description.home}]]*/ "",
+      "url": /*[[${appBaseUrl}]]*/ "https://mototrip27.ru",
+      "image": /*[[${appBaseUrl} + @{/images/promo/promo1.png}]]*/ "",
+      "telephone": "+7 (914) 541-59-60",
+      "email": "mototrip@list.ru",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": /*[[#{section.location.address}]]*/ "",
+        "addressCountry": "RU"
+      }
+    }
+    </script>
+
     <!-- Hero Section -->
     <section class="hero-section"
              th:style="'background-image: url(' + @{/images/promo/promo1.png} + ');'">
@@ -265,10 +283,18 @@
                 <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
                 <h3 class="mb-3" th:text="#{section.location.title}">Где мы находимся</h3>
                 <p class="text-muted mb-4" th:text="#{section.location.address}">г. Владикавказ, ул. Примерная, 123</p>
+                <p>
                 <a href="https://go.2gis.com/lVIE6" target="_blank" class="btn btn-outline-primary">
                     <i class="fas fa-external-link-alt me-2"></i>
-                    <span th:text="#{section.location.cta}">Открыть в 2ГИС</span>
+                    <span th:text="#{section.location.2gis}">Открыть в 2ГИС</span>
                 </a>
+                </p>z
+                <p>
+                <a href="https://yandex.com.ge/maps/org/mototrip/33144452387/prices/?ll=135.118755%2C48.358335&z=16" target="_blank" class="btn btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    <span th:text="#{section.location.yandex}">Открыть в Яндекс</span>
+                </a>
+                </p>
             </div>
         </div>
     </section>

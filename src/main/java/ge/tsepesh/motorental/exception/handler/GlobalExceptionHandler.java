@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler {
     private final LocaleResolver localeResolver;
 
     @ExceptionHandler(BookingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBookingException(BookingException ex, WebRequest request, Locale locale) {
         log.error("Booking exception occurred: {}", ex.getMessage(), ex);
 
@@ -46,6 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request, Locale locale) {
         log.error("Resource not found: {}", ex.getMessage(), ex);
 
@@ -62,6 +65,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleValidationException(ValidationException ex, WebRequest request, Locale locale) {
         log.error("Validation exception: {}", ex.getMessage(), ex);
 
@@ -78,6 +82,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request, Locale locale) {
         log.error("Entity not found: {}", ex.getMessage(), ex);
 
@@ -94,6 +99,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request, Locale locale) {
         log.error("Illegal argument: {}", ex.getMessage(), ex);
 
@@ -117,6 +123,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGenericException(Exception ex, WebRequest request, Locale locale) {
         log.error("Unexpected error occurred", ex);
 

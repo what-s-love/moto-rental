@@ -16,6 +16,7 @@ target/
 ### IntelliJ IDEA ###
 .idea
 .cursor
+.claude
 .env
 *.iws
 *.iml

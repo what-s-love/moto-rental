@@ -1,5 +1,16 @@
 server:
   port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      # Только cookie: без этого при первом заходе (и всегда для поисковых ботов)
+      # во все ссылки дописывается ;jsessionid=..., что плодит дубли страниц в индексе.
+      tracking-modes: cookie
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  seo:
+    # Токен из meta-тега Google Search Console (только значение content="..."). Пусто — тег не выводится.
+    google-site-verification: ${GOOGLE_SITE_VERIFICATION:}
 
 spring:
   application:

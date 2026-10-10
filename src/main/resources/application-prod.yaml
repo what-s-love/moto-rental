@@ -1,6 +1,12 @@
 server:
   port: ${SERVER_PORT:8080}
 
+app:
+  base-url: ${APP_BASE_URL:https://mototrip27.ru}
+  seo:
+    # Токен из meta-тега Google Search Console (только значение content="..."). Пусто — тег не выводится.
+    google-site-verification: ${GOOGLE_SITE_VERIFICATION:}
+
 spring:
   application:
     name: moto-trip

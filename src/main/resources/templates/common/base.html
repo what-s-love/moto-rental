@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
-<head>
+<html lang="ru" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+<!-- Язык переключается параметром ?lang=, поэтому английская версия страницы канонизируется на URL с ?lang=en -->
+<head th:with="canonicalUrl=${pagePath != null ? appBaseUrl + pagePath + (#locale.language == 'en' ? '?lang=en' : '') : null}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf"        th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title th:text="#{app.name}">Moto Rental</title>
+    <title th:text="${pageTitleKey} != null ? #{${pageTitleKey}} : #{app.name}">Moto Trip</title>
+    <meta name="description"
+          th:content="${pageDescriptionKey} != null ? #{${pageDescriptionKey}} : #{meta.description.default}">
+
+    <meta th:if="${noIndex}" name="robots" content="noindex, nofollow">
+
+    <meta th:if="${!#strings.isEmpty(googleSiteVerification)}"
+          name="google-site-verification" th:content="${googleSiteVerification}">
+
+    <th:block th:if="${canonicalUrl != null}">
+        <link rel="canonical" th:href="${canonicalUrl}">
+        <link rel="alternate" hreflang="ru" th:href="${appBaseUrl + pagePath}">
+        <link rel="alternate" hreflang="en" th:href="${appBaseUrl + pagePath + '?lang=en'}">
+        <link rel="alternate" hreflang="x-default" th:href="${appBaseUrl + pagePath}">
+    </th:block>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" th:content="#{app.name}">
+    <meta property="og:locale" th:content="${#locale.language == 'en' ? 'en_US' : 'ru_RU'}">
+    <meta property="og:locale:alternate" th:content="${#locale.language == 'en' ? 'ru_RU' : 'en_US'}">
+    <meta property="og:title"
+          th:content="${pageTitleKey} != null ? #{${pageTitleKey}} : #{app.name}">
+    <meta property="og:description"
+          th:content="${pageDescriptionKey} != null ? #{${pageDescriptionKey}} : #{meta.description.default}">
+    <meta th:if="${canonicalUrl != null}" property="og:url" th:content="${canonicalUrl}">
+    <meta property="og:image" th:content="${appBaseUrl} + @{/images/promo/promo1.png}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+          th:content="${pageTitleKey} != null ? #{${pageTitleKey}} : #{app.name}">
+    <meta name="twitter:description"
+          th:content="${pageDescriptionKey} != null ? #{${pageDescriptionKey}} : #{meta.description.default}">
+    <meta name="twitter:image" th:content="${appBaseUrl} + @{/images/promo/promo1.png}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

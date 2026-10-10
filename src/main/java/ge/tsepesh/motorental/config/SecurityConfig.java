@@ -11,6 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +29,18 @@ public class SecurityConfig {
             "/admin/login"
     };
 
+    /**
+     * URL, которые не должны попадать в поисковую выдачу: админка (включая пагинацию и редиректы на логин),
+     * страницы бронирования/оплаты и JSON-эндпоинты календаря.
+     * Для них отдаётся заголовок X-Robots-Tag независимо от шаблона и кода ответа.
+     */
+    private static final RequestMatcher NO_INDEX_URLS = new OrRequestMatcher(
+            PathPatternRequestMatcher.withDefaults().matcher("/admin/**"),
+            PathPatternRequestMatcher.withDefaults().matcher("/ride/**"),
+            PathPatternRequestMatcher.withDefaults().matcher("/booking/**"),
+            PathPatternRequestMatcher.withDefaults().matcher("/calendar/api/**")
+    );
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,6 +48,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/booking/payment/return")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            )
+            .headers(headers -> headers
+                .addHeaderWriter(new DelegatingRequestMatcherHeaderWriter(
+                        NO_INDEX_URLS, new StaticHeadersWriter("X-Robots-Tag", "noindex, nofollow")))
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
             .httpBasic(Customizer.withDefaults())

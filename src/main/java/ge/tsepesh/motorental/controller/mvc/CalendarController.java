@@ -44,6 +44,9 @@ public class CalendarController {
         model.addAttribute("rides", rides);
         model.addAttribute("shifts", shifts);
         model.addAttribute("currentMonth", currentMonth);
+        model.addAttribute("pageTitleKey", "meta.title.calendar");
+        model.addAttribute("pageDescriptionKey", "meta.description.calendar");
+        model.addAttribute("pagePath", "/calendar");
         return "calendar";
     }
 
