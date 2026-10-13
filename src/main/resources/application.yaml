@@ -8,9 +8,6 @@ server:
 
 app:
   base-url: ${APP_BASE_URL:http://localhost:8080}
-  seo:
-    # Токен из meta-тега Google Search Console (только значение content="..."). Пусто — тег не выводится.
-    google-site-verification: ${GOOGLE_SITE_VERIFICATION:}
 
 spring:
   application:
