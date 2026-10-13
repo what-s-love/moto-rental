@@ -138,14 +138,6 @@
                                         <span th:text="#{booking.bike.height.upto(${bike.limits.heightMax})}">до 170 см</span>
                                     </span>
                                     <br>
-<!--                                Текст "Только для мужчин" на эндуро
-                                    <span th:if="${bike.limits.onlyMen}">
-                                        <span th:text="#{bike.only.men}">только для мужчин</span>
-                                    </span>
-                                    <span th:unless="${bike.limits.onlyMen}">
-                                        <br>
-                                    </span>
--->
                                 </p>
                                 <span class="badge mt-auto"
                                       th:classappend="${bike.engineCc >= 250} ? 'bg-custom-success' : (${bike.engineCc <= 125} ? 'bg-custom-primary' : 'bg-custom-warning')"
@@ -288,9 +280,9 @@
                     <i class="fas fa-external-link-alt me-2"></i>
                     <span th:text="#{section.location.2gis}">Открыть в 2ГИС</span>
                 </a>
-                </p>z
+                </p>
                 <p>
-                <a href="https://yandex.com.ge/maps/org/mototrip/33144452387/prices/?ll=135.118755%2C48.358335&z=16" target="_blank" class="btn btn-outline-primary">
+                <a href="https://yandex.com.ge/maps/org/mototrip/33144452387/?ll=135.118755%2C48.358335&z=16" target="_blank" class="btn btn-outline-primary">
                     <i class="fas fa-external-link-alt me-2"></i>
                     <span th:text="#{section.location.yandex}">Открыть в Яндекс</span>
                 </a>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
-<!-- Язык переключается параметром ?lang=, поэтому английская версия страницы канонизируется на URL с ?lang=en -->
 <head th:with="canonicalUrl=${pagePath != null ? appBaseUrl + pagePath + (#locale.language == 'en' ? '?lang=en' : '') : null}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
