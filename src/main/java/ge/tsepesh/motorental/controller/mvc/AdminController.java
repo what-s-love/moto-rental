@@ -530,14 +530,14 @@ public class AdminController {
     }
 
     // ==================== BANNERS ====================
-    @GetMapping("/banner/list")
+    @GetMapping("/banners")
     public String bannerList(Model model) {
         List<BannerDto> banners = bannerService.getAllBanners();
         model.addAttribute("banners", banners);
-        return "admin/banner/list";
+        return "admin/banners/list";
     }
 
-    @GetMapping("/banner/create")
+    @GetMapping("/banners/create")
     public String createBannerForm(Model model) {
         // Получить только специальные маршруты
         List<RouteDto> specialRoutes = routeService.getAllRoutes()
@@ -551,17 +551,17 @@ public class AdminController {
         model.addAttribute("specialRoutes", specialRoutes);
         model.addAttribute("shifts", shifts);
 
-        return "admin/banner/create";
+        return "admin/banners/create";
     }
 
-    @PostMapping("/banner")
+    @PostMapping("/banners")
     public String createBanner(@Valid @ModelAttribute BannerCreateDto dto,
                                @RequestParam(value = "bannerImage", required = false) MultipartFile bannerImage,
                                RedirectAttributes redirectAttributes,
                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
-            return "redirect:/admin/banner/create";
+            return "redirect:/admin/banners/create";
         }
         try {
             Banner created = bannerService.createBanner(dto, bannerImage);
@@ -572,12 +572,12 @@ public class AdminController {
         } catch (Exception e) {
             log.error("Error creating banner", e);
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
-            return "redirect:/admin/banner/create";
+            return "redirect:/admin/banners/create";
         }
-        return "redirect:/admin/banner/list";
+        return "redirect:/admin/banners";
     }
 
-    @GetMapping("/banner/{id}/edit")
+    @GetMapping("/banners/{id}/edit")
     public String editBannerForm(@PathVariable Integer id, Model model) {
         try {
             Banner banner = bannerService.getBannerById(id);
@@ -591,14 +591,14 @@ public class AdminController {
             model.addAttribute("banner", dto);
             model.addAttribute("specialRoutes", specialRoutes);
             model.addAttribute("shifts", shifts);
-            return "admin/banner/edit";
+            return "admin/banners/edit";
         } catch (Exception e) {
             log.error("Error loading banner edit form for id {}", id, e);
-            return "redirect:/admin/banner/list";
+            return "redirect:/admin/banners";
         }
     }
 
-    @PostMapping("/banner/{id}")
+    @PostMapping("/banners/{id}")
     public String updateBanner(@PathVariable Integer id,
                                @Valid @ModelAttribute BannerUpdateDto dto,
                                @RequestParam(value = "bannerImage", required = false) MultipartFile bannerImage,
@@ -606,7 +606,7 @@ public class AdminController {
                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Ошибка валидации полей формы");
-            return "redirect:/admin/banner/" + id + "/edit";
+            return "redirect:/admin/banners/" + id + "/edit";
         }
         try {
             bannerService.updateBanner(id, dto, bannerImage);
@@ -614,12 +614,12 @@ public class AdminController {
         } catch (Exception e) {
             log.error("Error updating banner {}", id, e);
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
-            return "redirect:/admin/banner/" + id + "/edit";
+            return "redirect:/admin/banners/" + id + "/edit";
         }
-        return "redirect:/admin/banner/list";
+        return "redirect:/admin/banners";
     }
 
-    @PostMapping("/banner/{id}/toggle")
+    @PostMapping("/banners/{id}/toggle")
     public String toggleBanner(@PathVariable Integer id,
                                @RequestParam Boolean enabled,
                                RedirectAttributes redirectAttributes) {
@@ -631,10 +631,10 @@ public class AdminController {
             log.error("Error toggling banner {}", id, e);
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
-        return "redirect:/admin/banner/list";
+        return "redirect:/admin/banners";
     }
 
-    @PostMapping("/banner/{id}/delete")
+    @PostMapping("/banners/{id}/delete")
     public String deleteBanner(@PathVariable Integer id,
                                RedirectAttributes redirectAttributes) {
         try {
@@ -644,7 +644,7 @@ public class AdminController {
             log.error("Error deleting banner {}", id, e);
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
         }
-        return "redirect:/admin/banner/list";
+        return "redirect:/admin/banners";
     }
 
     // ==================== SETTINGS ====================

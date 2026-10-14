@@ -7,11 +7,11 @@
         <div>
             <h1 class="h3 mb-1">
                 <i class="fas fa-bullhorn me-2 text-warning"></i>
-                <span th:text="#{admin.banner.create}">Создать баннер</span>
+                <span th:text="|#{admin.button.edit} #{admin.banner.title}|">Редактировать баннер</span>
             </h1>
-            <p class="text-muted mb-0" th:text="#{admin.banner.subtitle}">Настройка специального предложения для главной страницы</p>
+            <p class="text-muted mb-0">ID: <span th:text="${banner.id}">1</span></p>
         </div>
-        <a class="btn btn-secondary" th:href="@{/admin/banner}">
+        <a class="btn btn-secondary" th:href="@{/admin/banners}">
             <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад</span>
         </a>
     </div>
@@ -25,7 +25,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form th:action="@{/admin/banner}"
+                    <form th:action="@{/templates/admin/banners/{id}(id=${banner.id})}"
                           method="post"
                           enctype="multipart/form-data">
 
@@ -35,11 +35,14 @@
                                        type="checkbox"
                                        id="enabled"
                                        name="enabled"
-                                       checked>
+                                       th:checked="${banner.enabled}">
                                 <label class="form-check-label" for="enabled">
-                                    <strong th:text="#{admin.banner.enabled}">Включить баннер сразу после создания</strong>
+                                    <strong th:text="#{admin.banner.enable}">Включить баннер на главной странице</strong>
                                 </label>
                             </div>
+                            <small class="text-muted" th:text="#{admin.banner.warning}">
+                                При включении баннер будет отображаться на главной странице сайта
+                            </small>
                         </div>
 
                         <hr>
@@ -55,7 +58,8 @@
                                 <option value="" th:text="#{admin.select.route}">Выберите маршрут</option>
                                 <option th:each="route : ${specialRoutes}"
                                         th:value="${route.id}"
-                                        th:text="${route.name + ' (' + route.price + ' ₽)'}">
+                                        th:text="${route.name + ' (' + route.price + ' ₽)'}"
+                                        th:selected="${route.id == banner.routeId}">
                                     Маршрут
                                 </option>
                             </select>
@@ -72,6 +76,7 @@
                                    class="form-control"
                                    id="rideDate"
                                    name="rideDate"
+                                   th:value="${banner.rideDate}"
                                    required>
                         </div>
 
@@ -86,7 +91,8 @@
                                 <option value="" th:text="#{admin.select.shift}">Выберите смену</option>
                                 <option th:each="shift : ${shifts}"
                                         th:value="${shift.id}"
-                                        th:text="${shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'}">
+                                        th:text="${shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'}"
+                                        th:selected="${shift.id == banner.shiftId}">
                                     Смена
                                 </option>
                             </select>
@@ -102,6 +108,7 @@
                                    class="form-control"
                                    id="title"
                                    name="title"
+                                   th:value="${banner.title}"
                                    maxlength="255"
                                    th:placeholder="#{admin.hint.banner.title}"
                                    placeholder="Например: Весенний заезд по горам"
@@ -118,22 +125,31 @@
                                       rows="3"
                                       maxlength="500"
                                       th:placeholder="#{admin.hint.banner.description}"
-                                      placeholder="Краткое описание специального предложения"></textarea>
+                                      placeholder="Краткое описание специального предложения"
+                                      th:text="${banner.description}"></textarea>
                             <small class="text-muted" th:text="#{admin.hint.max.chars.50}">Максимум 500 символов</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="bannerImage" class="form-label">
-                                <span th:text="#{admin.label.photo}">Изображение баннера</span> <span class="text-danger" th:text="#{form.required}">*</span>
+                            <label for="bannerImage" class="form-label" th:text="#{admin.label.photo}">
+                                Изображение баннера
                             </label>
+
+                            <div th:if="${banner.imagePath != null}" class="mb-2">
+                                <p class="small text-muted mb-1" th:text="#{admin.label.current.photo}">Текущее изображение:</p>
+                                <img th:src="@{${banner.imagePath}}"
+                                     alt="Current banner"
+                                     class="img-thumbnail"
+                                     style="max-height: 150px;">
+                            </div>
+
                             <input type="file"
                                    class="form-control"
                                    id="bannerImage"
                                    name="bannerImage"
-                                   accept="image/jpeg,image/png,image/jpg,image/webp"
-                                   required>
-                            <small class="text-muted" th:text="#{admin.photo.optional}">
-                                Форматы: JPG, PNG, WEBP. Рекомендуемый размер: 1200x400px
+                                   accept="image/jpeg,image/png,image/jpg,image/webp">
+                            <small class="text-muted" th:text="#{admin.photo.keep.current}">
+                                Оставьте пустым, чтобы сохранить текущее изображение.
                             </small>
                         </div>
 
@@ -141,9 +157,9 @@
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i><span th:text="#{admin.banner.create}">Создать баннер</span>
+                                <i class="fas fa-save me-2"></i><span th:text="#{admin.save.all}">Сохранить изменения</span>
                             </button>
-                            <a th:href="@{/admin/banner}" class="btn btn-secondary">
+                            <a th:href="@{/admin/banners}" class="btn btn-secondary">
                                 <i class="fas fa-times me-2"></i><span th:text="#{admin.button.back}">Отмена</span>
                             </a>
                         </div>
@@ -156,27 +172,62 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0">
-                        <i class="fas fa-lightbulb me-2"></i><span th:text="#{admin.info}">Советы</span>
+                        <i class="fas fa-eye me-2"></i><span th:text="#{admin.banner.preview.title}">Предварительный просмотр</span>
                     </h5>
                 </div>
                 <div class="card-body">
-                    <ul class="small mb-0">
-                        <li class="mb-2" th:text="#{booking.special.route.title}">
-                            Выбирайте только специальные маршруты (с флагом isSpecial=true)
-                        </li>
-                        <li class="mb-2" th:text="#{admin.banner.subtitle}">
-                            Баннер будет отображаться вверху главной страницы
-                        </li>
-                        <li class="mb-2" th:text="#{admin.hint.banner.title}">
-                            Используйте яркие и привлекательные изображения
-                        </li>
-                        <li class="mb-2" th:text="#{admin.banner.preview.title}">
-                            Заголовок должен быть кратким и понятным
-                        </li>
-                        <li th:text="#{admin.banner.warning}">
-                            Одновременно может быть активен только один баннер
-                        </li>
-                    </ul>
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <span th:text="#{admin.banner.subtitle}">Так баннер будет выглядеть на главной странице</span>
+                    </div>
+
+                    <div class="border rounded p-2 bg-light"
+                         style="background: linear-gradient(135deg, #fff9e6 0%, #ffe8a1 100%);">
+                        <div th:if="${banner.imagePath != null}">
+                            <img th:src="@{${banner.imagePath}}"
+                                 alt="Banner preview"
+                                 class="img-fluid rounded mb-2"
+                                 style="max-height: 100px; width: 100%; object-fit: cover;">
+                        </div>
+                        <span class="badge bg-danger mb-1">
+                            <i class="fas fa-star"></i> <span th:text="#{booking.special.route.title}">СПЕЦПРЕДЛОЖЕНИЕ</span>
+                        </span>
+                        <h6 class="fw-bold mb-1" th:text="${banner.title}">Заголовок</h6>
+                        <p class="small text-muted mb-1" th:text="${banner.description}">
+                            Описание баннера
+                        </p>
+                        <div class="small">
+                            <i class="fas fa-calendar text-primary"></i>
+                            <span th:text="${#temporals.format(banner.rideDate, 'dd.MM.yyyy')}">
+                                01.05.2026
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i><span th:text="#{admin.label.status}">Статус баннера</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong th:text="#{admin.label.status}">Текущий статус:</strong>
+                        <span th:if="${banner.enabled}"
+                              class="badge bg-success">
+                            <i class="fas fa-circle-check"></i> <span th:text="#{admin.banner.enabled}">Включен</span>
+                        </span>
+                        <span th:unless="${banner.enabled}"
+                              class="badge bg-secondary">
+                            <i class="fas fa-circle-xmark"></i> <span th:text="#{admin.banner.disabled}">Выключен</span>
+                        </span>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        <span th:text="#{admin.banner.warning}">Используйте переключатель вверху формы для включения/выключения баннера</span>
+                    </small>
                 </div>
             </div>
         </div>
