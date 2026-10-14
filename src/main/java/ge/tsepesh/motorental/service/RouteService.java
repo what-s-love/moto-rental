@@ -78,7 +78,7 @@ public class RouteService {
      */
     @Transactional
     public Route createRoute(RouteCreateDto dto, MultipartFile mapImage) {
-        log.info("Creating new route: {}", dto.getName());
+        log.debug("Creating new route: {}", dto.getName());
 
         Route route = new Route();
         route.setName(dto.getName());
@@ -109,8 +109,8 @@ public class RouteService {
      */
     @Transactional
     public Route updateRoute(Integer id, RouteUpdateDto dto, MultipartFile mapImage) {
-        log.info("Updating route: {}", id);
-        log.info("Incoming dto: {}", dto.toString());
+        log.debug("Updating route: {}", id);
+        log.debug("Incoming dto: {}", dto.toString());
 
         Route route = getRouteById(id);
 

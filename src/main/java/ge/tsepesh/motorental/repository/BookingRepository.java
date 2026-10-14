@@ -5,11 +5,14 @@ import ge.tsepesh.motorental.model.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +39,16 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT b FROM Booking b ORDER BY b.ride.date DESC, b.id DESC")
     Page<Booking> findByOrderByRide_DateDesc(Pageable pageable);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Booking b SET b.bookingStatus = :newStatus " +
+            "WHERE b.bookingStatus = :currentStatus " +
+            "AND b.ride.id IN (" +
+                "SELECT r.id FROM Ride r " +
+                "WHERE r.date < :today OR " +
+                   "(r.date = :today AND r.shift.endTime <= :nowTime))")
+    int updateStatusForFinishedRides(@Param("currentStatus") BookingStatus currentStatus,
+                                     @Param("newStatus") BookingStatus newStatus,
+                                     @Param("today") LocalDate today,
+                                     @Param("nowTime") LocalTime nowTime);
 }

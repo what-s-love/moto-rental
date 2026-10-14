@@ -26,14 +26,14 @@ public class EmailService {
     }
 
     public void sendPaymentLink(Booking booking, String paymentUrl) {
-        log.info("Start creating email to send to {}", booking.getClient().getEmail());
+        log.debug("Start creating email to send to {}", booking.getClient().getEmail());
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(booking.getClient().getEmail());
         message.setSubject("Подтверждение бронирования и оплата");
         message.setText(buildPaymentMessageBody(booking, paymentUrl));
 
         mailSender.send(message);
-        log.info("Payment email sent to {}", booking.getClient().getEmail());
+        log.debug("Payment email sent to {}", booking.getClient().getEmail());
     }
 
     private String buildPaymentMessageBody(Booking booking, String paymentUrl) {

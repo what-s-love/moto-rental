@@ -72,7 +72,7 @@ public class BookingController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        log.info("Showing ride booking page for date: {} and shift: {}", date, shiftId);
+        log.debug("Showing ride booking page for date: {} and shift: {}", date, shiftId);
 
         // Валидация входных параметров
         if (date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now())) {
@@ -129,7 +129,7 @@ public class BookingController {
             // Заезд не создан - передаём маршрут 'standart'
             Route route = routeService.getRouteByName("standart");
             model.addAttribute("standartRoute", route);
-            log.info("No existing ride found");
+            log.debug("No existing ride found");
         }
 
         return "booking";

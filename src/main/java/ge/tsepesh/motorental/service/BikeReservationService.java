@@ -28,7 +28,7 @@ public class BikeReservationService {
         Boolean success = redisTemplate.opsForValue().setIfAbsent(key, value, RESERVATION_TTL);
         
         if (Boolean.TRUE.equals(success)) {
-            log.info("Bike {} reserved for ride {} by session {}", bikeId, rideId, sessionId);
+            log.debug("Bike {} reserved for ride {} by session {}", bikeId, rideId, sessionId);
             return true;
         }
         
@@ -42,7 +42,7 @@ public class BikeReservationService {
         
         if (currentValue != null && currentValue.startsWith(sessionId + ":")) {
             redisTemplate.delete(key);
-            log.info("Released bike {} for ride {} by session {}", bikeId, rideId, sessionId);
+            log.debug("Released bike {} for ride {} by session {}", bikeId, rideId, sessionId);
         }
     }
 
@@ -63,7 +63,7 @@ public class BikeReservationService {
             }
         }
         
-        log.info("Released all reservations for session {}", sessionId);
+        log.debug("Released all reservations for session {}", sessionId);
     }
 
     private String buildReservationKey(Integer rideId, Integer bikeId) {

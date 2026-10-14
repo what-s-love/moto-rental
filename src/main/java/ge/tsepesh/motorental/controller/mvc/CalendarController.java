@@ -38,8 +38,8 @@ public class CalendarController {
         // Получаем доступные смены
         List<ShiftDto> shifts = shiftService.getEnabledShifts();
 
-        log.info("Rides found: {}", rides.size());
-        log.info("Shifts found: {}", shifts.size());
+        log.debug("Rides found: {}", rides.size());
+        log.debug("Shifts found: {}", shifts.size());
 
         model.addAttribute("rides", rides);
         model.addAttribute("shifts", shifts);

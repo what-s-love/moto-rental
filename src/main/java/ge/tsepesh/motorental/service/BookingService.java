@@ -46,7 +46,7 @@ public class BookingService {
     private final BookingCreationService bookingCreationService;
 
     public BookingResponseDto createBooking(BookingRequestDto request, String sessionId) {
-        log.info("Creating booking for session {} with {} participants", sessionId, request.getParticipants().size());
+        log.debug("Creating booking for session {} with {} participants", sessionId, request.getParticipants().size());
 
         // 1-8. Создание записей в БД приложения (вызов через отдельный бин — транзакция работает корректно)
         BookingCreationService.BookingResult result = bookingCreationService.createBookingInDB(request);
@@ -112,7 +112,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + id));
 
-        log.info("Updating booking {} status from {} to {}", id, booking.getBookingStatus(), newStatus);
+        log.debug("Updating booking {} status from {} to {}", id, booking.getBookingStatus(), newStatus);
         booking.setBookingStatus(newStatus);
         booking = bookingRepository.save(booking);
 
