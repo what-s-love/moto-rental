@@ -1,84 +1,8 @@
+// Общие скрипты для всех страниц (публичных и админки)
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Initialize Swiper for bikes
-    const bikesSwiper = new Swiper('.bikes-swiper', {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 2800,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-            },
-            768: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-            },
-            1024: {
-                slidesPerView: 4,
-                spaceBetween: 20,
-            },
-        },
-    });
-
-    // Pause autoplay on bike cards hover
-    const bikeCards = document.querySelectorAll('.bikes-swiper .card');
-    bikeCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            bikesSwiper.autoplay.stop();
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            bikesSwiper.autoplay.start();
-        });
-    });
-
-    // Initialize Swiper for routes
-    const routesSwiper = new Swiper('.routes-swiper', {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-            delay: 3200,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-            },
-            768: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-            },
-        },
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
     // Route cards click animation

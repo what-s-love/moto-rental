@@ -105,7 +105,7 @@
                                 <button type="submit"
                                         class="btn btn-sm w-100"
                                         th:classappend="${banner.enabled} ? 'btn-warning' : 'btn-success'"
-                                        th:attr="onclick=|return confirm('${#messages.msg('admin.banner.warning')}')|">
+                                        th:data-confirm="#{admin.banner.warning}">
                                     <i class="fas"
                                        th:classappend="${banner.enabled} ? 'fa-eye-slash' : 'fa-eye'"></i>
                                     <span th:text="${banner.enabled} ? #{admin.banner.disable} : #{admin.banner.enable}">
@@ -121,7 +121,7 @@
                                   class="d-inline w-100">
                                 <button type="submit"
                                         class="btn btn-outline-danger btn-sm w-100"
-                                        th:attr="onclick=|return confirm('${#messages.msg('admin.button.delete')}')|">
+                                        th:data-confirm="#{admin.button.delete}">
                                     <i class="fas fa-trash me-1"></i><span th:text="#{admin.button.delete}">Удалить</span>
                                 </button>
                             </form>

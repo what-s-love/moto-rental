@@ -51,8 +51,7 @@
 
             <button type="button"
                     class="banner-close-btn"
-                    th:aria-label="#{aria.close}" aria-label="Закрыть"
-                    onclick="event.preventDefault(); event.stopPropagation(); this.closest('.special-banner-sticky-wrapper').style.display='none';">
+                    th:aria-label="#{aria.close}" aria-label="Закрыть">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -291,5 +290,9 @@
         </div>
     </section>
 </div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/home.js}"></script>
+</th:block>
 
 </html>

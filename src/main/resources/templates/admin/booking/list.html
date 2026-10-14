@@ -51,9 +51,8 @@
                     <td class="text-end">
                         <!-- Копировать ссылку на оплату — только для PENDING_PAYMENT -->
                         <button th:if="${booking.bookingStatus.name() == 'PENDING_PAYMENT' and booking.paymentLink != null}"
-                                class="btn btn-outline-secondary btn-sm me-1"
-                                th:data-url="${booking.paymentLink}"
-                                onclick="navigator.clipboard.writeText(this.dataset.url)"
+                                class="btn btn-outline-secondary btn-sm me-1 copy-btn"
+                                th:data-copy="${booking.paymentLink}"
                                 title="Скопировать ссылку на оплату">
                             <i class="fas fa-copy"></i>
                         </button>
@@ -62,7 +61,7 @@
                               th:action="@{/admin/bookings/{id}/regenerate-payment(id=${booking.id})}"
                               method="post"
                               style="display:inline"
-                              onsubmit="return confirm('Перевыпустить ссылку на оплату для бронирования #' + [[${booking.id}]] + '?')">
+                              th:data-confirm="|Перевыпустить ссылку на оплату для бронирования #${booking.id}?|">
                             <button type="submit"
                                     class="btn btn-outline-warning btn-sm me-1"
                                     title="Перевыпустить ссылку на оплату">

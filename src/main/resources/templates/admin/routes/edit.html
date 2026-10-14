@@ -115,8 +115,9 @@
                         <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад к списку</span>
                     </a>
 
-                    <button type="button" class="btn btn-outline-danger"
-                            onclick="confirmDelete()">
+                    <button type="submit" form="deleteForm" class="btn btn-outline-danger"
+                            data-confirm="Вы уверены, что хотите удалить этот маршрут? Это действие необратимо."
+                            th:data-confirm="#{admin.button.delete}">
                         <i class="fas fa-trash me-2"></i><span th:text="#{admin.button.delete}">Удалить маршрут</span>
                     </button>
                 </div>
@@ -126,13 +127,5 @@
             </form>
         </div>
     </div>
-
-    <script th:inline="javascript">
-        function confirmDelete() {
-            if (confirm(/*[[#{admin.button.delete}]]*/ 'Вы уверены, что хотите удалить этот маршрут? Это действие необратимо.')) {
-                document.getElementById('deleteForm').submit();
-            }
-        }
-    </script>
 </div>
 </html>

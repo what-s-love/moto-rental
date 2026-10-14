@@ -98,7 +98,9 @@
                     <a class="btn btn-outline-secondary flex-fill" th:href="@{/admin/bikes}">
                         <i class="fas fa-arrow-left me-2"></i><span th:text="#{admin.button.back}">Назад к списку</span>
                     </a>
-                    <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                    <button type="submit" form="deleteForm" class="btn btn-outline-danger"
+                            data-confirm="Удалить этот мотоцикл? Если есть участники в заездах, удаление будет запрещено."
+                            th:data-confirm="#{admin.button.delete}">
                         <i class="fas fa-trash me-2"></i><span th:text="#{admin.button.delete}">Удалить</span>
                     </button>
                 </div>
@@ -108,13 +110,5 @@
             </form>
         </div>
     </div>
-
-    <script th:inline="javascript">
-        function confirmDelete() {
-            if (confirm(/*[[#{admin.button.delete}]]*/ 'Удалить этот мотоцикл? Если есть участники в заездах, удаление будет запрещено.')) {
-                document.getElementById('deleteForm').submit();
-            }
-        }
-    </script>
 </div>
 </html>

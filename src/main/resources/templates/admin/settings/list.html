@@ -77,12 +77,4 @@
     </div>
 </div>
 
-<th:block layout:fragment="scripts">
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                .forEach(el => new bootstrap.Tooltip(el));
-        });
-    </script>
-</th:block>
 </html>

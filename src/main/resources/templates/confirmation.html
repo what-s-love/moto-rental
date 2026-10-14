@@ -65,14 +65,6 @@
         </div>
     </div>
 
-    <!--  Basic Confetti  -->
-    <script th:src="@{/js/confetti.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            startConfetti();
-        });
-    </script>
-
     <!-- Custom Styles -->
     <style>
         .card {
@@ -111,5 +103,11 @@
         }
     </style>
 </div>
+
+<th:block layout:fragment="scripts">
+    <!--  Basic Confetti  -->
+    <script th:src="@{/js/confetti.js}"></script>
+    <script th:src="@{/js/confirmation.js}"></script>
+</th:block>
 
 </html>

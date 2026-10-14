@@ -153,36 +153,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function copyValue(value, btn) {
-            if (!value) return;
-            navigator.clipboard.writeText(value).then(() => {
-                const icon = btn.querySelector('i');
-                icon.classList.replace('fa-copy', 'fa-check');
-                btn.classList.add('btn-success');
-                btn.classList.remove('btn-outline-secondary');
-                setTimeout(() => {
-                    icon.classList.replace('fa-check', 'fa-copy');
-                    btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-secondary');
-                }, 1500);
-            });
-        }
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const input = btn.closest('.input-group').querySelector('.copy-field');
-                copyValue(input.dataset.copy || input.value, btn);
-            });
-        });
-        document.querySelectorAll('.copy-field').forEach(input => {
-            input.addEventListener('click', () => {
-                const btn = input.closest('.input-group').querySelector('.copy-btn');
-                copyValue(input.dataset.copy || input.value, btn);
-            });
-            input.style.cursor = 'pointer';
-        });
-    </script>
-
 </div>
 </html>
